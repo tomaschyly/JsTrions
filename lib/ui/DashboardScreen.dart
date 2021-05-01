@@ -2,7 +2,7 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class DashboardScreen extends AbstractResposiveScreen {
-  static const String ROUTE = "/";
+  static const String ROUTE = "/dashboard";
 
   /// Create state for widget
   @override
@@ -43,7 +43,11 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    return Container();
+    return Container(
+      child: Center(
+        child: Text('Wip: dashboard'),
+      ),
+    );
   }
 }
 
