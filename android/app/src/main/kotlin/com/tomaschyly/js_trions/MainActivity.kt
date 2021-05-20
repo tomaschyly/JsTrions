@@ -1,4 +1,4 @@
-package com.example.js_trions
+package com.tomaschyly.js_trions
 
 import io.flutter.embedding.android.FlutterActivity
 

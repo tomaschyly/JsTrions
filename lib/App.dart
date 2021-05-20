@@ -1,5 +1,10 @@
+import 'dart:io';
+
 import 'package:js_trions/core/Router.dart' as AppRouter;
 import 'package:js_trions/ui/DashboardScreen.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:sqflite/sqflite.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class App extends AbstractStatefulWidget {
@@ -48,6 +53,19 @@ class AppState extends AbstractStatefulWidgetState<App> {
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
+      ),
+      mainDataProviderOptions: MainDataProviderOptions(
+        sembastOptions: SembastOptions(databasePath: () async {
+          if (Platform.isAndroid || Platform.isIOS) {
+            return join((await getDatabasesPath()), 'default.db');
+          } else {
+            var directory = await getApplicationSupportDirectory();
+
+            await directory.create(recursive: true);
+
+            return join(directory.path, 'default.db');
+          }
+        }),
       ),
     );
   }

@@ -2,7 +2,7 @@ cmake_minimum_required(VERSION 3.10)
 project(runner LANGUAGES CXX)
 
 set(BINARY_NAME "js_trions")
-set(APPLICATION_ID "com.example.js_trions")
+set(APPLICATION_ID "com.tomaschyly.js_trions")
 
 cmake_policy(SET CMP0063 NEW)
 
