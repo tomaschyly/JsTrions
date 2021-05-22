@@ -1,3 +1,4 @@
+import 'package:flutter_svg/svg.dart';
 import 'package:js_trions/ui/AboutScreen.dart';
 import 'package:js_trions/ui/DashboardScreen.dart';
 import 'package:js_trions/ui/ProjectsScreen.dart';
@@ -41,7 +42,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
           tt('drawer.dashboard'),
           // style: AppStyles.Text, //TODO theme
         ),
-        // icon: SvgPicture.asset('images/male.svg', color: Colors.black), //TODO icons
+        icon: SvgPicture.asset('images/dashboard.svg', color: Colors.black),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -56,7 +57,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
           tt('drawer.projects'),
           // style: AppStyles.Text, //TODO theme
         ),
-        // icon: SvgPicture.asset('images/male.svg', color: Colors.black), //TODO icons
+        icon: SvgPicture.asset('images/project.svg', color: Colors.black),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -71,7 +72,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
           tt('drawer.settings'),
           // style: AppStyles.Text, //TODO theme
         ),
-        // icon: SvgPicture.asset('images/male.svg', color: Colors.black), //TODO icons
+        icon: SvgPicture.asset('images/cog.svg', color: Colors.black),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -86,7 +87,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
           tt('drawer.about'),
           // style: AppStyles.Text, //TODO theme
         ),
-        // icon: SvgPicture.asset('images/male.svg', color: Colors.black), //TODO icons
+        icon: SvgPicture.asset('images/info.svg', color: Colors.black),
       ),
     ];
   }

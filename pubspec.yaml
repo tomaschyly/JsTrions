@@ -21,6 +21,7 @@ dependencies:
   tch_appliable_core: ^0.4.0
 
   cupertino_icons: ^1.0.2
+  flutter_svg: ^0.22.0
 
   intl: ^0.17.0
 
@@ -33,5 +34,8 @@ flutter:
   uses-material-design: true
 
   assets:
+    - images/
+    - images/2.0x/
+    - images/3.0x/
     - assets/
     - assets/translations/
