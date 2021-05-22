@@ -64,6 +64,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       ),
       initializationMinDurationInMilliseconds: 1200,
       initialScreenRoute: DashboardScreen.ROUTE,
+      initialScreenRouteArguments: <String, String>{'router-fade-animation': '1'},
       onGenerateRoute: AppRouter.onGenerateRoute,
       theme: ThemeData(
           //TODO
