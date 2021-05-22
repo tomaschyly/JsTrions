@@ -11,10 +11,10 @@ class AboutScreen extends AbstractResposiveScreen {
 
 class _AboutScreenState extends AppResponsiveScreenState<AboutScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.basic(
-        screenName: AboutScreen.ROUTE,
-        title: tt('about.screen.title'),
-      );
+  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+    screenName: AboutScreen.ROUTE,
+    title: tt('about.screen.title'),
+  );
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

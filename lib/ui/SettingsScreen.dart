@@ -11,10 +11,10 @@ class SettingsScreen extends AbstractResposiveScreen {
 
 class _SettingsScreenState extends AppResponsiveScreenState<SettingsScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.basic(
-        screenName: SettingsScreen.ROUTE,
-        title: tt('settings.screen.title'),
-      );
+  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+    screenName: SettingsScreen.ROUTE,
+    title: tt('settings.screen.title'),
+  );
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

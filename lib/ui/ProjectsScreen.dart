@@ -11,10 +11,10 @@ class ProjectsScreen extends AbstractResposiveScreen {
 
 class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.basic(
-        screenName: ProjectsScreen.ROUTE,
-        title: tt('projects.screen.title'),
-      );
+  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+    screenName: ProjectsScreen.ROUTE,
+    title: tt('projects.screen.title'),
+  );
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();

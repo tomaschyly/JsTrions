@@ -11,7 +11,7 @@ class DashboardScreen extends AbstractResposiveScreen {
 
 class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
   @override
-  AppScreenStateOptions get options => AppScreenStateOptions.basic(
+  AbstractScreenStateOptions options = AppScreenStateOptions.main(
     screenName: DashboardScreen.ROUTE,
     title: tt('dashboard.screen.title'),
   );
@@ -35,9 +35,7 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
   Widget tabletScreen(BuildContext context) => _BodyWidget();
 }
 
-abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
-
-}
+abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
   /// Create view layout from widgets
@@ -57,6 +55,4 @@ class _BodyWidget extends _AbstractBodyWidget {
   State<StatefulWidget> createState() => _BodyWidgetState();
 }
 
-class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {
-
-}
+class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
