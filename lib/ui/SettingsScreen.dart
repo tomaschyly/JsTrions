@@ -1,4 +1,6 @@
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
+import 'package:js_trions/ui/widgets/Space.dart';
+import 'package:js_trions/utils/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class SettingsScreen extends AbstractResposiveScreen {
@@ -41,9 +43,23 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    return Container(
-      child: Center(
-        child: Text('Wip: settings'),
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.topCenter,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              SpaceV(),
+              Container(
+                width: kPhoneStopBreakpoint,
+                padding: const EdgeInsets.symmetric(horizontal: AppDimens.PrimaryHorizontalMargin),
+                child: _GeneralWidget(),
+              ),
+            ],
+          ),
+        ),
       ),
     );
   }
@@ -56,3 +72,13 @@ class _BodyWidget extends _AbstractBodyWidget {
 }
 
 class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
+
+class _GeneralWidget extends StatelessWidget {
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+    );
+  }
+}

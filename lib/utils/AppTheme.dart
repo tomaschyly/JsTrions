@@ -1,3 +1,5 @@
+const double kPhoneStopBreakpoint = 576;
+
 class AppDimens {
   /// Private initialization to have static class
   AppDimens._();

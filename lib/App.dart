@@ -1,12 +1,14 @@
 import 'dart:io';
 
 import 'package:js_trions/core/Router.dart' as AppRouter;
+import 'package:js_trions/core/AppPreferences.dart' as AppPreferences;
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/ui/DashboardScreen.dart';
 import 'package:js_trions/utils/AppTheme.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
-import 'package:sqflite/sqflite.dart';
+import 'package:sembast/sembast.dart';
+import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class App extends AbstractStatefulWidget {
@@ -67,27 +69,38 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRouteArguments: <String, String>{'router-fade-animation': '1'},
       onGenerateRoute: AppRouter.onGenerateRoute,
       theme: ThemeData(
-          //TODO
+          //TODO theme
           ),
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
+        getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.PREFS_LANGUAGE),
       ),
       mainDataProviderOptions: MainDataProviderOptions(
-        sembastOptions: SembastOptions(databasePath: () async {
-          if (Platform.isAndroid || Platform.isIOS) {
-            return join((await getDatabasesPath()), 'default.db');
-          } else {
-            var directory = await getApplicationSupportDirectory();
+        sembastOptions: SembastOptions(
+          databasePath: () async {
+            if (Platform.isAndroid || Platform.isIOS) {
+              return join((await SQLite.getDatabasesPath()), 'default.db');
+            } else {
+              final directory = await getApplicationSupportDirectory();
 
-            await directory.create(recursive: true);
+              await directory.create(recursive: true);
 
-            return join(directory.path, 'default.db');
-          }
-        }),
+              return join(directory.path, 'default.db');
+            }
+          },
+          version: 1,
+          onVersionChanged: _dbMigrate,
+        ),
       ),
     );
+  }
+
+  /// Migrate db when version changes
+  Future<void> _dbMigrate(Database db, int oldVersion, int newVersion) async {
+    print('TCH_d _dbMigrate oldVersion $oldVersion newVersion $newVersion');
+    //TODO fill with languages on first install
   }
 }
 
