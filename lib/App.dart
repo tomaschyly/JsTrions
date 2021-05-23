@@ -10,6 +10,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class App extends AbstractStatefulWidget {
   /// Create state for widget
@@ -42,14 +43,14 @@ class AppState extends AbstractStatefulWidgetState<App> {
             body: Container(
               child: Center(
                 child: Padding(
-                  padding: const EdgeInsets.all(AppDimens.PrimaryMargin),
+                  padding: const EdgeInsets.all(kCommonPrimaryMargin),
                   child: Container(
                     width: 295,
                     child: Column(
                       mainAxisSize: MainAxisSize.min,
                       children: [
                         tomasChylyImage,
-                        Container(height: AppDimens.PrimaryVerticalMargin),
+                        Container(height: kCommonVerticalMargin),
                         Text(
                           'JsTrions\nby Tomáš Chylý',
                           // style: AppStyles.TextHeadline.copyWith(fontFamily: 'CaveHand'), //TODO theme
@@ -68,15 +69,16 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRoute: DashboardScreen.ROUTE,
       initialScreenRouteArguments: <String, String>{'router-fade-animation': '1'},
       onGenerateRoute: AppRouter.onGenerateRoute,
-      theme: ThemeData(
-          //TODO theme
-          ),
+      builder: (BuildContext context, Widget child) {
+        return CommonTheme(child: child);
+      },
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
         getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.PREFS_LANGUAGE),
       ),
+      preferencesOptions: PreferencesOptions(),
       mainDataProviderOptions: MainDataProviderOptions(
         sembastOptions: SembastOptions(
           databasePath: () async {

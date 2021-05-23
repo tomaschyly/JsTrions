@@ -5,6 +5,7 @@ import 'package:js_trions/ui/ProjectsScreen.dart';
 import 'package:js_trions/ui/SettingsScreen.dart';
 import 'package:js_trions/utils/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class AppScreenStateOptions extends AbstractScreenStateOptions {
   /// AppScreenStateOptions initialization for default app state
@@ -135,8 +136,8 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                     child: Container(
                       height: 48,
                       padding: option.icon != null
-                          ? const EdgeInsets.only(right: AppDimens.PrimaryHorizontalMargin)
-                          : const EdgeInsets.symmetric(horizontal: AppDimens.PrimaryHorizontalMargin),
+                          ? const EdgeInsets.only(right: kCommonHorizontalMargin)
+                          : const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                       child: Row(
                         mainAxisSize: MainAxisSize.max,
                         children: [

@@ -1,7 +1,8 @@
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
-import 'package:js_trions/ui/widgets/Space.dart';
+import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/utils/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class SettingsScreen extends AbstractResposiveScreen {
   static const String ROUTE = "/settings";
@@ -47,14 +48,15 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
       child: SingleChildScrollView(
         child: Container(
           width: double.infinity,
-          alignment: Alignment.topCenter,
+          alignment: Alignment.topLeft,
           child: Column(
             mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              SpaceV(),
+              CommonSpaceV(),
               Container(
                 width: kPhoneStopBreakpoint,
-                padding: const EdgeInsets.symmetric(horizontal: AppDimens.PrimaryHorizontalMargin),
+                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: _GeneralWidget(),
               ),
             ],
@@ -79,6 +81,13 @@ class _GeneralWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Column(
       mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CategoryHeaderWidget(
+          text: tt('settings.screen.category.general'),
+          doubleMargin: true,
+        ),
+      ],
     );
   }
 }
