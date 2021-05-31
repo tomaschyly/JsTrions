@@ -1,6 +1,5 @@
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
-import 'package:js_trions/utils/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 

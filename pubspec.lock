@@ -307,14 +307,14 @@ packages:
       name: tch_appliable_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.4.3"
+    version: "0.4.5"
   tch_common_widgets:
     dependency: "direct main"
     description:
       name: tch_common_widgets
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.0.2"
+    version: "0.0.8"
   term_glyph:
     dependency: transitive
     description:

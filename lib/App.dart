@@ -1,10 +1,10 @@
 import 'dart:io';
 
-import 'package:js_trions/core/Router.dart' as AppRouter;
 import 'package:js_trions/core/AppPreferences.dart' as AppPreferences;
+import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/Router.dart' as AppRouter;
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/ui/DashboardScreen.dart';
-import 'package:js_trions/utils/AppTheme.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
@@ -53,7 +53,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
                         Container(height: kCommonVerticalMargin),
                         Text(
                           'JsTrions\nby Tomáš Chylý',
-                          // style: AppStyles.TextHeadline.copyWith(fontFamily: 'CaveHand'), //TODO theme
+                          style: fancyText(kTextHeadline, force: true),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -69,16 +69,16 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRoute: DashboardScreen.ROUTE,
       initialScreenRouteArguments: <String, String>{'router-fade-animation': '1'},
       onGenerateRoute: AppRouter.onGenerateRoute,
-      builder: (BuildContext context, Widget child) {
-        return CommonTheme(child: child);
-      },
+      builder: appThemeBuilder,
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
         getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.PREFS_LANGUAGE),
       ),
-      preferencesOptions: PreferencesOptions(),
+      preferencesOptions: PreferencesOptions(
+        intPrefs: AppPreferences.intPrefs,
+      ),
       mainDataProviderOptions: MainDataProviderOptions(
         sembastOptions: SembastOptions(
           databasePath: () async {

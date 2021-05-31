@@ -3,7 +3,7 @@ import 'package:js_trions/ui/AboutScreen.dart';
 import 'package:js_trions/ui/DashboardScreen.dart';
 import 'package:js_trions/ui/ProjectsScreen.dart';
 import 'package:js_trions/ui/SettingsScreen.dart';
-import 'package:js_trions/utils/AppTheme.dart';
+import 'package:js_trions/core/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 

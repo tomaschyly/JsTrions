@@ -1,4 +1,4 @@
-# js_trions
+# JsTrions
 
 Flutter cross-platform JSON translations utility app.
 
