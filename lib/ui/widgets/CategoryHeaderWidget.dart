@@ -1,3 +1,4 @@
+import 'package:js_trions/core/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -21,13 +22,13 @@ class CategoryHeaderWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             text,
-            // style: AppStyles.TextHeadline, //TODO theme
+            style: fancyText(kTextHeadline),
           ),
-          CommonSpaceHHalf(),
+          CommonSpaceH(),
           Expanded(
             child: Container(
               height: 1,
-              // color: AppColors.Gold, //TODO theme
+              color: kColorSecondaryDark,
             ),
           ),
         ],

@@ -41,9 +41,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('drawer.dashboard'),
-          // style: AppStyles.Text, //TODO theme
+          style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/dashboard.svg', color: Colors.black),
+        icon: SvgPicture.asset('images/dashboard.svg', color: kColorTextPrimary),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -56,9 +56,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('drawer.projects'),
-          // style: AppStyles.Text, //TODO theme
+          style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/project.svg', color: Colors.black),
+        icon: SvgPicture.asset('images/project.svg', color: kColorTextPrimary),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -71,9 +71,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('drawer.settings'),
-          // style: AppStyles.Text, //TODO theme
+          style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/cog.svg', color: Colors.black),
+        icon: SvgPicture.asset('images/cog.svg', color: kColorTextPrimary),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -86,9 +86,9 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
         },
         title: Text(
           tt('drawer.about'),
-          // style: AppStyles.Text, //TODO theme
+          style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/info.svg', color: Colors.black),
+        icon: SvgPicture.asset('images/info.svg', color: kColorTextPrimary),
       ),
     ];
   }
@@ -125,13 +125,13 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final drawerList = Container(
         width: options.drawerIsPermanentlyVisible ? 304 : null,
-        // color: AppColors.GoldDarker, //TODO theme
+        color: kColorPrimary,
         child: ListView(padding: EdgeInsets.zero, children: [
           Container(height: MediaQuery.of(context).padding.top),
           ...theDrawerOptions
               .map(
                 (DrawerOption option) => Material(
-                  // color: option.isSelected(context) ? AppColors.SilverDarker : AppColors.GoldDarker, //TODO theme
+                  color: option.isSelected(context) ? kColorPrimaryLight : kColorPrimary,
                   child: InkWell(
                     child: Container(
                       height: 48,

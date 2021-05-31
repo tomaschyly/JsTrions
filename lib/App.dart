@@ -70,6 +70,14 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRouteArguments: <String, String>{'router-fade-animation': '1'},
       onGenerateRoute: AppRouter.onGenerateRoute,
       builder: appThemeBuilder,
+      theme: ThemeData(
+        backgroundColor: kColorPrimaryLight,
+        primaryColor: kColorPrimary,
+        primaryColorLight: kColorPrimaryLight,
+        primaryColorDark: kColorPrimaryDark,
+        accentColor: kColorSecondary,
+        shadowColor: kColorShadow,
+      ),
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
