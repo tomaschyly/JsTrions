@@ -110,8 +110,63 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
 
 abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> extends AbstractResposiveScreenState<T> {
   /// Create default AppBar
-  @override
-  AppBar? createAppBar(BuildContext context) => null;
+  @protected
+  PreferredSizeWidget? createAppBar(BuildContext context) {
+    return AppBar(
+      title: Text(
+        options.title,
+        style: fancyText(kTextHeadline),
+      ),
+      centerTitle: false,
+      leading: options.drawerOptions?.isNotEmpty == true && !options.drawerIsPermanentlyVisible
+          ? Builder(
+        builder: (BuildContext context) {
+          return Container();/*IconButtonWidget( //TODO
+            icon: SvgPicture.asset(
+              'images/hamburger.svg',
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Scaffold.of(context).openDrawer();
+            },
+          );*/
+        },
+      )
+          : (Navigator.of(context).canPop() == true
+          ? Builder(
+        builder: (BuildContext context) {
+          return Container(); /*IconButtonWidget( //TODO
+            icon: SvgPicture.asset(
+              'images/back.svg',
+              color: Colors.black,
+            ),
+            onPressed: () {
+              Navigator.pop(context);
+            },
+          );*/
+        },
+      )
+          : null),
+      actions: options.appBarOptions
+          ?.map((AppBarOption option) => Builder(
+        builder: (BuildContext context) {
+          final theIcon = option.icon;
+          final theComplexIcon = option.complexIcon;
+
+          return Container(); //TODO
+          /*return IconButtonWidget(
+            icon: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+            onPressed: () {
+              option.onTap(context);
+            },
+            iconWidth: option.complexIcon != null ? 48 : 24,
+            iconHeight: option.complexIcon != null ? 48 : 24,
+          );*/
+        },
+      ))
+          .toList(),
+    );
+  }
 
   /// Create default BottomNavigationBar
   @protected
