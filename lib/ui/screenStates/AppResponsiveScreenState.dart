@@ -120,50 +120,47 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
       centerTitle: false,
       leading: options.drawerOptions?.isNotEmpty == true && !options.drawerIsPermanentlyVisible
           ? Builder(
-        builder: (BuildContext context) {
-          return Container();/*IconButtonWidget( //TODO
-            icon: SvgPicture.asset(
-              'images/hamburger.svg',
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Scaffold.of(context).openDrawer();
-            },
-          );*/
-        },
-      )
+              builder: (BuildContext context) {
+                return IconButtonWidget(
+                  style: kAppBarIconButtonStyle,
+                  svgAssetPath: 'images/hamburger.svg',
+                  onTap: () {
+                    Scaffold.of(context).openDrawer();
+                  },
+                );
+              },
+            )
           : (Navigator.of(context).canPop() == true
-          ? Builder(
-        builder: (BuildContext context) {
-          return Container(); /*IconButtonWidget( //TODO
-            icon: SvgPicture.asset(
-              'images/back.svg',
-              color: Colors.black,
-            ),
-            onPressed: () {
-              Navigator.pop(context);
-            },
-          );*/
-        },
-      )
-          : null),
+              ? Builder(
+                  builder: (BuildContext context) {
+                    return IconButtonWidget(
+                      style: kAppBarIconButtonStyle,
+                      svgAssetPath: 'images/back.svg',
+                      onTap: () {
+                        Navigator.pop(context);
+                      },
+                    );
+                  },
+                )
+              : null),
       actions: options.appBarOptions
           ?.map((AppBarOption option) => Builder(
-        builder: (BuildContext context) {
-          final theIcon = option.icon;
-          final theComplexIcon = option.complexIcon;
+                builder: (BuildContext context) {
+                  final theIcon = option.icon;
+                  final theComplexIcon = option.complexIcon;
 
-          return Container(); //TODO
-          /*return IconButtonWidget(
-            icon: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
-            onPressed: () {
-              option.onTap(context);
-            },
-            iconWidth: option.complexIcon != null ? 48 : 24,
-            iconHeight: option.complexIcon != null ? 48 : 24,
-          );*/
-        },
-      ))
+                  return IconButtonWidget(
+                    style: kAppBarIconButtonStyle.copyWith(
+                      iconWidth: option.complexIcon != null ? 48 : 24,
+                      iconHeight: option.complexIcon != null ? 48 : 24,
+                    ),
+                    iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                    onTap: () {
+                      option.onTap(context);
+                    },
+                  );
+                },
+              ))
           .toList(),
     );
   }

@@ -76,6 +76,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
         primaryColorLight: kColorPrimaryLight,
         primaryColorDark: kColorPrimaryDark,
         accentColor: kColorSecondary,
+        splashColor: kColorSecondary,
         shadowColor: kColorShadow,
       ),
       snapshot: AppDataStateSnapshot(),
