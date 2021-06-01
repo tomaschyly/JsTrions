@@ -41,48 +41,12 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
-  final _testController = TextEditingController();
-  final _test2Controller = TextEditingController();
-
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final commonTheme = CommonTheme.of(context)!;
-
     return Container(
       child: Center(
-        child: Column(
-          mainAxisSize: MainAxisSize.min,
-          children: [
-            TextFormFieldWidget(
-              style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                inputDecoration: commonTheme.formStyle.textFormFieldStyle.inputDecoration.copyWith(
-                  prefixIcon: Container(
-                    width: kMinInteractiveSize,
-                    height: kMinInteractiveSize,
-                    child: Center(
-                      child: Container(
-                        width: kIconSize,
-                        height: kIconSize,
-                        child: SvgPicture.asset('images/dashboard.svg', color: kColorTextPrimary),
-                      ),
-                    ),
-                  ),
-                  suffixIcon: IconButtonWidget(
-                    style: kAppBarIconButtonStyle,
-                    svgAssetPath: 'images/hamburger.svg',
-                    onTap: () {},
-                  ),
-                ),
-              ),
-              controller: _testController,
-            ),
-            CommonSpaceV(),
-            TextFormFieldWidget(
-              controller: _test2Controller,
-            ),
-          ],
-        ),
+        child: Text('Wip: dashboard'),
       ),
     );
   }

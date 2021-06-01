@@ -311,10 +311,10 @@ packages:
   tch_common_widgets:
     dependency: "direct main"
     description:
-      path: "../tch_common_widgets"
-      relative: true
-    source: path
-    version: "0.0.9"
+      name: tch_common_widgets
+      url: "https://pub.dartlang.org"
+    source: hosted
+    version: "0.0.10"
   term_glyph:
     dependency: transitive
     description:
