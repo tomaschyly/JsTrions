@@ -151,8 +151,8 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
 
                   return IconButtonWidget(
                     style: kAppBarIconButtonStyle.copyWith(
-                      iconWidth: option.complexIcon != null ? 48 : 24,
-                      iconHeight: option.complexIcon != null ? 48 : 24,
+                      iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                      iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                     ),
                     iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
                     onTap: () {
@@ -176,7 +176,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
 
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final drawerList = Container(
-        width: options.drawerIsPermanentlyVisible ? 304 : null,
+        width: options.drawerIsPermanentlyVisible ? kDrawerWidth : null,
         color: kColorPrimary,
         child: ListView(padding: EdgeInsets.zero, children: [
           Container(height: MediaQuery.of(context).padding.top),
@@ -186,7 +186,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                   color: option.isSelected(context) ? kColorPrimaryLight : kColorPrimary,
                   child: InkWell(
                     child: Container(
-                      height: 48,
+                      height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
                       padding: option.icon != null
                           ? const EdgeInsets.only(right: kCommonHorizontalMargin)
                           : const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
@@ -195,12 +195,12 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                         children: [
                           if (option.icon != null)
                             Container(
-                              width: 48,
-                              height: 48,
+                              width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
+                              height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
                               child: Center(
                                 child: Container(
-                                  width: 24,
-                                  height: 24,
+                                  width: kIconSizeNotTouch,
+                                  height: kIconSizeNotTouch,
                                   child: option.icon,
                                 ),
                               ),

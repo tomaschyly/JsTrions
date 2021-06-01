@@ -39,6 +39,10 @@ const kAppBarIconButtonStyle = const IconButtonStyle(
 Widget appThemeBuilder(BuildContext context, Widget child) {
   final ButtonsStyle buttonsStyle = ButtonsStyle(
     iconButtonStyle: IconButtonStyle(
+      width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
+      height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+      iconWidth: kIconSizeNotTouch,
+      iconHeight: kIconSizeNotTouch,
       color: kColorTextPrimary,
     ),
   );
