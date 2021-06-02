@@ -30,6 +30,14 @@ const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
     force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
 
+const kIconButtonStyle = IconButtonStyle(
+  width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
+  height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+  iconWidth: kIconSizeNotTouch,
+  iconHeight: kIconSizeNotTouch,
+  color: kColorTextPrimary,
+);
+
 const kAppBarIconButtonStyle = const IconButtonStyle(
   variant: IconButtonVariant.IconOnly,
   color: kColorTextPrimary,
@@ -37,19 +45,11 @@ const kAppBarIconButtonStyle = const IconButtonStyle(
 
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
-  final ButtonsStyle buttonsStyle = ButtonsStyle(
-    iconButtonStyle: IconButtonStyle(
-      width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
-      height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
-      iconWidth: kIconSizeNotTouch,
-      iconHeight: kIconSizeNotTouch,
-      color: kColorTextPrimary,
-    ),
-  );
-
   return CommonTheme(
     child: child,
     fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
-    buttonsStyle: buttonsStyle,
+    buttonsStyle: ButtonsStyle(
+      iconButtonStyle: kIconButtonStyle,
+    ),
   );
 }
