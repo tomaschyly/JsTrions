@@ -31,7 +31,7 @@ TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
     force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
 
 const kButtonStyle = CommonButtonStyle(
-  //TODO
+  height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
 );
 
 final kButtonDangerStyle = kButtonStyle.copyWith(
@@ -52,6 +52,14 @@ const kAppBarIconButtonStyle = const IconButtonStyle(
   color: kColorTextPrimary,
 );
 
+const kTextFormFieldStyle = const TextFormFieldStyle(
+  //TODO smaller height for desktoplike
+);
+
+const kSelectionFormFieldStyle = const SelectionFormFieldStyle(
+  inputStyle: kTextFormFieldStyle,
+);
+
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
   return CommonTheme(
@@ -60,6 +68,10 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     buttonsStyle: ButtonsStyle(
       buttonStyle: kButtonStyle,
       iconButtonStyle: kIconButtonStyle,
+    ),
+    formStyle: FormStyle(
+      textFormFieldStyle: kTextFormFieldStyle,
+      selectionFormFieldStyle: kSelectionFormFieldStyle,
     ),
   );
 }

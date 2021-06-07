@@ -117,9 +117,9 @@ class _GeneralWidget extends StatelessWidget {
             _clearData(context);
           },
         ),
-        CommonSpaceVHalf(),
-        Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
         CommonSpaceV(),
+        Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
+        CommonSpaceVDouble(),
         SelectionFormFieldWidget<String>(
           key: _languageKey,
           label: tt('settings.screen.language'),
@@ -156,7 +156,7 @@ class _GeneralWidget extends StatelessWidget {
           tt('settings.screen.language.description'),
           style: fancyText(kText),
         ),
-        CommonSpaceV(),
+        CommonSpaceVDouble(),
       ],
     );
   }
