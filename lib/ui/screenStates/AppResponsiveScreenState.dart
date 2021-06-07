@@ -32,7 +32,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
     drawerOptions = <DrawerOption>[
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, DashboardScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          pushNamedNewStack(context, DashboardScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
         },
         isSelected: (BuildContext context) {
           final RoutingArguments? arguments = RoutingArguments.of(context);
@@ -47,7 +47,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
         },
         isSelected: (BuildContext context) {
           final RoutingArguments? arguments = RoutingArguments.of(context);
@@ -62,7 +62,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
         },
         isSelected: (BuildContext context) {
           final RoutingArguments? arguments = RoutingArguments.of(context);
@@ -77,7 +77,7 @@ class AppScreenStateOptions extends AbstractScreenStateOptions {
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
-          pushNamedNewStack(context, AboutScreen.ROUTE, arguments: <String, String>{'router-fade-animation': '1'});
+          pushNamedNewStack(context, AboutScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
         },
         isSelected: (BuildContext context) {
           final RoutingArguments? arguments = RoutingArguments.of(context);

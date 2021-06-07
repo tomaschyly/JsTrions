@@ -30,6 +30,15 @@ const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
     force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
 
+const kButtonStyle = CommonButtonStyle(
+  //TODO
+);
+
+final kButtonDangerStyle = kButtonStyle.copyWith(
+  variant: ButtonVariant.Filled,
+  color: kColorRed,
+);
+
 const kIconButtonStyle = IconButtonStyle(
   width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
   height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
@@ -49,6 +58,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     child: child,
     fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
     buttonsStyle: ButtonsStyle(
+      buttonStyle: kButtonStyle,
       iconButtonStyle: kIconButtonStyle,
     ),
   );

@@ -1,4 +1,14 @@
 {
   "dashboard.screen.title": "Prehľad",
-  "settings.screen.category.general": "Všeobecné"
+  "drawer.about": "O Appke",
+  "drawer.dashboard": "Prehľad",
+  "drawer.projects": "Projekty",
+  "drawer.settings": "Nastavenia",
+  "settings.screen.category.general": "Všeobecné",
+  "settings.screen.language": "Jazyk",
+  "settings.screen.language.description": "Môžeš zmeniť jazyk používaný aplikáciou",
+  "settings.screen.language.selection": "Vyber Jazyk",
+  "settings.screen.reset": "Vymazať Údaje",
+  "settings.screen.reset.description": "Týmto sa odstránia všetky tvoje údaje naraz",
+  "settings.screen.title": "Nastavenia"
 }

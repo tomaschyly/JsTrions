@@ -1,4 +1,14 @@
 {
   "dashboard.screen.title": "Dashboard",
-  "settings.screen.category.general": "General"
+  "drawer.about": "About",
+  "drawer.dashboard": "Dashboard",
+  "drawer.projects": "Projects",
+  "drawer.settings": "Settings",
+  "settings.screen.category.general": "General",
+  "settings.screen.language": "Language",
+  "settings.screen.language.description": "You can change the language used by app",
+  "settings.screen.language.selection": "Choose Language",
+  "settings.screen.reset": "Clear Data",
+  "settings.screen.reset.description": "Use this to delete all your data at once",
+  "settings.screen.title": "Settings"
 }
