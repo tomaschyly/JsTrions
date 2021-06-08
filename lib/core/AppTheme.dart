@@ -95,12 +95,11 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     inputStyle: kText,
     borderColor: kColorTextPrimary,
     focusedBorderColor: kColorTextPrimary,
+    textAlign: TextAlign.center,
   );
 
   final kSelectionFormFieldStyle = SelectionFormFieldStyle(
-    inputStyle: kTextFormFieldStyle.copyWith(
-      textAlign: TextAlign.center,
-    ),
+    inputStyle: kTextFormFieldStyle,
   );
 
   return CommonTheme(

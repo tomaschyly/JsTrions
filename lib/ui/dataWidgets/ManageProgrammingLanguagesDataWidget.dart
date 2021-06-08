@@ -2,6 +2,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
+import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -18,6 +19,23 @@ class ManageProgrammingLanguagesDataWidget extends AbstractDataWidget {
 }
 
 class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState<ManageProgrammingLanguagesDataWidget> {
+  final _formKey = GlobalKey<FormState>();
+  final _nameController = TextEditingController();
+  final _extensionController = TextEditingController();
+  final _nameFocus = FocusNode();
+  final _extensionFocus = FocusNode();
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _nameController.dispose();
+    _extensionController.dispose();
+    _nameFocus.dispose();
+    _extensionFocus.dispose();
+
+    super.dispose();
+  }
+
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
@@ -32,22 +50,90 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
           return Container();
         }
 
+        programmingLanguages.programmingLanguages.sort((a, b) => a.name.compareTo(b.name));
+
         return Column(
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
             Wrap(
               spacing: kCommonHorizontalMarginHalf,
-              runSpacing: kCommonVerticalMargin,
+              runSpacing: kCommonVerticalMarginHalf,
               children: programmingLanguages.programmingLanguages
                   .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(programmingLanguage: programmingLanguage))
                   .toList(),
             ),
             CommonSpaceV(),
+            Form(
+              key: _formKey,
+              child: Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormFieldWidget(
+                      controller: _nameController,
+                      focusNode: _nameFocus,
+                      nextFocus: _extensionFocus,
+                      label: tt('programming_languages.manage.name'),
+                      validations: [
+                        FormFieldValidation(
+                          validator: validateRequired,
+                          errorText: tt('validation.required'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CommonSpaceHHalf(),
+                  Expanded(
+                    child: TextFormFieldWidget(
+                      controller: _extensionController,
+                      focusNode: _extensionFocus,
+                      label: tt('programming_languages.manage.extension'),
+                      validations: [
+                        FormFieldValidation(
+                          validator: validateRequired,
+                          errorText: tt('validation.required'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CommonSpaceH(),
+                  IconButtonWidget(
+                    svgAssetPath: 'images/plus.svg',
+                    onTap: () => _addProgrammingLanguage(context),
+                  ),
+                ],
+              ),
+            ),
           ],
         );
       },
     );
+  }
+
+  /// Add new programming language and reload data
+  Future<void> _addProgrammingLanguage(BuildContext context) async {
+    FocusScope.of(context).unfocus();
+
+    if (_formKey.currentState!.validate()) {
+      final programmingLanguage = ProgrammingLanguage.fromJson(<String, dynamic>{
+        ProgrammingLanguage.COL_NAME: _nameController.text,
+        ProgrammingLanguage.COL_EXTENSION: _extensionController.text,
+      });
+
+      await MainDataProvider.instance!.executeDataTask<SaveProgrammingLanguageDataTask>(
+        SaveProgrammingLanguageDataTask(
+          data: programmingLanguage,
+        ),
+      );
+
+      if (mounted) {
+        _nameController.text = '';
+        _extensionController.text = '';
+      }
+    }
   }
 }
 

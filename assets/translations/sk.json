@@ -4,6 +4,8 @@
   "drawer.dashboard": "Prehľad",
   "drawer.projects": "Projekty",
   "drawer.settings": "Nastavenia",
+  "programming_languages.manage.extension": "Prípona",
+  "programming_languages.manage.name": "Nový Jazyk",
   "settings.screen.category.general": "Všeobecné",
   "settings.screen.category.programming_languages": "Programovacie Jazyky",
 	"settings.screen.font": "Efektné Písmo",
@@ -14,5 +16,6 @@
   "settings.screen.language.selection": "Vyber Jazyk",
   "settings.screen.reset": "Vymazať Údaje",
   "settings.screen.reset.description": "Týmto sa odstránia všetky tvoje údaje naraz",
-  "settings.screen.title": "Nastavenia"
+  "settings.screen.title": "Nastavenia",
+  "validation.required": "Prosím vyplň pole"
 }
