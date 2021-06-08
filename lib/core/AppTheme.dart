@@ -24,6 +24,7 @@ const kColorSilverLighter = const Color(0xFFf2f2f2);
 const kFontFamily = 'Kalam';
 
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
+const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 
 /// If fancy font enabled, add it to TextStyle
@@ -76,25 +77,32 @@ final kListDialogStyle = ListDialogStyle(
   ),
 );
 
-final kTextFormFieldStyle = TextFormFieldStyle(
-  inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
-        labelStyle: kText,
-        contentPadding: const EdgeInsets.symmetric(
-          horizontal: kCommonHorizontalMarginHalf,
-          vertical: 7,
-        ),
-      ),
-  inputStyle: kText,
-  borderColor: kColorTextPrimary,
-  focusedBorderColor: kColorTextPrimary,
-);
-
-final kSelectionFormFieldStyle = SelectionFormFieldStyle(
-  inputStyle: kTextFormFieldStyle,
+final kPreferencesSwitchStyle = PreferencesSwitchStyle(
+  labelStyle: kTextBold,
+  descriptionStyle: kText,
 );
 
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
+  final kTextFormFieldStyle = TextFormFieldStyle(
+    inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
+          labelStyle: kTextBold,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: kCommonHorizontalMarginHalf,
+            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 7 : 10,
+          ),
+        ),
+    inputStyle: kText,
+    borderColor: kColorTextPrimary,
+    focusedBorderColor: kColorTextPrimary,
+  );
+
+  final kSelectionFormFieldStyle = SelectionFormFieldStyle(
+    inputStyle: kTextFormFieldStyle.copyWith(
+      textAlign: TextAlign.center,
+    ),
+  );
+
   return CommonTheme(
     child: child,
     fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
@@ -108,6 +116,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     formStyle: FormStyle(
       textFormFieldStyle: kTextFormFieldStyle,
       selectionFormFieldStyle: kSelectionFormFieldStyle,
+      preferencesSwitchStyle: kPreferencesSwitchStyle,
     ),
   );
 }

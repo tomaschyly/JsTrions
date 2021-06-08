@@ -1,3 +1,4 @@
+import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
@@ -154,6 +155,20 @@ class _GeneralWidget extends StatelessWidget {
         Text(
           tt('settings.screen.language.description'),
           style: fancyText(kText),
+        ),
+        CommonSpaceVDouble(),
+        PreferencesSwitchWidget(
+          label: tt('settings.screen.font'),
+          prefsKey: PREFS_FANCY_FONT,
+          descriptionOn: tt('settings.screen.font.on'),
+          descriptionOff: tt('settings.screen.font.off'),
+          onChange: (bool value) {
+            Future.delayed(kThemeAnimationDuration).then((value) {
+              AppState.instance.invalidate();
+
+              pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+            });
+          },
         ),
         CommonSpaceVDouble(),
       ],
