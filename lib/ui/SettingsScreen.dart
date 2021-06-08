@@ -1,6 +1,7 @@
 import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -22,16 +23,16 @@ class _SettingsScreenState extends AppResponsiveScreenState<SettingsScreen> {
   );
 
   @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyWidget();
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyWidget();
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
 
   @override
   Widget largePhoneScreen(BuildContext context) => _BodyWidget();
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyWidget();
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget();
 
   @override
   Widget smallPhoneScreen(BuildContext context) => _BodyWidget();
@@ -73,6 +74,11 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
                   language: _language,
                 ),
               ),
+              Container(
+                width: kPhoneStopBreakpoint,
+                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                child: _ProgrammingLanguagesWidget(),
+              ),
             ],
           ),
         ),
@@ -88,6 +94,63 @@ class _BodyWidget extends _AbstractBodyWidget {
 }
 
 class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
+
+class _BodyDesktopWidget extends _AbstractBodyWidget {
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _BodyDesktopWidgetState();
+}
+
+class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidget> {
+  /// Create view layout from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          alignment: Alignment.topLeft,
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CommonSpaceV(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: kPhoneStopBreakpoint,
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: _GeneralWidget(
+                          language: _language,
+                        ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: kPhoneStopBreakpoint,
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: _ProgrammingLanguagesWidget(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+            ],
+          ),
+        ),
+      ),
+    );
+  }
+}
 
 class _GeneralWidget extends StatelessWidget {
   final String language;
@@ -178,5 +241,24 @@ class _GeneralWidget extends StatelessWidget {
   /// TODO
   void _clearData(BuildContext context) {
     //TODO clear data when available
+  }
+}
+
+class _ProgrammingLanguagesWidget extends StatelessWidget {
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CategoryHeaderWidget(
+          text: tt('settings.screen.category.programming_languages'),
+          doubleMargin: true,
+        ),
+        ManageProgrammingLanguagesDataWidget(),
+        CommonSpaceVDouble(),
+      ],
+    );
   }
 }

@@ -5,6 +5,7 @@
   "drawer.projects": "Projekty",
   "drawer.settings": "Nastavenia",
   "settings.screen.category.general": "Všeobecné",
+  "settings.screen.category.programming_languages": "Programovacie Jazyky",
 	"settings.screen.font": "Efektné Písmo",
 	"settings.screen.font.on": "Efektné písmo sa aplikuje na všetky texty v appke",
 	"settings.screen.font.off": "Texty v appke používú základny font family závyslí na OS",

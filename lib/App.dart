@@ -112,6 +112,8 @@ class AppState extends AbstractStatefulWidgetState<App> {
   Future<void> _dbMigrate(Database db, int oldVersion, int newVersion) async {
     print('TCH_d _dbMigrate oldVersion $oldVersion newVersion $newVersion');
     //TODO fill with languages on first install
+
+    // TCH_d _dbMigrate oldVersion 0 newVersion 1 was for first run!
   }
 }
 
