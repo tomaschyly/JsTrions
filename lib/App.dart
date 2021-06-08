@@ -4,6 +4,7 @@ import 'package:js_trions/core/AppPreferences.dart' as AppPreferences;
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/core/AppRouter.dart' as AppRouter;
 import 'package:js_trions/images/TomasChyly.dart';
+import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
 import 'package:js_trions/ui/DashboardScreen.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
@@ -110,10 +111,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
 
   /// Migrate db when version changes
   Future<void> _dbMigrate(Database db, int oldVersion, int newVersion) async {
-    print('TCH_d _dbMigrate oldVersion $oldVersion newVersion $newVersion');
-    //TODO fill with languages on first install
-
-    // TCH_d _dbMigrate oldVersion 0 newVersion 1 was for first run!
+    await updateDB(db, oldVersion, newVersion);
   }
 }
 
