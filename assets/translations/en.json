@@ -4,6 +4,8 @@
   "drawer.dashboard": "Dashboard",
   "drawer.projects": "Projects",
   "drawer.settings": "Settings",
+  "programming_languages.manage.extension": "Extension",
+  "programming_languages.manage.name": "New Language",
   "settings.screen.category.general": "General",
   "settings.screen.category.programming_languages": "Programming Languages",
 	"settings.screen.font": "Fancy Font",
@@ -14,5 +16,6 @@
   "settings.screen.language.selection": "Choose Language",
   "settings.screen.reset": "Clear Data",
   "settings.screen.reset.description": "Use this to delete all your data at once",
-  "settings.screen.title": "Settings"
+  "settings.screen.title": "Settings",
+  "validation.required": "Please fill in the field"
 }
