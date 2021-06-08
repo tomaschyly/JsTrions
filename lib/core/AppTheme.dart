@@ -30,8 +30,14 @@ const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
     force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
 
+const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
+
 const kButtonStyle = CommonButtonStyle(
-  height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+  height: kButtonHeight,
+  textStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+  filledTextStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+  disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
+  color: kColorTextPrimary,
 );
 
 final kButtonDangerStyle = kButtonStyle.copyWith(
@@ -41,7 +47,7 @@ final kButtonDangerStyle = kButtonStyle.copyWith(
 
 const kIconButtonStyle = IconButtonStyle(
   width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
-  height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+  height: kButtonHeight,
   iconWidth: kIconSizeNotTouch,
   iconHeight: kIconSizeNotTouch,
   color: kColorTextPrimary,
@@ -52,11 +58,38 @@ const kAppBarIconButtonStyle = const IconButtonStyle(
   color: kColorTextPrimary,
 );
 
-const kTextFormFieldStyle = const TextFormFieldStyle(
-  //TODO smaller height for desktoplike
+final kListDialogStyle = ListDialogStyle(
+  backgroundColor: kColorPrimaryLight,
+  optionStyle: kButtonStyle.copyWith(
+    variant: ButtonVariant.TextOnly,
+  ),
+  selectedOptionStyle: kButtonStyle.copyWith(
+    variant: ButtonVariant.Filled,
+  ),
+  dialogHeaderStyle: const DialogHeaderStyle(
+    textStyle: kTextHeadline,
+  ),
+  dialogFooterStyle: DialogFooterStyle(
+    buttonStyle: kButtonStyle.copyWith(
+      widthWrapContent: true,
+    ),
+  ),
 );
 
-const kSelectionFormFieldStyle = const SelectionFormFieldStyle(
+final kTextFormFieldStyle = TextFormFieldStyle(
+  inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
+        labelStyle: kText,
+        contentPadding: const EdgeInsets.symmetric(
+          horizontal: kCommonHorizontalMarginHalf,
+          vertical: 7,
+        ),
+      ),
+  inputStyle: kText,
+  borderColor: kColorTextPrimary,
+  focusedBorderColor: kColorTextPrimary,
+);
+
+final kSelectionFormFieldStyle = SelectionFormFieldStyle(
   inputStyle: kTextFormFieldStyle,
 );
 
@@ -68,6 +101,9 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     buttonsStyle: ButtonsStyle(
       buttonStyle: kButtonStyle,
       iconButtonStyle: kIconButtonStyle,
+    ),
+    dialogsStyle: DialogsStyle(
+      listDialogStyle: kListDialogStyle,
     ),
     formStyle: FormStyle(
       textFormFieldStyle: kTextFormFieldStyle,

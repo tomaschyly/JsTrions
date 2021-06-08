@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
 
   tch_appliable_core: ^0.5.2
-  tch_common_widgets: ^0.4.5
+  tch_common_widgets: ^0.4.6
 
   cupertino_icons: ^1.0.2
   flutter_svg: ^0.22.0
