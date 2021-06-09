@@ -4,6 +4,7 @@ import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
+import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -103,7 +104,12 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
                   CommonSpaceH(),
                   IconButtonWidget(
                     svgAssetPath: 'images/plus.svg',
-                    onTap: () => _addProgrammingLanguage(context),
+                    onTap: () => saveProgrammingLanguage(
+                      context,
+                      formKey: _formKey,
+                      nameController: _nameController,
+                      extensionController: _extensionController,
+                    ),
                   ),
                 ],
               ),
@@ -112,29 +118,6 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
         );
       },
     );
-  }
-
-  /// Add new programming language and reload data
-  Future<void> _addProgrammingLanguage(BuildContext context) async {
-    FocusScope.of(context).unfocus();
-
-    if (_formKey.currentState!.validate()) {
-      final programmingLanguage = ProgrammingLanguage.fromJson(<String, dynamic>{
-        ProgrammingLanguage.COL_NAME: _nameController.text,
-        ProgrammingLanguage.COL_EXTENSION: _extensionController.text,
-      });
-
-      await MainDataProvider.instance!.executeDataTask<SaveProgrammingLanguageDataTask>(
-        SaveProgrammingLanguageDataTask(
-          data: programmingLanguage,
-        ),
-      );
-
-      if (mounted) {
-        _nameController.text = '';
-        _extensionController.text = '';
-      }
-    }
   }
 }
 
@@ -175,29 +158,13 @@ class _ChipWidget extends StatelessWidget {
               color: kColorRed,
             ),
             svgAssetPath: 'images/times.svg',
-            onTap: () => _deleteProgrammingLanguage(context),
+            onTap: () => deleteProgrammingLanguage(
+              context,
+              programmingLanguage,
+            ),
           ),
         ],
       ),
     );
-  }
-
-  /// Delete existing programming language from DB and update data
-  Future<void> _deleteProgrammingLanguage(BuildContext context) async {
-    final confirmed = await ConfirmDialog.show(
-      context,
-      isDanger: true,
-      title: tt('dialog.confirm.title'),
-      noText: tt('dialog.no'),
-      yesText: tt('dialog.yes'),
-    );
-
-    if (confirmed == true) {
-      await MainDataProvider.instance!.executeDataTask<DeleteProgrammingLanguageDataTask>(
-        DeleteProgrammingLanguageDataTask(
-          data: programmingLanguage,
-        ),
-      );
-    }
   }
 }

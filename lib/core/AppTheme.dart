@@ -43,6 +43,9 @@ const kButtonStyle = CommonButtonStyle(
 
 final kButtonDangerStyle = kButtonStyle.copyWith(
   variant: ButtonVariant.Filled,
+  filledTextStyle: kButtonStyle.filledTextStyle.copyWith(
+    color: kColorTextPrimary,
+  ),
   color: kColorRed,
 );
 
@@ -71,6 +74,9 @@ final kConfirmDialogStyle = ConfirmDialogStyle(
   dialogFooterStyle: DialogFooterStyle(
     buttonStyle: kButtonStyle.copyWith(
       widthWrapContent: true,
+      filledTextStyle: kButtonStyle.filledTextStyle.copyWith(
+        color: kColorTextPrimary,
+      ),
     ),
     dangerColor: kColorRed,
   ),

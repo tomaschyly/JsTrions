@@ -1,6 +1,6 @@
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-/// Save Project, works for both existing and new
+/// Save Project, works for both existing and new, and update data
 Future<void> saveProject(
   BuildContext context, {
   required GlobalKey<FormState> formKey,
