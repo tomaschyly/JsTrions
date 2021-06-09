@@ -46,6 +46,10 @@ final kButtonDangerStyle = kButtonStyle.copyWith(
   color: kColorRed,
 );
 
+final kListItemButtonStyle = kButtonStyle.copyWith(
+  variant: ButtonVariant.TextOnly,
+);
+
 const kIconButtonStyle = IconButtonStyle(
   width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
   height: kButtonHeight,

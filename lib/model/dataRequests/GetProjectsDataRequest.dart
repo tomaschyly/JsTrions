@@ -1,12 +1,12 @@
-import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/Projects.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
-class GetProjectsDataRequest extends DataRequest<Project> {
+class GetProjectsDataRequest extends DataRequest<Projects> {
   /// GetProjectsDataRequest initialization
   GetProjectsDataRequest()
       : super(
           source: MainDataProviderSource.Sembast,
-          method: Project.STORE,
-          processResult: (json) => Project.fromJson(json),
+          method: Projects.STORE,
+          processResult: (json) => Projects.fromJson(json),
         );
 }

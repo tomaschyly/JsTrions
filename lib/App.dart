@@ -5,7 +5,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/core/AppRouter.dart' as AppRouter;
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
-import 'package:js_trions/ui/DashboardScreen.dart';
+import 'package:js_trions/ui/screens/DashboardScreen.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
