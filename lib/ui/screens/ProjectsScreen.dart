@@ -1,8 +1,9 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
+import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
-import 'package:path/path.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -19,7 +20,14 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
   AbstractScreenStateOptions options = AppScreenStateOptions.main(
     screenName: ProjectsScreen.ROUTE,
     title: tt('projects.screen.title'),
-  );
+  )..appBarOptions = <AppBarOption>[
+      AppBarOption(
+        onTap: (BuildContext context) {
+          EditProjectDialog.show(context);
+        },
+        icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
+      ),
+    ];
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();

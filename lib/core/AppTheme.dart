@@ -36,7 +36,7 @@ const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
 const kButtonStyle = CommonButtonStyle(
   height: kButtonHeight,
   textStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
-  filledTextStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+  filledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
   disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
   color: kColorTextPrimary,
 );
