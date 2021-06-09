@@ -59,6 +59,19 @@ const kAppBarIconButtonStyle = const IconButtonStyle(
   color: kColorTextPrimary,
 );
 
+final kConfirmDialogStyle = ConfirmDialogStyle(
+  backgroundColor: kColorPrimaryLight,
+  dialogHeaderStyle: const DialogHeaderStyle(
+    textStyle: kTextHeadline,
+  ),
+  dialogFooterStyle: DialogFooterStyle(
+    buttonStyle: kButtonStyle.copyWith(
+      widthWrapContent: true,
+    ),
+    dangerColor: kColorRed,
+  ),
+);
+
 final kListDialogStyle = ListDialogStyle(
   backgroundColor: kColorPrimaryLight,
   optionStyle: kButtonStyle.copyWith(
@@ -110,6 +123,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
       iconButtonStyle: kIconButtonStyle,
     ),
     dialogsStyle: DialogsStyle(
+      confirmDialogStyle: kConfirmDialogStyle,
       listDialogStyle: kListDialogStyle,
     ),
     formStyle: FormStyle(

@@ -1,5 +1,8 @@
 {
   "dashboard.screen.title": "Dashboard",
+  "dialog.confirm.title": "Confirm Action",
+  "dialog.no": "No",
+  "dialog.yes": "Yes",
   "drawer.about": "About",
   "drawer.dashboard": "Dashboard",
   "drawer.projects": "Projects",

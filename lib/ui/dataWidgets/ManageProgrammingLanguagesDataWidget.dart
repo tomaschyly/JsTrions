@@ -2,6 +2,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
+import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -150,7 +151,7 @@ class _ChipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     return Container(
       height: kButtonHeight,
-      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+      padding: const EdgeInsets.only(left: kCommonHorizontalMarginHalf),
       decoration: BoxDecoration(
         border: Border.all(
           width: 1,
@@ -167,8 +168,36 @@ class _ChipWidget extends StatelessWidget {
             programmingLanguage.name,
             style: fancyText(kText),
           ),
+          CommonSpaceHHalf(),
+          IconButtonWidget(
+            style: kIconButtonStyle.copyWith(
+              variant: IconButtonVariant.IconOnly,
+              color: kColorRed,
+            ),
+            svgAssetPath: 'images/times.svg',
+            onTap: () => _deleteProgrammingLanguage(context),
+          ),
         ],
       ),
     );
+  }
+
+  /// Delete existing programming language from DB and update data
+  Future<void> _deleteProgrammingLanguage(BuildContext context) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      isDanger: true,
+      title: tt('dialog.confirm.title'),
+      noText: tt('dialog.no'),
+      yesText: tt('dialog.yes'),
+    );
+
+    if (confirmed == true) {
+      await MainDataProvider.instance!.executeDataTask<DeleteProgrammingLanguageDataTask>(
+        DeleteProgrammingLanguageDataTask(
+          data: programmingLanguage,
+        ),
+      );
+    }
   }
 }

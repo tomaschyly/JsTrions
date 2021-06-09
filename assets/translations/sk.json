@@ -1,5 +1,8 @@
 {
   "dashboard.screen.title": "Prehľad",
+  "dialog.confirm.title": "Potvrdiť Akciu",
+  "dialog.no": "Nie",
+  "dialog.yes": "Áno",
   "drawer.about": "O Appke",
   "drawer.dashboard": "Prehľad",
   "drawer.projects": "Projekty",
