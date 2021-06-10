@@ -2,8 +2,6 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
-import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
-import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -20,7 +18,7 @@ class ManageProgrammingLanguagesDataWidget extends AbstractDataWidget {
   State<StatefulWidget> createState() => _ManageProgrammingLanguagesDataWidgetState();
 }
 
-class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState<ManageProgrammingLanguagesDataWidget> {
+class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState<ManageProgrammingLanguagesDataWidget> with SingleTickerProviderStateMixin {
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _extensionController = TextEditingController();
@@ -58,12 +56,17 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Wrap(
-              spacing: kCommonHorizontalMarginHalf,
-              runSpacing: kCommonVerticalMarginHalf,
-              children: programmingLanguages.programmingLanguages
-                  .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(programmingLanguage: programmingLanguage))
-                  .toList(),
+            AnimatedSize(
+              duration: kThemeAnimationDuration,
+              vsync: this,
+              alignment: Alignment.topCenter,
+              child: Wrap(
+                spacing: kCommonHorizontalMarginHalf,
+                runSpacing: kCommonVerticalMarginHalf,
+                children: programmingLanguages.programmingLanguages
+                    .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(programmingLanguage: programmingLanguage))
+                    .toList(),
+              ),
             ),
             CommonSpaceV(),
             Form(
@@ -140,7 +143,7 @@ class _ChipWidget extends StatelessWidget {
           width: 1,
           color: kColorTextPrimary,
         ),
-        borderRadius: BorderRadius.circular(8),
+        borderRadius: kButtonStyle.borderRadius,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,

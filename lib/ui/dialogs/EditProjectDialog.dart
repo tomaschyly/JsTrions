@@ -1,6 +1,7 @@
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -111,9 +112,9 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                       ],
                     ),
                     CommonSpaceVHalf(),
-                    Text('WIP: PLs'),
-                    CommonSpaceVHalf(),
-                    Text('WIP: keys'),
+                    ProjectProgrammingLanguagesFieldDataWidget(
+                      project: widget.project,
+                    ),
                     CommonSpaceVHalf(),
                     DialogFooter(
                       style: kListDialogStyle.dialogFooterStyle,

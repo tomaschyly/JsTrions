@@ -7,6 +7,7 @@ class Project extends DataModel {
   static const String COL_DIRECTORY = 'directory';
   static const String COL_PROGRAMMING_LANGUAGES = 'programming_languages';
   static const String COL_TRANSLATION_KEYS = 'translation_keys';
+  static const String COL_UPDATED = 'updated';
   static const String COL_CREATED = 'created';
 
   int? id;
@@ -14,6 +15,7 @@ class Project extends DataModel {
   late String directory;
   late List<int> programmingLanguages;
   late List<TranslationKey> translationKeys;
+  late int updated;
   late int created;
 
   /// Project initialization from JSON map
@@ -23,6 +25,7 @@ class Project extends DataModel {
     directory = json[COL_DIRECTORY];
     programmingLanguages = json[COL_PROGRAMMING_LANGUAGES];
     translationKeys = json[COL_TRANSLATION_KEYS].map((key) => TranslationKey.fromJson(key)).toList();
+    updated = json[COL_UPDATED];
     created = json[COL_CREATED];
   }
 
@@ -34,6 +37,7 @@ class Project extends DataModel {
       COL_DIRECTORY: directory,
       COL_PROGRAMMING_LANGUAGES: programmingLanguages,
       COL_TRANSLATION_KEYS: translationKeys.map((key) => key.toJson()).toList(),
+      COL_UPDATED: updated,
       COL_CREATED: created,
     };
 
@@ -51,8 +55,8 @@ class TranslationKey extends DataModel {
 
   /// TranslationKey initialization from JSON map
   TranslationKey.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
-    programmingLanguage = json[programmingLanguage];
-    key = json[key];
+    programmingLanguage = json['programmingLanguage'];
+    key = json['key'];
   }
 
   /// Covert the object into JSON map
