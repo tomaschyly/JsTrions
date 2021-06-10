@@ -119,18 +119,20 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
         style: fancyText(kTextHeadline),
       ),
       centerTitle: false,
-      leading: options.drawerOptions?.isNotEmpty == true && !options.drawerIsPermanentlyVisible
-          ? Builder(
-              builder: (BuildContext context) {
-                return IconButtonWidget(
-                  style: kAppBarIconButtonStyle,
-                  svgAssetPath: 'images/hamburger.svg',
-                  onTap: () {
-                    Scaffold.of(context).openDrawer();
+      leading: options.drawerOptions?.isNotEmpty == true
+          ? (!options.drawerIsPermanentlyVisible
+              ? Builder(
+                  builder: (BuildContext context) {
+                    return IconButtonWidget(
+                      style: kAppBarIconButtonStyle,
+                      svgAssetPath: 'images/hamburger.svg',
+                      onTap: () {
+                        Scaffold.of(context).openDrawer();
+                      },
+                    );
                   },
-                );
-              },
-            )
+                )
+              : null)
           : (Navigator.of(context).canPop() == true
               ? Builder(
                   builder: (BuildContext context) {
