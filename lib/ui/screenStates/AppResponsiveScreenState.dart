@@ -113,6 +113,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
   @protected
   PreferredSizeWidget? createAppBar(BuildContext context) {
     return AppBar(
+      toolbarHeight: 44,
       title: Text(
         options.title,
         style: fancyText(kTextHeadline),
@@ -149,15 +150,18 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                   final theIcon = option.icon;
                   final theComplexIcon = option.complexIcon;
 
-                  return IconButtonWidget(
-                    style: kAppBarIconButtonStyle.copyWith(
-                      iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
-                      iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                  return Padding(
+                    padding: const EdgeInsets.only(right: 12),
+                    child: IconButtonWidget(
+                      style: kAppBarIconButtonStyle.copyWith(
+                        iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                        iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                      ),
+                      iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                      onTap: () {
+                        option.onTap(context);
+                      },
                     ),
-                    iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
-                    onTap: () {
-                      option.onTap(context);
-                    },
                   );
                 },
               ))

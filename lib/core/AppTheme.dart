@@ -54,7 +54,7 @@ final kListItemButtonStyle = kButtonStyle.copyWith(
 );
 
 const kIconButtonStyle = IconButtonStyle(
-  width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
+  width: kButtonHeight,
   height: kButtonHeight,
   iconWidth: kIconSizeNotTouch,
   iconHeight: kIconSizeNotTouch,
@@ -63,6 +63,10 @@ const kIconButtonStyle = IconButtonStyle(
 
 const kAppBarIconButtonStyle = const IconButtonStyle(
   variant: IconButtonVariant.IconOnly,
+  width: kButtonHeight,
+  height: kButtonHeight,
+  iconWidth: kIconSizeNotTouch,
+  iconHeight: kIconSizeNotTouch,
   color: kColorTextPrimary,
 );
 
