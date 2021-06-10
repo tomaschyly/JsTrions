@@ -94,3 +94,8 @@ Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage
     );
   }
 }
+
+/// Sort list of ProgrammingLanguages alphabetycally
+void sortProgrammingLanguagesAlphabetycally(List<ProgrammingLanguage> programmingLanguages) {
+  programmingLanguages.sort((a, b) => a.name.compareTo(b.name));
+}
