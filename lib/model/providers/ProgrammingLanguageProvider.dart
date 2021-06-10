@@ -16,18 +16,22 @@ Future<void> updateDB(Database db, int oldVersion, int newVersion) async {
         {
           ProgrammingLanguage.COL_NAME: 'Dart',
           ProgrammingLanguage.COL_EXTENSION: 'dart',
+          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
         },
         {
           ProgrammingLanguage.COL_NAME: 'Kotlin',
           ProgrammingLanguage.COL_EXTENSION: 'kt',
+          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
         },
         {
           ProgrammingLanguage.COL_NAME: 'Swift',
           ProgrammingLanguage.COL_EXTENSION: 'swift',
+          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
         },
         {
           ProgrammingLanguage.COL_NAME: 'C#',
           ProgrammingLanguage.COL_EXTENSION: 'cs',
+          ProgrammingLanguage.COL_KEY: r'''(?<=T.Tk \(\')(.*?)(?=\'\))|(?<=T.Tk \(\")(.*?)(?=\"\))''',
         },
       ],
     });
@@ -45,6 +49,7 @@ Future<void> saveProgrammingLanguage(
   int? id,
   required TextEditingController nameController,
   required TextEditingController extensionController,
+  required TextEditingController keyController,
   bool clearFields = true,
 }) async {
   FocusScope.of(context).unfocus();
@@ -54,6 +59,7 @@ Future<void> saveProgrammingLanguage(
       ProgrammingLanguage.COL_ID: id,
       ProgrammingLanguage.COL_NAME: nameController.text,
       ProgrammingLanguage.COL_EXTENSION: extensionController.text,
+      ProgrammingLanguage.COL_KEY: keyController.text,
     });
 
     await MainDataProvider.instance!.executeDataTask<SaveProgrammingLanguageDataTask>(
@@ -65,6 +71,7 @@ Future<void> saveProgrammingLanguage(
     if (clearFields) {
       nameController.text = '';
       extensionController.text = '';
+      keyController.text = '';
     }
   }
 }

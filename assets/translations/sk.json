@@ -16,6 +16,7 @@
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
   "programming_languages.manage.extension": "Prípona",
+  "programming_languages.manage.key": "RegExp Kľúč",
   "programming_languages.manage.name": "Nový Jazyk",
   "projects.screen.title": "Projekty",
   "settings.screen.category.general": "Všeobecné",

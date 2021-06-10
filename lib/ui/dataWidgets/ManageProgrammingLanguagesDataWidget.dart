@@ -22,16 +22,20 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _extensionController = TextEditingController();
+  final _keyController = TextEditingController();
   final _nameFocus = FocusNode();
   final _extensionFocus = FocusNode();
+  final _keyFocus = FocusNode();
 
   /// Manually dispose of resources
   @override
   void dispose() {
     _nameController.dispose();
     _extensionController.dispose();
+    _keyController.dispose();
     _nameFocus.dispose();
     _extensionFocus.dispose();
+    _keyFocus.dispose();
 
     super.dispose();
   }
@@ -71,48 +75,81 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
             CommonSpaceV(),
             Form(
               key: _formKey,
-              child: Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.start,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  Expanded(
-                    child: TextFormFieldWidget(
-                      controller: _nameController,
-                      focusNode: _nameFocus,
-                      nextFocus: _extensionFocus,
-                      label: tt('programming_languages.manage.name'),
-                      validations: [
-                        FormFieldValidation(
-                          validator: validateRequired,
-                          errorText: tt('validation.required'),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextFormFieldWidget(
+                          controller: _nameController,
+                          focusNode: _nameFocus,
+                          nextFocus: _extensionFocus,
+                          label: tt('programming_languages.manage.name'),
+                          validations: [
+                            FormFieldValidation(
+                              validator: validateRequired,
+                              errorText: tt('validation.required'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
-                  ),
-                  CommonSpaceHHalf(),
-                  Expanded(
-                    child: TextFormFieldWidget(
-                      controller: _extensionController,
-                      focusNode: _extensionFocus,
-                      label: tt('programming_languages.manage.extension'),
-                      validations: [
-                        FormFieldValidation(
-                          validator: validateRequired,
-                          errorText: tt('validation.required'),
+                      ),
+                      CommonSpaceHHalf(),
+                      Expanded(
+                        child: TextFormFieldWidget(
+                          controller: _extensionController,
+                          focusNode: _extensionFocus,
+                          nextFocus: _keyFocus,
+                          label: tt('programming_languages.manage.extension'),
+                          validations: [
+                            FormFieldValidation(
+                              validator: validateRequired,
+                              errorText: tt('validation.required'),
+                            ),
+                          ],
                         ),
-                      ],
-                    ),
+                      ),
+                      CommonSpaceH(),
+                      IconButtonWidget(
+                        svgAssetPath: 'images/plus.svg',
+                        onTap: () => saveProgrammingLanguage(
+                          context,
+                          formKey: _formKey,
+                          nameController: _nameController,
+                          extensionController: _extensionController,
+                          keyController: _keyController,
+                        ),
+                      ),
+                    ],
                   ),
-                  CommonSpaceH(),
-                  IconButtonWidget(
-                    svgAssetPath: 'images/plus.svg',
-                    onTap: () => saveProgrammingLanguage(
-                      context,
-                      formKey: _formKey,
-                      nameController: _nameController,
-                      extensionController: _extensionController,
-                    ),
+                  CommonSpaceV(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    mainAxisAlignment: MainAxisAlignment.start,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Expanded(
+                        child: TextFormFieldWidget(
+                          controller: _keyController,
+                          focusNode: _keyFocus,
+                          label: tt('programming_languages.manage.key'),
+                          validations: [
+                            FormFieldValidation(
+                              validator: validateRequired,
+                              errorText: tt('validation.required'),
+                            ),
+                          ],
+                        ),
+                      ),
+                      CommonSpaceH(),
+                      Container(
+                        width: kIconButtonStyle.width,
+                      ),
+                    ],
                   ),
                 ],
               ),

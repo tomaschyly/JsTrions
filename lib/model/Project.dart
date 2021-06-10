@@ -5,6 +5,7 @@ class Project extends DataModel {
   static const String COL_ID = 'id';
   static const String COL_NAME = 'name';
   static const String COL_DIRECTORY = 'directory';
+  static const String COL_LANGUAGES = 'languages';
   static const String COL_PROGRAMMING_LANGUAGES = 'programming_languages';
   static const String COL_TRANSLATION_KEYS = 'translation_keys';
   static const String COL_UPDATED = 'updated';
@@ -13,6 +14,7 @@ class Project extends DataModel {
   int? id;
   late String name;
   late String directory;
+  late List<String> languages;
   late List<int> programmingLanguages;
   late List<TranslationKey> translationKeys;
   late int updated;
@@ -23,6 +25,7 @@ class Project extends DataModel {
     id = json[COL_ID];
     name = json[COL_NAME];
     directory = json[COL_DIRECTORY];
+    languages = json[COL_LANGUAGES];
     programmingLanguages = json[COL_PROGRAMMING_LANGUAGES];
     translationKeys = json[COL_TRANSLATION_KEYS].map((key) => TranslationKey.fromJson(key)).toList();
     updated = json[COL_UPDATED];
@@ -35,6 +38,7 @@ class Project extends DataModel {
     final json = <String, dynamic>{
       COL_NAME: name,
       COL_DIRECTORY: directory,
+      COL_LANGUAGES: languages,
       COL_PROGRAMMING_LANGUAGES: programmingLanguages,
       COL_TRANSLATION_KEYS: translationKeys.map((key) => key.toJson()).toList(),
       COL_UPDATED: updated,

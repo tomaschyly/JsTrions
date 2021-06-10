@@ -16,6 +16,7 @@
   "list.empty": "No items",
   "list.item.loading": "Loading...",
   "programming_languages.manage.extension": "Extension",
+  "programming_languages.manage.key": "RegExp Key",
   "programming_languages.manage.name": "New Language",
   "projects.screen.title": "Projects",
   "settings.screen.category.general": "General",
