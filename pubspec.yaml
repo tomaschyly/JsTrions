@@ -32,6 +32,8 @@ dependencies:
   sqflite: ^2.0.0+3
   sembast: ^3.0.2
 
+  file_picker_cross: ^4.4.2
+
 flutter:
   uses-material-design: true
 

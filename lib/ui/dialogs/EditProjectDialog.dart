@@ -1,3 +1,6 @@
+import 'dart:io';
+
+import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
@@ -109,14 +112,28 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                             ],
                           ),
                           CommonSpaceVHalf(),
-                          TextFormFieldWidget(
-                            controller: _directoryController,
-                            focusNode: _directoryFocus,
-                            label: tt('edit_project.field.directory'),
-                            validations: [
-                              FormFieldValidation(
-                                validator: validateRequired,
-                                errorText: tt('validation.required'),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextFormFieldWidget(
+                                  controller: _directoryController,
+                                  focusNode: _directoryFocus,
+                                  label: tt('edit_project.field.directory'),
+                                  validations: [
+                                    FormFieldValidation(
+                                      validator: validateRequired,
+                                      errorText: tt('validation.required'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              CommonSpaceHHalf(),
+                              IconButtonWidget(
+                                svgAssetPath: 'images/folder.svg',
+                                onTap: () => _pickDirectory(context),
                               ),
                             ],
                           ),
@@ -158,5 +175,26 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
         ),
       ],
     );
+  }
+
+  /// Use file picker to pick a file and then use its directory
+  Future<void> _pickDirectory(BuildContext context) async {
+    //TODO not compatible with MacOS app sanbox
+    // try {
+    //   final FilePickerCross projectFile = await FilePickerCross.importFromStorage();
+
+    //   final Directory directory = Directory(projectFile.directory);
+
+    //   await for (var test in directory.list()) {
+    //     print('TCH_d ${test.path}');
+    //   }
+
+    //   setStateNotDisposed(() {
+    //     _directoryController.text = projectFile.directory;
+    //   });
+    // } catch (e, t) {
+    //   debugPrint('TCH_e $e\n$t');
+    //   // do nothing for now, user may have just canceled input
+    // }
   }
 }

@@ -3,7 +3,9 @@
 #
 
 list(APPEND FLUTTER_PLUGIN_LIST
+  file_selector_windows
   tch_common_widgets
+  url_launcher_windows
 )
 
 set(PLUGIN_BUNDLED_LIBRARIES)
