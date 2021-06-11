@@ -5,6 +5,7 @@ import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
+import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -181,43 +182,15 @@ class _ChipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    return ClipRRect(
-      borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-      child: Material(
-        color: Colors.transparent,
-        child: InkWell(
-          child: Container(
-            height: kButtonHeight,
-            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-            decoration: BoxDecoration(
-              border: Border.all(
-                width: 1,
-                color: kColorTextPrimary,
-              ),
-              borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-            ),
-            child: Row(
-              mainAxisSize: MainAxisSize.min,
-              mainAxisAlignment: MainAxisAlignment.center,
-              crossAxisAlignment: CrossAxisAlignment.center,
-              children: [
-                Text(
-                  programmingLanguage.name,
-                  style: fancyText(kText),
-                ),
-                CommonSpaceHHalf(),
-                SvgPicture.asset(
-                  selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
-                  width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
-                  height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
-                  color: commonTheme.buttonsStyle.iconButtonStyle.color,
-                ),
-              ],
-            ),
-          ),
-          onTap: () => toggle(programmingLanguage),
-        ),
+    return ChipWidget(
+      text: programmingLanguage.name,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
       ),
+      onTap: () => toggle(programmingLanguage),
     );
   }
 }
