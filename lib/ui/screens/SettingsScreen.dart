@@ -165,6 +165,8 @@ class _GeneralWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -174,7 +176,7 @@ class _GeneralWidget extends StatelessWidget {
           doubleMargin: true,
         ),
         ButtonWidget(
-          style: kButtonDangerStyle,
+          style: commonTheme.buttonDangerStyle,
           text: tt('settings.screen.reset'),
           onTap: () {
             _clearData(context);

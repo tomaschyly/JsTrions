@@ -179,8 +179,10 @@ class _ChipWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return ClipRRect(
-      borderRadius: kButtonStyle.borderRadius,
+      borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
       child: Material(
         color: Colors.transparent,
         child: InkWell(
@@ -192,7 +194,7 @@ class _ChipWidget extends StatelessWidget {
                 width: 1,
                 color: kColorTextPrimary,
               ),
-              borderRadius: kButtonStyle.borderRadius,
+              borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
             ),
             child: Row(
               mainAxisSize: MainAxisSize.min,
@@ -206,9 +208,9 @@ class _ChipWidget extends StatelessWidget {
                 CommonSpaceHHalf(),
                 SvgPicture.asset(
                   selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
-                  width: kIconButtonStyle.iconWidth,
-                  height: kIconButtonStyle.iconHeight,
-                  color: kIconButtonStyle.color,
+                  width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+                  height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+                  color: commonTheme.buttonsStyle.iconButtonStyle.color,
                 ),
               ],
             ),

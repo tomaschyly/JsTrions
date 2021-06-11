@@ -112,6 +112,8 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
   /// Create default AppBar
   @protected
   PreferredSizeWidget? createAppBar(BuildContext context) {
+    final appTheme = CommonTheme.of<AppTheme>(context)!;
+
     return AppBar(
       toolbarHeight: 44,
       title: Text(
@@ -124,7 +126,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
               ? Builder(
                   builder: (BuildContext context) {
                     return IconButtonWidget(
-                      style: kAppBarIconButtonStyle,
+                      style: appTheme.appBarIconButtonStyle,
                       svgAssetPath: 'images/hamburger.svg',
                       onTap: () {
                         Scaffold.of(context).openDrawer();
@@ -137,7 +139,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
               ? Builder(
                   builder: (BuildContext context) {
                     return IconButtonWidget(
-                      style: kAppBarIconButtonStyle,
+                      style: appTheme.appBarIconButtonStyle,
                       svgAssetPath: 'images/back.svg',
                       onTap: () {
                         Navigator.pop(context);
@@ -155,7 +157,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
                     child: IconButtonWidget(
-                      style: kAppBarIconButtonStyle.copyWith(
+                      style: appTheme.appBarIconButtonStyle.copyWith(
                         iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                         iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                       ),

@@ -144,6 +144,8 @@ class _ProjectsListWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return ListDataWidget<GetProjectsDataRequest, Project>(
       dataRequest: GetProjectsDataRequest(),
       processResult: (GetProjectsDataRequest dataRequest) {
@@ -151,7 +153,7 @@ class _ProjectsListWidget extends StatelessWidget {
       },
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(
-          style: kListItemButtonStyle,
+          style: commonTheme.listItemButtonStyle,
           text: item.name,
           onTap: item.id == selectedProject?.id
               ? null

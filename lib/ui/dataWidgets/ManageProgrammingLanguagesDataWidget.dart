@@ -43,6 +43,8 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return ValueListenableBuilder(
       valueListenable: dataSource!.results,
       builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
@@ -147,7 +149,7 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
                       ),
                       CommonSpaceH(),
                       Container(
-                        width: kIconButtonStyle.width,
+                        width: commonTheme.buttonsStyle.iconButtonStyle.width,
                       ),
                     ],
                   ),
@@ -172,6 +174,8 @@ class _ChipWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return Container(
       height: kButtonHeight,
       padding: const EdgeInsets.only(left: kCommonHorizontalMarginHalf),
@@ -180,7 +184,7 @@ class _ChipWidget extends StatelessWidget {
           width: 1,
           color: kColorTextPrimary,
         ),
-        borderRadius: kButtonStyle.borderRadius,
+        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
       ),
       child: Row(
         mainAxisSize: MainAxisSize.min,
@@ -193,7 +197,7 @@ class _ChipWidget extends StatelessWidget {
           ),
           CommonSpaceHHalf(),
           IconButtonWidget(
-            style: kIconButtonStyle.copyWith(
+            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
               variant: IconButtonVariant.IconOnly,
               color: kColorRed,
             ),

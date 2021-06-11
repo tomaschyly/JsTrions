@@ -56,6 +56,8 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     final theProject = widget.project;
 
     return Column(
@@ -65,29 +67,29 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
       children: [
         Flexible(
           child: ClipRRect(
-            borderRadius: kListDialogStyle.borderRadius,
+            borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
             child: Container(
               width: kPhoneStopBreakpoint,
-              margin: kListDialogStyle.dialogMargin,
+              margin: commonTheme.dialogsStyle.listDialogStyle.dialogMargin,
               decoration: BoxDecoration(
-                color: kListDialogStyle.backgroundColor,
+                color: commonTheme.dialogsStyle.listDialogStyle.backgroundColor,
                 border: Border.all(
-                  color: kListDialogStyle.color,
+                  color: commonTheme.dialogsStyle.listDialogStyle.color,
                   width: 1,
                 ),
-                borderRadius: kListDialogStyle.borderRadius,
+                borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
               ),
               child: Scrollbar(
                 child: SingleChildScrollView(
                   child: Container(
-                    padding: kListDialogStyle.dialogPadding,
+                    padding: commonTheme.dialogsStyle.listDialogStyle.dialogPadding,
                     child: Form(
                       key: _formKey,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
                         children: [
                           DialogHeader(
-                            style: kListDialogStyle.dialogHeaderStyle,
+                            style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
                             title: theProject != null ? tt('edit_project.title.edit').replaceAll(r'$name', theProject.name) : tt('edit_project.title.add'),
                           ),
                           CommonSpaceVHalf(),
@@ -123,7 +125,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                             project: widget.project,
                           ),
                           DialogFooter(
-                            style: kListDialogStyle.dialogFooterStyle,
+                            style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
                             noText: tt('dialog.cancel'),
                             yesText: tt('edit_project.submit'),
                             noOnTap: () {
