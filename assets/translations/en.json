@@ -10,6 +10,7 @@
   "drawer.settings": "Settings",
   "edit_project.field.directory": "Directory",
   "edit_project.field.name": "Name",
+  "edit_project.field.programming_languages.error": "Select at least one",
   "edit_project.title.add": "New Project",
   "edit_project.title.edit": "Edit $name",
   "edit_project.submit": "Save",

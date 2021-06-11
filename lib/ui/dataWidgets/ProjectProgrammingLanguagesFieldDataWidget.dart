@@ -31,6 +31,8 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
   List<int> _selectedProgrammingLanguages = [];
   List<TranslationKey> _translationKeys = [];
   Map<int, TextEditingController> _fieldsControllers = Map();
+  bool _isError = false;
+  String _errorText = '';
 
   /// State initialization
   @override
@@ -57,6 +59,8 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of(context)!;
+
     return ValueListenableBuilder(
       valueListenable: dataSource!.results,
       builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
@@ -80,17 +84,43 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Wrap(
-                spacing: kCommonHorizontalMarginHalf,
-                runSpacing: kCommonVerticalMarginHalf,
-                children: programmingLanguages.programmingLanguages
-                    .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(
-                          programmingLanguage: programmingLanguage,
-                          selected: _selectedProgrammingLanguages.contains(programmingLanguage.id),
-                          toggle: _toggle,
-                        ))
-                    .toList(),
+              FormField<List<int>>(
+                builder: (FormFieldState<List<int>> field) {
+                  return Wrap(
+                    spacing: kCommonHorizontalMarginHalf,
+                    runSpacing: kCommonVerticalMarginHalf,
+                    children: programmingLanguages.programmingLanguages
+                        .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(
+                              programmingLanguage: programmingLanguage,
+                              selected: _selectedProgrammingLanguages.contains(programmingLanguage.id),
+                              toggle: _toggle,
+                            ))
+                        .toList(),
+                  );
+                },
+                validator: (List<int>? value) {
+                  value = _selectedProgrammingLanguages;
+
+                  final validated = value.isEmpty ? tt('edit_project.field.programming_languages.error') : null;
+
+                  setStateNotDisposed(() {
+                    _isError = validated != null;
+                    _errorText = validated ?? _errorText;
+                  });
+
+                  return validated;
+                },
               ),
+              if (_isError)
+                Padding(
+                  padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+                  child: Text(
+                    _errorText,
+                    style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!).copyWith(
+                      color: commonTheme.formStyle.textFormFieldStyle.errorColor,
+                    ),
+                  ),
+                ),
               CommonSpaceVHalf(),
               ..._translationKeys.where((translationKey) => _selectedProgrammingLanguages.contains(translationKey.programmingLanguage)).map((translationKey) {
                 final programmingLanguage =
