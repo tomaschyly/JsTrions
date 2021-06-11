@@ -2,6 +2,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -38,6 +39,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _directoryController = TextEditingController();
+  final _languagesKey = GlobalKey<ProjectLanguagesFieldWidgetState>();
   final _programmingLanguagesKey = GlobalKey<ProjectProgrammingLanguagesFieldDataWidgetState>();
   final _nameFocus = FocusNode();
   final _directoryFocus = FocusNode();
@@ -87,6 +89,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                       key: _formKey,
                       child: Column(
                         mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
                         children: [
                           DialogHeader(
                             style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
@@ -118,7 +121,10 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                             ],
                           ),
                           CommonSpaceVHalf(),
-                          Text('Wip: languages'), //TODO
+                          ProjectLanguagesFieldWidget(
+                            key: _languagesKey,
+                            project: widget.project,
+                          ),
                           CommonSpaceVHalf(),
                           ProjectProgrammingLanguagesFieldDataWidget(
                             key: _programmingLanguagesKey,
