@@ -140,6 +140,11 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                             yesOnTap: () => saveProject(
                               context,
                               formKey: _formKey,
+                              project: widget.project,
+                              nameController: _nameController,
+                              directoryController: _directoryController,
+                              languagesKey: _languagesKey,
+                              programmingLanguagesKey: _programmingLanguagesKey,
                             ),
                           ),
                         ],

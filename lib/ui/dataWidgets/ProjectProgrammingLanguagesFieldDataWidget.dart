@@ -29,6 +29,11 @@ class ProjectProgrammingLanguagesFieldDataWidget extends AbstractDataWidget {
 
 class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidgetState<ProjectProgrammingLanguagesFieldDataWidget>
     with SingleTickerProviderStateMixin {
+  ProjectProgrammingLanguagesFieldDataWidgetValue get value => ProjectProgrammingLanguagesFieldDataWidgetValue(
+        programmingLanguages: _selectedProgrammingLanguages,
+        translationKeys: _translationKeys,
+      );
+
   List<int> _selectedProgrammingLanguages = [];
   List<TranslationKey> _translationKeys = [];
   Map<int, TextEditingController> _fieldsControllers = Map();
@@ -163,6 +168,17 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
       }
     });
   }
+}
+
+class ProjectProgrammingLanguagesFieldDataWidgetValue {
+  final List<int> programmingLanguages;
+  final List<TranslationKey> translationKeys;
+
+  /// ProjectProgrammingLanguagesFieldDataWidgetValue initialization
+  ProjectProgrammingLanguagesFieldDataWidgetValue({
+    required this.programmingLanguages,
+    required this.translationKeys,
+  });
 }
 
 class _ChipWidget extends StatelessWidget {

@@ -25,9 +25,9 @@ class Project extends DataModel {
     id = json[COL_ID];
     name = json[COL_NAME];
     directory = json[COL_DIRECTORY];
-    languages = json[COL_LANGUAGES];
-    programmingLanguages = json[COL_PROGRAMMING_LANGUAGES];
-    translationKeys = json[COL_TRANSLATION_KEYS].map((key) => TranslationKey.fromJson(key)).toList();
+    languages = List<String>.from(json[COL_LANGUAGES]);
+    programmingLanguages = List<int>.from(json[COL_PROGRAMMING_LANGUAGES]);
+    translationKeys = List<TranslationKey>.from(json[COL_TRANSLATION_KEYS].map((key) => TranslationKey.fromJson(key)).toList());
     updated = json[COL_UPDATED];
     created = json[COL_CREATED];
   }
