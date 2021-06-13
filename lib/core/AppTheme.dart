@@ -94,6 +94,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     dialogHeaderStyle: const DialogHeaderStyle(
       textStyle: kTextHeadline,
     ),
+    textStyle: kText,
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(
         widthWrapContent: true,

@@ -218,7 +218,7 @@ packages:
       name: sembast
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "3.0.2"
+    version: "3.1.0+2"
   shared_preferences:
     dependency: transitive
     description:
@@ -307,7 +307,7 @@ packages:
       name: tch_appliable_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.0"
+    version: "0.6.1"
   tch_common_widgets:
     dependency: "direct main"
     description:

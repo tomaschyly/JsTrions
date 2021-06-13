@@ -7,7 +7,7 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 /// On first app start fill store with programming languages
-Future<void> updateDB(Database db, int oldVersion, int newVersion) async {
+Future<void> updateDBForProgrammingLanguage(Database db, int oldVersion, int newVersion) async {
   final theStore = intMapStoreFactory.store(ProgrammingLanguage.STORE);
 
   if (oldVersion == 0) {

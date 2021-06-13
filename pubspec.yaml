@@ -19,7 +19,7 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  tch_appliable_core: ^0.6.0
+  tch_appliable_core: ^0.6.1
   tch_common_widgets: ^0.5.1
 
   cupertino_icons: ^1.0.2

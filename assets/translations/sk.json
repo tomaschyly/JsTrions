@@ -12,6 +12,7 @@
   "edit_project.field.directory.error": "Priečinok neexistuje",
   "edit_project.field.name": "Názov",
   "edit_project.field.new_language": "Nový Jazyk",
+  "edit_project.field.programming_languages.empty_error": "Nemáš žiadne Programovacie Jazyky, najprv préjdi do Nastavení a pridaj aspoň jeden",
   "edit_project.field.programming_languages.error": "Vyber aspoň jeden",
   "edit_project.title.add": "Nový Projekt",
   "edit_project.title.edit": "Upraviť $name",
@@ -31,6 +32,7 @@
   "settings.screen.language.description": "Môžeš zmeniť jazyk používaný aplikáciou",
   "settings.screen.language.selection": "Vyber Jazyk",
   "settings.screen.reset": "Vymazať Údaje",
+	"settings.screen.reset.confirm": "Si si istý, že chceš vymazať všetky svoje dáta? Následne nieje možné ich získať späť.",
   "settings.screen.reset.description": "Týmto sa odstránia všetky tvoje údaje naraz",
   "settings.screen.title": "Nastavenia",
   "validation.required": "Prosím vyplň pole"

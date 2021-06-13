@@ -78,7 +78,17 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
           return Container();
         }
 
-        //TODO handle state where no PLs, at least one needed
+        if (programmingLanguages.programmingLanguages.isEmpty) {
+          return Padding(
+            padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
+            child: Text(
+              tt('edit_project.field.programming_languages.empty_error'),
+              style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!).copyWith(
+                color: commonTheme.formStyle.textFormFieldStyle.errorColor,
+              ),
+            ),
+          );
+        }
 
         sortProgrammingLanguagesAlphabetycally(programmingLanguages.programmingLanguages);
 

@@ -111,7 +111,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
 
   /// Migrate db when version changes
   Future<void> _dbMigrate(Database db, int oldVersion, int newVersion) async {
-    await updateDB(db, oldVersion, newVersion);
+    await updateDBForProgrammingLanguage(db, oldVersion, newVersion);
   }
 }
 

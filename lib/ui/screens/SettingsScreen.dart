@@ -1,6 +1,10 @@
 import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/model/ProgrammingLanguageQuery.dart';
+import 'package:js_trions/model/ProjectQuery.dart';
+import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
+import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
@@ -240,9 +244,30 @@ class _GeneralWidget extends StatelessWidget {
     );
   }
 
-  /// TODO
-  void _clearData(BuildContext context) {
-    //TODO clear data when available
+  /// Clear all app data from DB after user confirms
+  Future<void> _clearData(BuildContext context) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      isDanger: true,
+      title: tt('dialog.confirm.title'),
+      text: tt('settings.screen.reset.confirm'),
+      noText: tt('dialog.no'),
+      yesText: tt('dialog.yes'),
+    );
+
+    if (confirmed == true) {
+      await MainDataProvider.instance!.executeDataTask(
+        DeleteProgrammingLanguagesDataTask(
+          data: ProgrammingLanguageQuery.fromJson({}),
+        ),
+      );
+
+      await MainDataProvider.instance!.executeDataTask(
+        DeleteProjectsDataTask(
+          data: ProjectQuery.fromJson({}),
+        ),
+      );
+    }
   }
 }
 
