@@ -9,6 +9,7 @@
   "drawer.projects": "Projects",
   "drawer.settings": "Settings",
   "edit_project.field.directory": "Directory",
+  "edit_project.field.directory.error": "The directory does not exist",
   "edit_project.field.name": "Name",
   "edit_project.field.new_language": "New Language",
   "edit_project.field.programming_languages.error": "Select at least one",

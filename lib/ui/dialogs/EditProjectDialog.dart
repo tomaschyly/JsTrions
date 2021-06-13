@@ -1,6 +1,5 @@
 import 'dart:io';
 
-import 'package:file_picker_cross/file_picker_cross.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
@@ -127,14 +126,22 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                                       validator: validateRequired,
                                       errorText: tt('validation.required'),
                                     ),
+                                    FormFieldValidation(
+                                      validator: (String? value) {
+                                        final directory = Directory(value!);
+
+                                        return directory.existsSync();
+                                      },
+                                      errorText: tt('edit_project.field.directory.error'),
+                                    ),
                                   ],
                                 ),
                               ),
-                              CommonSpaceHHalf(),
-                              IconButtonWidget(
-                                svgAssetPath: 'images/folder.svg',
-                                onTap: () => _pickDirectory(context),
-                              ),
+                              // CommonSpaceHHalf(),
+                              // IconButtonWidget(
+                              //   svgAssetPath: 'images/folder.svg',
+                              //   onTap: () => _pickDirectory(context),
+                              // ),
                             ],
                           ),
                           CommonSpaceVHalf(),

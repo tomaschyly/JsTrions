@@ -9,6 +9,7 @@
   "drawer.projects": "Projekty",
   "drawer.settings": "Nastavenia",
   "edit_project.field.directory": "Priečinok",
+  "edit_project.field.directory.error": "Priečinok neexistuje",
   "edit_project.field.name": "Názov",
   "edit_project.field.new_language": "Nový Jazyk",
   "edit_project.field.programming_languages.error": "Vyber aspoň jeden",
