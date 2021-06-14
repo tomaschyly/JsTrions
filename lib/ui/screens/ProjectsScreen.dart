@@ -1,11 +1,16 @@
+import 'dart:async';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
+import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+
+const double kProjectsListWidth = 496;
 
 class ProjectsScreen extends AbstractResposiveScreen {
   static const String ROUTE = "/projects";
@@ -51,18 +56,80 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
+  final _searchController = TextEditingController();
+  Timer? _searchTimer;
+  String _searchQuery = '';
   Project? _selectedProject;
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _searchController.dispose();
+
+    _searchTimer?.cancel();
+    _searchTimer = null;
+
+    super.dispose();
+  }
+
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    _searchController.addListener(_searchProjects);
+  }
 
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return Container(
       width: double.infinity,
-      child: _ProjectsListWidget(
-        selectProject: _selectProject,
-        selectedProject: _selectedProject,
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CommonSpaceV(),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            children: [
+              CommonSpaceH(),
+              Expanded(
+                child: TextFormFieldWidget(
+                  style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                    fullWidthMobileOnly: false,
+                  ),
+                  controller: _searchController,
+                  label: tt('projects.screen.field.search'),
+                ),
+              ),
+              CommonSpaceH(),
+            ],
+          ),
+          CommonSpaceV(),
+          Expanded(
+            child: _ProjectsListWidget(
+              searchQuery: _searchQuery,
+              selectProject: _selectProject,
+              selectedProject: _selectedProject,
+            ),
+          ),
+        ],
       ),
     );
+  }
+
+  /// Filter projects by current name string in real time
+  void _searchProjects() {
+    _searchTimer?.cancel();
+
+    _searchTimer = Timer(Duration(milliseconds: 300), () {
+      setStateNotDisposed(() {
+        _searchQuery = _searchController.text;
+      });
+    });
   }
 
   /// Select Project, on desktop screens show details, on smaller screens navs to details screen
@@ -89,6 +156,8 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return Container(
       width: double.infinity,
       child: Column(
@@ -103,11 +172,37 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: kDrawerWidth,
+                  width: kProjectsListWidth,
                   padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                  child: _ProjectsListWidget(
-                    selectProject: _selectProject,
-                    selectedProject: _selectedProject,
+                  child: Column(
+                    mainAxisSize: MainAxisSize.max,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        children: [
+                          CommonSpaceH(),
+                          Expanded(
+                            child: TextFormFieldWidget(
+                              style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                                fullWidthMobileOnly: false,
+                              ),
+                              controller: _searchController,
+                              label: tt('projects.screen.field.search'),
+                            ),
+                          ),
+                          CommonSpaceH(),
+                        ],
+                      ),
+                      CommonSpaceV(),
+                      Expanded(
+                        child: _ProjectsListWidget(
+                          searchQuery: _searchQuery,
+                          selectProject: _selectProject,
+                          selectedProject: _selectedProject,
+                        ),
+                      ),
+                    ],
                   ),
                 ),
                 Container(
@@ -131,34 +226,59 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   }
 }
 
-class _ProjectsListWidget extends StatelessWidget {
+class _ProjectsListWidget extends AbstractStatefulWidget {
+  final String searchQuery;
   final void Function(Project project) selectProject;
   final Project? selectedProject;
 
   /// ProjectsListWidget initialization
   _ProjectsListWidget({
+    required this.searchQuery,
     required this.selectProject,
     this.selectedProject,
   });
 
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _ProjectsListWidgetState();
+}
+
+class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsListWidget> {
+  final _listKey = GlobalKey<ListDataWidgetState>();
+
+  /// Widget parameters changed
+  @override
+  void didUpdateWidget(covariant _ProjectsListWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.searchQuery != widget.searchQuery) {
+      _listKey.currentState!.updateDataRequests([
+        _dataRequest(),
+      ]);
+    }
+  }
+
   /// Create view layout from widgets
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     return ListDataWidget<GetProjectsDataRequest, Project>(
-      dataRequest: GetProjectsDataRequest(),
+      key: _listKey,
+      dataRequest: _dataRequest(),
       processResult: (GetProjectsDataRequest dataRequest) {
+        sortProjectsAlphabetycally(dataRequest.result?.projects);
+
         return dataRequest.result?.projects;
       },
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(
           style: commonTheme.listItemButtonStyle,
           text: item.name,
-          onTap: item.id == selectedProject?.id
+          onTap: item.id == widget.selectedProject?.id
               ? null
               : () {
-                  selectProject(item);
+                  widget.selectProject(item);
                 },
         );
       },
@@ -172,7 +292,7 @@ class _ProjectsListWidget extends StatelessWidget {
         );
       },
       emptyState: Container(
-        width: kPhoneStopBreakpoint,
+        width: double.infinity,
         padding: const EdgeInsets.all(kCommonPrimaryMargin),
         alignment: Alignment.topCenter,
         child: Text(
@@ -180,6 +300,15 @@ class _ProjectsListWidget extends StatelessWidget {
           style: fancyText(kText),
         ),
       ),
+    );
+  }
+
+  /// Create the DataRequest for current parameters
+  GetProjectsDataRequest _dataRequest() {
+    return GetProjectsDataRequest(
+      parameters: <String, dynamic>{
+        if (widget.searchQuery.isNotEmpty) '${Project.COL_NAME} LIKE': widget.searchQuery,
+      },
     );
   }
 }

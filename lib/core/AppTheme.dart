@@ -68,6 +68,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kListItemButtonStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.TextOnly,
+    alignment: Alignment.centerLeft,
   );
 
   final kIconButtonStyle = IconButtonStyle(

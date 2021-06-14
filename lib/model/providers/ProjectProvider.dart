@@ -44,3 +44,8 @@ Future<void> saveProject(
     }
   }
 }
+
+/// Sort list of Projects alphabetycally
+void sortProjectsAlphabetycally(List<Project>? projects) {
+  projects?.sort((a, b) => a.name.compareTo(b.name));
+}
