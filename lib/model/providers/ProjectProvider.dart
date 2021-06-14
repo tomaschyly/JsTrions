@@ -29,6 +29,7 @@ Future<void> saveProject(
       Project.COL_LANGUAGES: languagesKey.currentState!.value,
       Project.COL_PROGRAMMING_LANGUAGES: programmingLanguagesValue.programmingLanguages,
       Project.COL_TRANSLATION_KEYS: programmingLanguagesValue.translationKeys.map((translationKey) => translationKey.toJson()).toList(),
+      Project.COL_LAST_SEEN: project?.lastSeen,
       Project.COL_UPDATED: now,
       Project.COL_CREATED: project?.created ?? now,
     });

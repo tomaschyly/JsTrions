@@ -8,6 +8,7 @@ class Project extends DataModel {
   static const String COL_LANGUAGES = 'languages';
   static const String COL_PROGRAMMING_LANGUAGES = 'programming_languages';
   static const String COL_TRANSLATION_KEYS = 'translation_keys';
+  static const String COL_LAST_SEEN = 'last_seen';
   static const String COL_UPDATED = 'updated';
   static const String COL_CREATED = 'created';
 
@@ -17,6 +18,7 @@ class Project extends DataModel {
   late List<String> languages;
   late List<int> programmingLanguages;
   late List<TranslationKey> translationKeys;
+  late int lastSeen;
   late int updated;
   late int created;
 
@@ -28,6 +30,7 @@ class Project extends DataModel {
     languages = List<String>.from(json[COL_LANGUAGES]);
     programmingLanguages = List<int>.from(json[COL_PROGRAMMING_LANGUAGES]);
     translationKeys = List<TranslationKey>.from(json[COL_TRANSLATION_KEYS].map((key) => TranslationKey.fromJson(key)).toList());
+    lastSeen = json[COL_LAST_SEEN] ?? 0;
     updated = json[COL_UPDATED];
     created = json[COL_CREATED];
   }
@@ -41,6 +44,7 @@ class Project extends DataModel {
       COL_LANGUAGES: languages,
       COL_PROGRAMMING_LANGUAGES: programmingLanguages,
       COL_TRANSLATION_KEYS: translationKeys.map((key) => key.toJson()).toList(),
+      COL_LAST_SEEN: lastSeen,
       COL_UPDATED: updated,
       COL_CREATED: created,
     };
