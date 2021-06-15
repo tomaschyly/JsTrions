@@ -10,8 +10,6 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-const double kProjectsListWidth = 496;
-
 class ProjectsScreen extends AbstractResposiveScreen {
   static const String ROUTE = "/projects";
 
@@ -172,7 +170,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
                 Container(
-                  width: kProjectsListWidth,
+                  width: kLeftPanelWidth,
                   padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                   child: Column(
                     mainAxisSize: MainAxisSize.max,

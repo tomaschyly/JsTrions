@@ -1,4 +1,8 @@
 {
+  "dashboard.screen.projects.add": "Add Project",
+  "dashboard.screen.projects.empty": "You do not have any Projects yet",
+  "dashboard.screen.recent_projects": "Recent Projects",
+  "dashboard.screen.recent_projects.empty": "There are no recently open Projects",
   "dashboard.screen.title": "Dashboard",
   "dialog.confirm.title": "Confirm Action",
   "dialog.cancel": "Cancel",

@@ -5,6 +5,8 @@ import 'package:js_trions/core/AppPreferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
+const double kLeftPanelWidth = 496;
+
 const kColorPrimary = const Color(0xFF1a1a1a);
 const kColorPrimaryLight = const Color(0xFF404040);
 const kColorPrimaryDark = const Color(0xFF000000);
@@ -67,6 +69,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   final kListItemButtonStyle = kButtonStyle.copyWith(
+    fullWidthMobileOnly: false,
     variant: ButtonVariant.TextOnly,
     alignment: Alignment.centerLeft,
   );

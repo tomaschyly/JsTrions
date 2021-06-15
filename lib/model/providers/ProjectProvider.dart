@@ -50,3 +50,8 @@ Future<void> saveProject(
 void sortProjectsAlphabetycally(List<Project>? projects) {
   projects?.sort((a, b) => a.name.compareTo(b.name));
 }
+
+/// Sort list of Projects by lastSeen with most recent first
+void sortProjectsByLastSeen(List<Project>? projects) {
+  projects?.sort((a, b) => a.lastSeen.compareTo(b.lastSeen));
+}
