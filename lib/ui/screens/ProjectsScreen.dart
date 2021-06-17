@@ -5,8 +5,10 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
+import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -132,7 +134,21 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
   /// Select Project, on desktop screens show details, on smaller screens navs to details screen
   void _selectProject(Project project) {
-    //TODO
+    final snapshot = AppDataState.of(context)!;
+
+    if ([
+      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.ExtraLargeDesktop,
+    ].contains(snapshot.responsiveScreen)) {
+      setStateNotDisposed(() {
+        _selectedProject = project;
+      });
+    } else {
+      pushNamed(context, ProjectDetailScreen.ROUTE, arguments: <String, String>{
+        Project.COL_ID: project.id!.toString(),
+      });
+    }
   }
 }
 
@@ -155,6 +171,8 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   @override
   Widget buildContent(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final theProject = _selectedProject;
 
     return Container(
       width: double.infinity,
@@ -208,12 +226,19 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                   height: double.infinity,
                   color: kColorSecondaryDark,
                 ),
-                Expanded(
-                  child: Container(
-                    padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                    child: Text('WIP: project details'),
+                if (theProject != null)
+                  Expanded(
+                    child: Container(
+                      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                      child: ProjectDetailDataWidget(
+                        projectId: theProject.id!,
+                      ),
+                    ),
+                  )
+                else
+                  Expanded(
+                    child: Container(),
                   ),
-                ),
               ],
             ),
           ),
@@ -271,7 +296,9 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       },
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(
-          style: commonTheme.listItemButtonStyle,
+          style: commonTheme.listItemButtonStyle.copyWith(
+            variant: item.id == widget.selectedProject?.id ? ButtonVariant.Filled : ButtonVariant.TextOnly,
+          ),
           text: item.name,
           onTap: item.id == widget.selectedProject?.id
               ? null

@@ -26,6 +26,7 @@
   "programming_languages.manage.extension": "Prípona",
   "programming_languages.manage.key": "RegExp Kľúč",
   "programming_languages.manage.name": "Nový Jazyk",
+  "project_detail.directory_not_found": "Priečinok \"$directory\" neexistuje, nemôžem inicializovať tento Projekt",
   "projects.screen.field.search": "Vyhľadaj Projekty",
   "projects.screen.title": "Projekty",
   "settings.screen.category.general": "Všeobecné",

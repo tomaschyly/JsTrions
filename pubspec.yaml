@@ -21,6 +21,8 @@ dependencies:
 
   tch_appliable_core: ^0.6.1
   tch_common_widgets: ^0.5.4
+  
+  supercharged: ^2.0.0
 
   cupertino_icons: ^1.0.2
   flutter_svg: ^0.22.0

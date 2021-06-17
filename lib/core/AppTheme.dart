@@ -31,6 +31,7 @@ const kFontFamily = 'Kalam';
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
 const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
+const kTextDanger = const TextStyle(color: kColorRed, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>

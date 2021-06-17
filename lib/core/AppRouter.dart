@@ -1,6 +1,7 @@
 import 'package:flutter/material.dart';
 import 'package:js_trions/ui/screens/AboutScreen.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';
+import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:js_trions/ui/screens/SettingsScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -15,6 +16,8 @@ Route<dynamic> onGenerateRoute(RouteSettings settings) {
         return createRoute((BuildContext context) => DashboardScreen(), settings);
       case ProjectsScreen.ROUTE:
         return createRoute((BuildContext context) => ProjectsScreen(), settings);
+      case ProjectDetailScreen.ROUTE:
+        return createRoute((BuildContext context) => ProjectDetailScreen(), settings);
       case SettingsScreen.ROUTE:
         return createRoute((BuildContext context) => SettingsScreen(), settings);
       case AboutScreen.ROUTE:
