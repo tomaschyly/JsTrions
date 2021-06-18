@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:file_selector/file_selector.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
@@ -137,11 +138,11 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                                   ],
                                 ),
                               ),
-                              // CommonSpaceHHalf(),
-                              // IconButtonWidget(
-                              //   svgAssetPath: 'images/folder.svg',
-                              //   onTap: () => _pickDirectory(context),
-                              // ),
+                              CommonSpaceHHalf(),
+                              IconButtonWidget(
+                                svgAssetPath: 'images/folder.svg',
+                                onTap: () => _pickDirectory(context),
+                              ),
                             ],
                           ),
                           CommonSpaceVHalf(),
@@ -186,22 +187,16 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
 
   /// Use file picker to pick a file and then use its directory
   Future<void> _pickDirectory(BuildContext context) async {
-    //TODO not compatible with MacOS app sanbox
-    // try {
-    //   final FilePickerCross projectFile = await FilePickerCross.importFromStorage();
+    try {
+      final directoryPath = await getDirectoryPath();
 
-    //   final Directory directory = Directory(projectFile.directory);
-
-    //   await for (var test in directory.list()) {
-    //     print('TCH_d ${test.path}');
-    //   }
-
-    //   setStateNotDisposed(() {
-    //     _directoryController.text = projectFile.directory;
-    //   });
-    // } catch (e, t) {
-    //   debugPrint('TCH_e $e\n$t');
-    //   // do nothing for now, user may have just canceled input
-    // }
+      if (directoryPath != null) {
+        setStateNotDisposed(() {
+          _directoryController.text = directoryPath;
+        });
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+    }
   }
 }
