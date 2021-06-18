@@ -3,6 +3,7 @@ import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class ProjectDetailScreen extends AbstractResposiveScreen {
   static const String ROUTE = "/projects/project";
@@ -48,10 +49,22 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
     final int projectId = arguments[Project.COL_ID]!.toInt()!;
 
-    return Container(
-      width: double.infinity,
-      child: ProjectDetailDataWidget(
-        projectId: projectId,
+    return Scrollbar(
+      child: SingleChildScrollView(
+        child: Container(
+          width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              CommonSpaceV(),
+              ProjectDetailDataWidget(
+                projectId: projectId,
+              )
+            ],
+          ),
+        ),
       ),
     );
   }

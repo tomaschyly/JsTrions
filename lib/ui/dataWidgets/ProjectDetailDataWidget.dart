@@ -96,12 +96,22 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
       final directory = Directory(project.directory);
 
       final exists = await directory.exists();
+      //TODO can be error on MacOS because of the app sandbox
 
       setStateNotDisposed(() {
         _projectDirNotFound = !exists;
       });
 
-      //TODO need dir for translations inside project
+      if (exists) {
+        final List<File> assets = [];
+        final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+
+        if (await translationsAssetsDirectory.exists()) {
+          await for (final file in translationsAssetsDirectory.list()) {
+            print('TCH_d file $file');
+          }
+        }
+      }
 
       updateLastSeenOfProject(project);
     }

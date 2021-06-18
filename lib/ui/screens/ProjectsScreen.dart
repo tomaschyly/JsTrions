@@ -262,8 +262,12 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                      child: ProjectDetailDataWidget(
-                        projectId: theProject.id!,
+                      child: Scrollbar(
+                        child: SingleChildScrollView(
+                          child: ProjectDetailDataWidget(
+                            projectId: theProject.id!,
+                          ),
+                        ),
                       ),
                     ),
                   )
