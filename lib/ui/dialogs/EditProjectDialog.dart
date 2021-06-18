@@ -19,11 +19,11 @@ class EditProjectDialog extends AbstractStatefulWidget {
   });
 
   /// Show the dialog as a popup
-  static Future<void> show(
+  static Future<int?> show(
     BuildContext context, {
     Project? project,
   }) {
-    return showDialog(
+    return showDialog<int>(
       context: context,
       builder: (BuildContext context) {
         return Material(

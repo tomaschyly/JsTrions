@@ -57,9 +57,7 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
                     widthWrapContent: true,
                   ),
                   text: tt('dashboard.screen.projects.add'),
-                  onTap: () {
-                    EditProjectDialog.show(context);
-                  },
+                  onTap: () => _addProject(context),
                 ),
               ),
             ],
@@ -107,5 +105,17 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
         );
       },
     );
+  }
+
+  /// Use EditDialog to add Project and then navigate to Projects
+  Future<void> _addProject(BuildContext context) async {
+    final int? id = await EditProjectDialog.show(context);
+
+    if (id != null) {
+      pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{
+        'router-no-animation': '1',
+        Project.COL_ID: id.toString(),
+      });
+    }
   }
 }

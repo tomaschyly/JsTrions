@@ -36,14 +36,14 @@ Future<void> saveProject(
       Project.COL_CREATED: project?.created ?? now,
     });
 
-    await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(
+    final dataTask = await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(
       SaveProjectDataTask(
         data: data,
       ),
     );
 
-    if (popOnSuccess) {
-      Navigator.of(context).pop();
+    if (popOnSuccess && dataTask.result != null) {
+      Navigator.of(context).pop(dataTask.result?.id);
     }
   }
 }
