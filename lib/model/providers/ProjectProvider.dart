@@ -48,6 +48,20 @@ Future<void> saveProject(
   }
 }
 
+/// Update Project lastSeen in DB
+Future<void> updateLastSeenOfProject(Project project) async {
+  final now = DateTime.now().millisecondsSinceEpoch;
+
+  project.lastSeen = now;
+  project.updated = now;
+
+  await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(
+    SaveProjectDataTask(
+      data: project,
+    ),
+  );
+}
+
 /// Sort list of Projects alphabetycally
 void sortProjectsAlphabetycally(List<Project>? projects) {
   projects?.sort((a, b) => a.name.compareTo(b.name));
@@ -55,5 +69,5 @@ void sortProjectsAlphabetycally(List<Project>? projects) {
 
 /// Sort list of Projects by lastSeen with most recent first
 void sortProjectsByLastSeen(List<Project>? projects) {
-  projects?.sort((a, b) => a.lastSeen.compareTo(b.lastSeen));
+  projects?.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
 }

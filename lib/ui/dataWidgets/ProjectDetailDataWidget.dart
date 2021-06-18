@@ -3,6 +3,7 @@ import 'dart:io';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
+import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -101,6 +102,8 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
       });
 
       //TODO need dir for translations inside project
+
+      updateLastSeenOfProject(project);
     }
   }
 }
