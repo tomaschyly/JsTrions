@@ -20,6 +20,8 @@
   "edit_project.field.programming_languages.error": "Select at least one",
   "edit_project.title.add": "New Project",
   "edit_project.title.edit": "Edit $name",
+  "edit_project.field.translation_assets": "Translations Directory",
+  "edit_project.field.translation_assets.error": "Translations assets directoy does not exist",
   "edit_project.submit": "Save",
   "list.empty": "No items",
   "list.item.loading": "Loading...",

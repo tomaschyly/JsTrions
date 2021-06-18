@@ -6,6 +6,7 @@ import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
+import 'package:path/path.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -42,18 +43,22 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
   final _formKey = GlobalKey<FormState>();
   final _nameController = TextEditingController();
   final _directoryController = TextEditingController();
+  final _translationAssetsController = TextEditingController();
   final _languagesKey = GlobalKey<ProjectLanguagesFieldWidgetState>();
   final _programmingLanguagesKey = GlobalKey<ProjectProgrammingLanguagesFieldDataWidgetState>();
   final _nameFocus = FocusNode();
   final _directoryFocus = FocusNode();
+  final _translationAssetsFocus = FocusNode();
 
   /// Manually dispose of resources
   @override
   void dispose() {
     _nameController.dispose();
     _directoryController.dispose();
+    _translationAssetsController.dispose();
     _nameFocus.dispose();
     _directoryFocus.dispose();
+    _translationAssetsFocus.dispose();
 
     super.dispose();
   }
@@ -121,6 +126,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                                 child: TextFormFieldWidget(
                                   controller: _directoryController,
                                   focusNode: _directoryFocus,
+                                  nextFocus: _translationAssetsFocus,
                                   label: tt('edit_project.field.directory'),
                                   validations: [
                                     FormFieldValidation(
@@ -142,6 +148,40 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                               IconButtonWidget(
                                 svgAssetPath: 'images/folder.svg',
                                 onTap: () => _pickDirectory(context),
+                              ),
+                            ],
+                          ),
+                          CommonSpaceVHalf(),
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
+                            mainAxisAlignment: MainAxisAlignment.start,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Expanded(
+                                child: TextFormFieldWidget(
+                                  controller: _translationAssetsController,
+                                  focusNode: _translationAssetsFocus,
+                                  label: tt('edit_project.field.translation_assets'),
+                                  validations: [
+                                    FormFieldValidation(
+                                      validator: validateRequired,
+                                      errorText: tt('validation.required'),
+                                    ),
+                                    FormFieldValidation(
+                                      validator: (String? value) {
+                                        final directory = Directory('${_directoryController.text}$value');
+
+                                        return directory.existsSync();
+                                      },
+                                      errorText: tt('edit_project.field.translation_assets.error'),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              CommonSpaceHHalf(),
+                              IconButtonWidget(
+                                svgAssetPath: 'images/folder.svg',
+                                onTap: () => _pickDirectory(context, true),
                               ),
                             ],
                           ),
@@ -168,6 +208,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                               project: widget.project,
                               nameController: _nameController,
                               directoryController: _directoryController,
+                              translationAssetsController: _translationAssetsController,
                               languagesKey: _languagesKey,
                               programmingLanguagesKey: _programmingLanguagesKey,
                             ),
@@ -185,14 +226,22 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
     );
   }
 
-  /// Use file picker to pick a file and then use its directory
-  Future<void> _pickDirectory(BuildContext context) async {
+  /// Use file picker to pick a directory for Project or translation assets
+  Future<void> _pickDirectory(BuildContext context, [bool translationAssets = false]) async {
     try {
-      final directoryPath = await getDirectoryPath();
+      final theDirectoryPath = _directoryController.text;
+
+      final directoryPath = await getDirectoryPath(
+        initialDirectory: translationAssets && theDirectoryPath.isNotEmpty ? theDirectoryPath : null,
+      );
 
       if (directoryPath != null) {
         setStateNotDisposed(() {
-          _directoryController.text = directoryPath;
+          if (translationAssets) {
+            _translationAssetsController.text = directoryPath.replaceAll(theDirectoryPath, '');
+          } else {
+            _directoryController.text = directoryPath;
+          }
         });
       }
     } catch (e, t) {
