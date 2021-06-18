@@ -1,9 +1,12 @@
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/Projects.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
+import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/Text.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class DashboardProjectsDataWidget extends AbstractDataWidget {
@@ -80,16 +83,18 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
             ),
             CommonSpaceV(),
             if (recentProjects.isNotEmpty)
-              ...recentProjects
-                  .take(5)
-                  .map((project) => ButtonWidget(
-                        style: commonTheme.listItemButtonStyle,
-                        text: project.name,
-                        onTap: () {
-                          //TODO go to projects screen and select there by resolution
-                        },
-                      ))
-                  .toList()
+              ...recentProjects.take(5).map((project) {
+                return ButtonWidget(
+                  style: commonTheme.listItemButtonStyle,
+                  text: '${project.name} - ${millisToDefault(project.lastSeen)}',
+                  onTap: () {
+                    pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{
+                      'router-no-animation': '1',
+                      Project.COL_ID: project.id!.toString(),
+                    });
+                  },
+                );
+              }).toList()
             else
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),

@@ -53,7 +53,6 @@ Future<void> updateLastSeenOfProject(Project project) async {
   final now = DateTime.now().millisecondsSinceEpoch;
 
   project.lastSeen = now;
-  project.updated = now;
 
   await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(
     SaveProjectDataTask(

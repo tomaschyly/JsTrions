@@ -72,5 +72,13 @@ class _BodyDesktopWidget extends _AbstractBodyWidget {
 }
 
 class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidget> {
-  //TODO should pop back to list and show details there???
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      popNotDisposed(context, mounted);
+    });
+  }
 }

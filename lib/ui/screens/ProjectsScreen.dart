@@ -3,12 +3,15 @@ import 'dart:async';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
+import 'package:js_trions/model/dataTasks/GetProjectDataTask.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -78,6 +81,8 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
     super.firstBuildOnly(context);
 
     _searchController.addListener(_searchProjects);
+
+    _selectProjectFromArguments(context);
   }
 
   /// Create view layout from widgets
@@ -121,6 +126,31 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
     );
   }
 
+  /// Check routing arguments if Project should be selected
+  Future<void> _selectProjectFromArguments(BuildContext context) async {
+    final RoutingArguments arguments = RoutingArguments.of(context)!;
+
+    final int? projectId = arguments[Project.COL_ID]?.toInt();
+
+    if (projectId != null) {
+      final dataTask = await MainDataProvider.instance!.executeDataTask(
+        GetProjectDataTask(
+          data: ProjectQuery.fromJson(
+            <String, dynamic>{
+              Project.COL_ID: projectId,
+            },
+          ),
+        ),
+      );
+
+      final theProject = dataTask.result;
+
+      if (theProject != null) {
+        _selectProject(theProject);
+      }
+    }
+  }
+
   /// Filter projects by current name string in real time
   void _searchProjects() {
     _searchTimer?.cancel();
@@ -145,6 +175,8 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
         _selectedProject = project;
       });
     } else {
+      _selectedProject = project;
+
       pushNamed(context, ProjectDetailScreen.ROUTE, arguments: <String, String>{
         Project.COL_ID: project.id!.toString(),
       });
