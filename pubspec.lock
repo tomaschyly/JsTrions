@@ -321,14 +321,14 @@ packages:
       name: tch_appliable_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.6.1"
+    version: "0.6.2"
   tch_common_widgets:
     dependency: "direct main"
     description:
       name: tch_common_widgets
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.5.4"
+    version: "0.6.0"
   term_glyph:
     dependency: transitive
     description:
