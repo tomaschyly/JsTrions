@@ -61,7 +61,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               CommonSpaceV(),
               ProjectDetailDataWidget(
                 projectId: projectId,
-              )
+              ),
             ],
           ),
         ),

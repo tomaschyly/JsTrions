@@ -2,6 +2,7 @@ import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
+import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:sembast/sembast.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -78,10 +79,13 @@ Future<void> saveProgrammingLanguage(
 
 /// Delete existing ProgramminLanguage and update data
 Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage programmingLanguage) async {
+  final anyProject = await anyProjectForProgrammingLanguage(programmingLanguage.id!);
+
   final confirmed = await ConfirmDialog.show(
     context,
     isDanger: true,
     title: tt('dialog.confirm.title'),
+    text: anyProject != null ? tt('delete_programming_language.text').replaceAll(r'$projectName', anyProject.name) : null,
     noText: tt('dialog.no'),
     yesText: tt('dialog.yes'),
   );

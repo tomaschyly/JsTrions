@@ -4,6 +4,7 @@
   "dashboard.screen.recent_projects": "Nedávne Projekty",
   "dashboard.screen.recent_projects.empty": "Neexistujú žiadne nedávno otvorené projekty",
   "dashboard.screen.title": "Prehľad",
+  "delete_programming_language.text": "Ber na vedomie, že Projekty ktoré používajú tento Programovací Jazyk ho už nebudú môcť použiť\nNapr. $projectName",
   "dialog.confirm.title": "Potvrdiť Akciu",
   "dialog.cancel": "Zrušiť",
   "dialog.no": "Nie",

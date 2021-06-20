@@ -1,4 +1,7 @@
+import 'package:flutter/services.dart';
 import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/ProjectQuery.dart';
+import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
@@ -69,4 +72,23 @@ void sortProjectsAlphabetycally(List<Project>? projects) {
 /// Sort list of Projects by lastSeen with most recent first
 void sortProjectsByLastSeen(List<Project>? projects) {
   projects?.sort((a, b) => b.lastSeen.compareTo(a.lastSeen));
+}
+
+/// Find any Project that has Programming Language assigned
+Future<Project?> anyProjectForProgrammingLanguage(int programmingLanguage) async {
+  final dataTask = await MainDataProvider.instance!.executeDataTask(
+    GetProjectsDataTask(data: ProjectQuery.fromJson({})),
+  );
+
+  final projects = dataTask.result;
+
+  if (projects != null) {
+    final filtered = projects.projects.where((project) => project.programmingLanguages.contains(programmingLanguage)).toList();
+
+    if (filtered.isNotEmpty) {
+      return filtered.first;
+    }
+  }
+
+  return null;
 }

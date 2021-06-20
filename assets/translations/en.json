@@ -4,6 +4,7 @@
   "dashboard.screen.recent_projects": "Recent Projects",
   "dashboard.screen.recent_projects.empty": "There are no recently open Projects",
   "dashboard.screen.title": "Dashboard",
+  "delete_programming_language.text": "Be aware that Projects that use this Programming Language will not be able to use it anymore\nE.g. $projectName",
   "dialog.confirm.title": "Confirm Action",
   "dialog.cancel": "Cancel",
   "dialog.no": "No",

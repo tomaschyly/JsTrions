@@ -2,6 +2,7 @@ import 'dart:io';
 
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -16,6 +17,7 @@ class ProjectDetailDataWidget extends AbstractDataWidget {
   }) : super(
           dataRequests: [
             GetProjectDataRequest(projectId: projectId),
+            GetProgrammingLanguagesDataRequest(),
           ],
         );
 
@@ -34,7 +36,7 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.projectId != widget.projectId) {
-      _resetForProjects();
+      _resetForProject();
     }
   }
 
@@ -82,9 +84,10 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
   }
 
   /// New projectId provided, reset and load new Project
-  void _resetForProjects() {
+  void _resetForProject() {
     updateDataRequests([
       GetProjectDataRequest(projectId: widget.projectId),
+      GetProgrammingLanguagesDataRequest(),
     ]);
   }
 
