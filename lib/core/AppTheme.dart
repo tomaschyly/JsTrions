@@ -5,7 +5,7 @@ import 'package:js_trions/core/AppPreferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-const double kLeftPanelWidth = 496;
+const double kLeftPanelWidth = kDrawerWidth;
 
 const kColorPrimary = const Color(0xFF1a1a1a);
 const kColorPrimaryLight = const Color(0xFF404040);

@@ -30,6 +30,8 @@
   "programming_languages.manage.key": "RegExp Kľúč",
   "programming_languages.manage.name": "Nový Jazyk",
   "project_detail.directory_not_found": "Priečinok \"$directory\" neexistuje, nemôžem inicializovať tento Projekt",
+  "project_detail.translation_assets_directory_not_found": "Priečinok \"$directory\" kde majú byť assety prekladov neexistuje, nemôžem inicializovať tento Projekt",
+  "project_detail.translations.label": "Preklady",
   "projects.screen.field.search": "Vyhľadaj Projekty",
   "projects.screen.title": "Projekty",
   "settings.screen.category.general": "Všeobecné",
