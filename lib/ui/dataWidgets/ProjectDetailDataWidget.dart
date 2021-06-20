@@ -174,7 +174,13 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
                               key: _topKey,
                             ),
                             Table(
-                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              // defaultColumnWidth: IntrinsicColumnWidth(),
+                              columnWidths: {
+                                0: IntrinsicColumnWidth(),
+                                1: FixedColumnWidth(kCommonHorizontalMargin),
+                                2: FlexColumnWidth(),
+                                3: FixedColumnWidth(kCommonHorizontalMargin + kButtonHeight),
+                              },
                               children: _selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
                                 rowIsOdd = !rowIsOdd;
 
@@ -204,6 +210,17 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
                                         child: Text(
                                           _selectedLanguagePairs[key]!,
                                           style: fancyText(kText),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.fill,
+                                      child: Container(
+                                        color: kColorPrimaryLight,
+                                        alignment: Alignment.centerRight,
+                                        child: IconButtonWidget(
+                                          svgAssetPath: 'images/edit.svg',
+                                          // onTap: () => _pickDirectory(context, true),
                                         ),
                                       ),
                                     ),
