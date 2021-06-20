@@ -72,12 +72,9 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Padding(
-              padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-              child: Text(
-                tt('dashboard.screen.recent_projects'),
-                style: fancyText(kTextHeadline),
-              ),
+            Text(
+              tt('dashboard.screen.recent_projects'),
+              style: fancyText(kTextHeadline),
             ),
             CommonSpaceV(),
             if (recentProjects.isNotEmpty)
@@ -94,12 +91,9 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
                 );
               }).toList()
             else
-              Padding(
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: Text(
-                  tt('dashboard.screen.recent_projects.empty'),
-                  style: fancyText(kText),
-                ),
+              Text(
+                tt('dashboard.screen.recent_projects.empty'),
+                style: fancyText(kText),
               ),
           ],
         );

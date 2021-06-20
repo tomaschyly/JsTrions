@@ -30,6 +30,8 @@
   "programming_languages.manage.key": "RegExp Key",
   "programming_languages.manage.name": "New Language",
   "project_detail.directory_not_found": "The directory \"$directory\" does not exist, cannot initialize this Project",
+  "project_detail.field.search": "Search Translations",
+  "project_detail.screen.title": "Project",
   "project_detail.translation_assets_directory_not_found": "The directory \"$directory\" where translation assets are to be stored does not exist, cannot initialize this Project",
   "project_detail.translations.label": "Translations",
   "projects.screen.field.search": "Search Projects",

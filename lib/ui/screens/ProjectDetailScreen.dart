@@ -49,22 +49,20 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
     final int projectId = arguments[Project.COL_ID]!.toInt()!;
 
-    return Scrollbar(
-      child: SingleChildScrollView(
-        child: Container(
-          width: double.infinity,
-          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-          child: Column(
-            mainAxisSize: MainAxisSize.max,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              CommonSpaceV(),
-              ProjectDetailDataWidget(
-                projectId: projectId,
-              ),
-            ],
+    return Container(
+      width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      child: Column(
+        mainAxisSize: MainAxisSize.max,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          CommonSpaceV(),
+          Expanded(
+            child: ProjectDetailDataWidget(
+              projectId: projectId,
+            ),
           ),
-        ),
+        ],
       ),
     );
   }

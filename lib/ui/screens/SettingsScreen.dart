@@ -179,67 +179,76 @@ class _GeneralWidget extends StatelessWidget {
           text: tt('settings.screen.category.general'),
           doubleMargin: true,
         ),
-        ButtonWidget(
-          style: commonTheme.buttonDangerStyle,
-          text: tt('settings.screen.reset'),
-          onTap: () {
-            _clearData(context);
-          },
-        ),
-        CommonSpaceV(),
-        Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
-        CommonSpaceVDouble(),
-        SelectionFormFieldWidget<String>(
-          key: _languageKey,
-          label: tt('settings.screen.language'),
-          selectionTitle: tt('settings.screen.language.selection'),
-          initialValue: language,
-          options: <ListDialogOption<String>>[
-            ListDialogOption(
-              text: 'English',
-              value: 'en',
-            ),
-            ListDialogOption(
-              text: 'Slovenčina',
-              value: 'sk',
-            ),
-          ],
-          onChange: (String? newValue) {
-            if (newValue != null) {
-              Translator.instance!.changeLanguage(newValue);
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ButtonWidget(
+                style: commonTheme.buttonDangerStyle,
+                text: tt('settings.screen.reset'),
+                onTap: () {
+                  _clearData(context);
+                },
+              ),
+              CommonSpaceV(),
+              Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
+              CommonSpaceVDouble(),
+              SelectionFormFieldWidget<String>(
+                key: _languageKey,
+                label: tt('settings.screen.language'),
+                selectionTitle: tt('settings.screen.language.selection'),
+                initialValue: language,
+                options: <ListDialogOption<String>>[
+                  ListDialogOption(
+                    text: 'English',
+                    value: 'en',
+                  ),
+                  ListDialogOption(
+                    text: 'Slovenčina',
+                    value: 'sk',
+                  ),
+                ],
+                onChange: (String? newValue) {
+                  if (newValue != null) {
+                    Translator.instance!.changeLanguage(newValue);
 
-              prefsSetString(PREFS_LANGUAGE, Translator.instance!.currentLanguage);
+                    prefsSetString(PREFS_LANGUAGE, Translator.instance!.currentLanguage);
 
-              Translator.instance!.initTranslations(context).then((value) {
-                pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
-              });
-            } else {
-              Future.delayed(kThemeAnimationDuration).then((value) {
-                _languageKey.currentState!.setValue(language);
-              });
-            }
-          },
-        ),
-        CommonSpaceV(),
-        Text(
-          tt('settings.screen.language.description'),
-          style: fancyText(kText),
-        ),
-        CommonSpaceVDouble(),
-        PreferencesSwitchWidget(
-          label: tt('settings.screen.font'),
-          prefsKey: PREFS_FANCY_FONT,
-          descriptionOn: tt('settings.screen.font.on'),
-          descriptionOff: tt('settings.screen.font.off'),
-          onChange: (bool value) {
-            Future.delayed(kThemeAnimationDuration).then((value) {
-              AppState.instance.invalidate();
+                    Translator.instance!.initTranslations(context).then((value) {
+                      pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+                    });
+                  } else {
+                    Future.delayed(kThemeAnimationDuration).then((value) {
+                      _languageKey.currentState!.setValue(language);
+                    });
+                  }
+                },
+              ),
+              CommonSpaceV(),
+              Text(
+                tt('settings.screen.language.description'),
+                style: fancyText(kText),
+              ),
+              CommonSpaceVDouble(),
+              PreferencesSwitchWidget(
+                label: tt('settings.screen.font'),
+                prefsKey: PREFS_FANCY_FONT,
+                descriptionOn: tt('settings.screen.font.on'),
+                descriptionOff: tt('settings.screen.font.off'),
+                onChange: (bool value) {
+                  Future.delayed(kThemeAnimationDuration).then((value) {
+                    AppState.instance.invalidate();
 
-              pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
-            });
-          },
+                    pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+                  });
+                },
+              ),
+              CommonSpaceVDouble(),
+            ],
+          ),
         ),
-        CommonSpaceVDouble(),
       ],
     );
   }
@@ -283,8 +292,17 @@ class _ProgrammingLanguagesWidget extends StatelessWidget {
           text: tt('settings.screen.category.programming_languages'),
           doubleMargin: true,
         ),
-        ManageProgrammingLanguagesDataWidget(),
-        CommonSpaceVDouble(),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.max,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              ManageProgrammingLanguagesDataWidget(),
+              CommonSpaceVDouble(),
+            ],
+          ),
+        ),
       ],
     );
   }

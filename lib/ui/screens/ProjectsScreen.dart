@@ -92,6 +92,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
     return Container(
       width: double.infinity,
+      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
       child: Column(
         mainAxisSize: MainAxisSize.max,
         crossAxisAlignment: CrossAxisAlignment.start,
@@ -262,12 +263,8 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                      child: Scrollbar(
-                        child: SingleChildScrollView(
-                          child: ProjectDetailDataWidget(
-                            projectId: theProject.id!,
-                          ),
-                        ),
+                      child: ProjectDetailDataWidget(
+                        projectId: theProject.id!,
                       ),
                     ),
                   )

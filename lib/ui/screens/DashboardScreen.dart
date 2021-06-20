@@ -48,6 +48,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
       child: SingleChildScrollView(
         child: Container(
           width: double.infinity,
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -89,10 +90,27 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CommonSpaceV(),
-              Container(
-                width: kLeftPanelWidth,
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: DashboardProjectsDataWidget(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: kPhoneStopBreakpoint,
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: DashboardProjectsDataWidget(),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                    ),
+                  ),
+                ],
               ),
             ],
           ),

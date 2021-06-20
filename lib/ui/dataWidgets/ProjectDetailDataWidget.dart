@@ -1,3 +1,4 @@
+import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
@@ -40,6 +41,20 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
   Map<String, Map<String, String>> _translationPairsByLanguage = Map();
   String _selectedLanguage = '';
   Map<String, String> _selectedLanguagePairs = Map();
+  final _searchController = TextEditingController();
+  Timer? _searchTimer;
+  String _searchQuery = '';
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _searchController.dispose();
+
+    _searchTimer?.cancel();
+    _searchTimer = null;
+
+    super.dispose();
+  }
 
   /// Widget parameters changed
   @override
@@ -49,6 +64,14 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
     if (oldWidget.projectId != widget.projectId) {
       _resetForProject();
     }
+  }
+
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    _searchController.addListener(_searchTranslations);
   }
 
   /// Create screen content from widgets
@@ -74,14 +97,20 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
         Widget content;
 
         if (_projectDirNotFound) {
-          content = Text(
-            tt('project_detail.directory_not_found').replaceAll(r'$directory', theProject.directory),
-            style: fancyText(kTextDanger),
+          content = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Text(
+              tt('project_detail.directory_not_found').replaceAll(r'$directory', theProject.directory),
+              style: fancyText(kTextDanger),
+            ),
           );
         } else if (_translationAssetsDirNotFound) {
-          content = Text(
-            tt('project_detail.translation_assets_directory_not_found').replaceAll(r'$directory', '${theProject.directory}${theProject.translationAssets}'),
-            style: fancyText(kTextDanger),
+          content = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Text(
+              tt('project_detail.translation_assets_directory_not_found').replaceAll(r'$directory', '${theProject.directory}${theProject.translationAssets}'),
+              style: fancyText(kTextDanger),
+            ),
           );
         } else {
           bool rowIsOdd = false;
@@ -91,62 +120,102 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               if (_translationPairsByLanguage.isNotEmpty) ...[
-                Wrap(
-                  spacing: kCommonHorizontalMarginHalf,
-                  runSpacing: kCommonVerticalMarginHalf,
-                  children: _translationPairsByLanguage.keys
-                      .map((language) => _LanguageChipWidget(
-                            language: language,
-                            selected: _selectedLanguage == language,
-                            selectLanguage: _selectLanguage,
-                          ))
-                      .toList(),
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                  child: Wrap(
+                    spacing: kCommonHorizontalMarginHalf,
+                    runSpacing: kCommonVerticalMarginHalf,
+                    children: _translationPairsByLanguage.keys
+                        .map((language) => _LanguageChipWidget(
+                              language: language,
+                              selected: _selectedLanguage == language,
+                              selectLanguage: _selectLanguage,
+                            ))
+                        .toList(),
+                  ),
                 ),
                 CommonSpaceV(),
               ],
               if (_selectedLanguagePairs.isNotEmpty) ...[
-                Text(
-                  tt('project_detail.translations.label'),
-                  style: fancyText(kTextBold),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    CommonSpaceH(),
+                    Expanded(
+                      child: TextFormFieldWidget(
+                        style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                          fullWidthMobileOnly: false,
+                        ),
+                        controller: _searchController,
+                        label: tt('project_detail.field.search'),
+                      ),
+                    ),
+                    CommonSpaceH(),
+                  ],
                 ),
                 CommonSpaceV(),
-                Table(
-                  defaultColumnWidth: IntrinsicColumnWidth(),
-                  children: _selectedLanguagePairs.keys.map((key) {
-                    rowIsOdd = !rowIsOdd;
+                Text(
+                  tt('project_detail.translations.label'),
+                  style: fancyText(kTextHeadline),
+                ),
+                CommonSpaceV(),
+                Expanded(
+                  child: Scrollbar(
+                    child: SingleChildScrollView(
+                      child: Container(
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: Column(
+                          mainAxisSize: MainAxisSize.max,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Container(
+                              width: 1,
+                              height: 1,
+                              key: _topKey,
+                            ),
+                            Table(
+                              defaultColumnWidth: IntrinsicColumnWidth(),
+                              children: _selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
+                                rowIsOdd = !rowIsOdd;
 
-                    return TableRow(
-                      decoration: BoxDecoration(
-                        color: rowIsOdd ? kColorPrimary : null,
-                        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+                                return TableRow(
+                                  decoration: BoxDecoration(
+                                    color: rowIsOdd ? kColorPrimary : null,
+                                    borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+                                  ),
+                                  children: [
+                                    TableCell(
+                                      child: Container(
+                                        constraints: BoxConstraints(minHeight: kButtonHeight),
+                                        alignment: Alignment.topLeft,
+                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        child: Text(
+                                          key,
+                                          style: fancyText(kText),
+                                        ),
+                                      ),
+                                    ),
+                                    CommonSpaceH(),
+                                    TableCell(
+                                      child: Container(
+                                        constraints: BoxConstraints(minHeight: kButtonHeight),
+                                        alignment: Alignment.topLeft,
+                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        child: Text(
+                                          _selectedLanguagePairs[key]!,
+                                          style: fancyText(kText),
+                                        ),
+                                      ),
+                                    ),
+                                  ],
+                                );
+                              }).toList(),
+                            ),
+                          ],
+                        ),
                       ),
-                      children: [
-                        TableCell(
-                          child: Container(
-                            constraints: BoxConstraints(minHeight: kButtonHeight),
-                            alignment: Alignment.topLeft,
-                            padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                            child: Text(
-                              key,
-                              style: fancyText(kText),
-                            ),
-                          ),
-                        ),
-                        CommonSpaceH(),
-                        TableCell(
-                          child: Container(
-                            constraints: BoxConstraints(minHeight: kButtonHeight),
-                            alignment: Alignment.topLeft,
-                            padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                            child: Text(
-                              _selectedLanguagePairs[key]!,
-                              style: fancyText(kText),
-                            ),
-                          ),
-                        ),
-                      ],
-                    );
-                  }).toList(),
+                    ),
+                  ),
                 ),
               ],
             ],
@@ -157,17 +226,14 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
           mainAxisSize: MainAxisSize.max,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Container(
-              width: 1,
-              height: 1,
-              key: _topKey,
-            ),
             Text(
               theProject.name,
               style: fancyText(kTextHeadline),
             ),
             CommonSpaceV(),
-            content,
+            Expanded(
+              child: content,
+            ),
           ],
         );
       },
@@ -250,6 +316,17 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
           _topKey.currentContext!,
           alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
         );
+      });
+    });
+  }
+
+  /// Filter visible translations by query
+  void _searchTranslations() {
+    _searchTimer?.cancel();
+
+    _searchTimer = Timer(Duration(milliseconds: 300), () {
+      setStateNotDisposed(() {
+        _searchQuery = _searchController.text.toLowerCase();
       });
     });
   }
