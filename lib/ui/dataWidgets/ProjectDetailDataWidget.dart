@@ -54,6 +54,8 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return ValueListenableBuilder(
       valueListenable: dataSource!.results,
       builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
@@ -82,6 +84,8 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
             style: fancyText(kTextDanger),
           );
         } else {
+          bool rowIsOdd = false;
+
           content = Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -106,37 +110,44 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
                   style: fancyText(kTextBold),
                 ),
                 CommonSpaceV(),
-                ..._selectedLanguagePairs.keys
-                    .map((key) => Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.start,
-                              crossAxisAlignment: CrossAxisAlignment.start,
-                              children: [
-                                Expanded(
-                                  flex: 3,
-                                  child: Text(
-                                    key,
-                                    style: fancyText(kText),
-                                  ),
-                                ),
-                                CommonSpaceHHalf(),
-                                Expanded(
-                                  flex: 7,
-                                  child: Text(
-                                    _selectedLanguagePairs[key]!,
-                                    style: fancyText(kText),
-                                  ),
-                                ),
-                              ],
+                Table(
+                  defaultColumnWidth: IntrinsicColumnWidth(),
+                  children: _selectedLanguagePairs.keys.map((key) {
+                    rowIsOdd = !rowIsOdd;
+
+                    return TableRow(
+                      decoration: BoxDecoration(
+                        color: rowIsOdd ? kColorPrimary : null,
+                        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+                      ),
+                      children: [
+                        TableCell(
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: kButtonHeight),
+                            alignment: Alignment.topLeft,
+                            padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                            child: Text(
+                              key,
+                              style: fancyText(kText),
                             ),
-                            CommonSpaceV(),
-                          ],
-                        ))
-                    .toList(),
+                          ),
+                        ),
+                        CommonSpaceH(),
+                        TableCell(
+                          child: Container(
+                            constraints: BoxConstraints(minHeight: kButtonHeight),
+                            alignment: Alignment.topLeft,
+                            padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                            child: Text(
+                              _selectedLanguagePairs[key]!,
+                              style: fancyText(kText),
+                            ),
+                          ),
+                        ),
+                      ],
+                    );
+                  }).toList(),
+                ),
               ],
             ],
           );
