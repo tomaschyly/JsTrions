@@ -31,6 +31,8 @@
   "programming_languages.manage.name": "Nový Jazyk",
   "project_detail.directory_not_found": "Priečinok \"$directory\" neexistuje, nemôžem inicializovať tento Projekt",
   "project_detail.field.search": "Vyhľadaj Preklady",
+  "project_detail.macos_request_access": "Potvrď Prístup",
+  "project_detail.macos_request_access.description": "Z dôvodu MacOS App Sandbox, z bezpečnostných dôvodov, musíš potvrdiť prístup k súborom Projektu pri každóm spustení Appky",
   "project_detail.screen.title": "Projekt",
   "project_detail.translation_assets_directory_not_found": "Priečinok \"$directory\" kde majú byť assety prekladov neexistuje, nemôžem inicializovať tento Projekt",
   "project_detail.translations.label": "Preklady",

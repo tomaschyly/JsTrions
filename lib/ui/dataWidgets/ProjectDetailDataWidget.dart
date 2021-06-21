@@ -2,6 +2,8 @@ import 'dart:async';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
@@ -37,6 +39,7 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
   final _topKey = GlobalKey();
   int? _projectId;
   bool _projectDirNotFound = false;
+  bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
   Map<String, Map<String, String>> _translationPairsByLanguage = Map();
   String _selectedLanguage = '';
@@ -102,6 +105,29 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
             child: Text(
               tt('project_detail.directory_not_found').replaceAll(r'$directory', theProject.directory),
               style: fancyText(kTextDanger),
+            ),
+          );
+        } else if (_projectDirMacOSRequestAccess) {
+          content = Container(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tt('project_detail.macos_request_access.description'),
+                  style: fancyText(kTextDanger),
+                ),
+                CommonSpaceV(),
+                ButtonWidget(
+                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                    variant: ButtonVariant.Filled,
+                    widthWrapContent: true,
+                  ),
+                  text: tt('project_detail.macos_request_access'),
+                  onTap: () => _confirmFilesAccess(theProject),
+                ),
+              ],
             ),
           );
         } else if (_translationAssetsDirNotFound) {
@@ -175,7 +201,7 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
                             ),
                             Table(
                               // defaultColumnWidth: IntrinsicColumnWidth(),
-                              columnWidths: {
+                              columnWidths: <int, TableColumnWidth>{
                                 0: IntrinsicColumnWidth(),
                                 1: FixedColumnWidth(kCommonHorizontalMargin),
                                 2: FlexColumnWidth(),
@@ -273,16 +299,29 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
       final directory = Directory(project.directory);
 
       bool exists = await directory.exists();
-      //TODO can be error on MacOS because of the app sandbox
+      bool macOsFileAccess = true;
+
+      if (!kIsWeb && Platform.isMacOS) {
+        try {
+          await for (var _ in directory.list()) {}
+
+          macOsFileAccess = true;
+        } catch (e, t) {
+          debugPrint('TCH_e $e\n$t');
+
+          macOsFileAccess = false;
+        }
+      }
 
       setStateNotDisposed(() {
         _projectDirNotFound = !exists;
+        _projectDirMacOSRequestAccess = !macOsFileAccess;
         _translationAssetsDirNotFound = false;
         _translationPairsByLanguage = Map();
         _selectedLanguage = '';
       });
 
-      if (exists) {
+      if (exists && macOsFileAccess) {
         final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
 
         exists = await translationsAssetsDirectory.exists();
@@ -317,6 +356,24 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
       }
 
       updateLastSeenOfProject(project);
+    }
+  }
+
+  /// Confirm access to Project files by picking the directory
+  Future<void> _confirmFilesAccess(Project project) async {
+    try {
+      final directoryPath = await getDirectoryPath(
+        initialDirectory: project.directory,
+        confirmButtonText: tt('project_detail.macos_request_access'),
+      );
+
+      if (directoryPath == project.directory) {
+        setStateNotDisposed(() {
+          _projectId = null;
+        });
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
     }
   }
 
