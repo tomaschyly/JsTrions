@@ -1,5 +1,8 @@
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -20,26 +23,64 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
     title: tt('project_detail.screen.title'),
   );
 
-  @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Project? _project;
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget();
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget();
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget();
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
+
+  @override
+  Widget tabletScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
+
+  /// On Project is initialized in DataWidget
+  void _onDataWidgetProjectInit(Project? project) {
+    _project = project;
+
+    setStateNotDisposed(() {
+      options.appBarOptions = <AppBarOption>[
+        if (project != null)
+          AppBarOption(
+            onTap: (BuildContext context) {
+              EditProjectDialog.show(context, project: _project);
+            },
+            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+          ),
+      ];
+    });
+  }
 }
 
-abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
+abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
+  final ValueChanged<Project?> onDataWidgetProjectInit;
+
+  /// AbstractBodyWidget initialization
+  _AbstractBodyWidget({
+    required this.onDataWidgetProjectInit,
+  });
+}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
   /// Create view layout from widgets
@@ -60,6 +101,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
           Expanded(
             child: ProjectDetailDataWidget(
               projectId: projectId,
+              onProjectChanged: widget.onDataWidgetProjectInit,
             ),
           ),
         ],
@@ -69,6 +111,13 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 }
 
 class _BodyWidget extends _AbstractBodyWidget {
+  /// BodyWidget initialization
+  _BodyWidget({
+    required ValueChanged<Project?> onDataWidgetProjectInit,
+  }) : super(
+          onDataWidgetProjectInit: onDataWidgetProjectInit,
+        );
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -77,6 +126,13 @@ class _BodyWidget extends _AbstractBodyWidget {
 class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
 
 class _BodyDesktopWidget extends _AbstractBodyWidget {
+  /// BodyDesktopWidget initialization
+  _BodyDesktopWidget({
+    required ValueChanged<Project?> onDataWidgetProjectInit,
+  }) : super(
+          onDataWidgetProjectInit: onDataWidgetProjectInit,
+        );
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyDesktopWidgetState();

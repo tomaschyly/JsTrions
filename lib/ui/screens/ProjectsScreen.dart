@@ -37,26 +37,70 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
       ),
     ];
 
-  @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Project? _project;
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget();
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget();
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget();
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
+
+  @override
+  Widget tabletScreen(BuildContext context) => _BodyWidget(
+        onDataWidgetProjectInit: _onDataWidgetProjectInit,
+      );
+
+  /// On Project is initialized in DataWidget
+  void _onDataWidgetProjectInit(Project? project) {
+    _project = project;
+
+    setStateNotDisposed(() {
+      options.appBarOptions = <AppBarOption>[
+        AppBarOption(
+          onTap: (BuildContext context) {
+            EditProjectDialog.show(context);
+          },
+          icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
+        ),
+        if (project != null)
+          AppBarOption(
+            onTap: (BuildContext context) {
+              EditProjectDialog.show(context, project: _project);
+            },
+            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+          ),
+      ];
+    });
+  }
 }
 
-abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
+abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
+  final ValueChanged<Project?> onDataWidgetProjectInit;
+
+  /// AbstractBodyWidget initialization
+  _AbstractBodyWidget({
+    required this.onDataWidgetProjectInit,
+  });
+}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
   final _searchController = TextEditingController();
@@ -186,6 +230,13 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 }
 
 class _BodyWidget extends _AbstractBodyWidget {
+  /// BodyWidget initialization
+  _BodyWidget({
+    required ValueChanged<Project?> onDataWidgetProjectInit,
+  }) : super(
+          onDataWidgetProjectInit: onDataWidgetProjectInit,
+        );
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -194,6 +245,13 @@ class _BodyWidget extends _AbstractBodyWidget {
 class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
 
 class _BodyDesktopWidget extends _AbstractBodyWidget {
+  /// BodyDesktopWidget initialization
+  _BodyDesktopWidget({
+    required ValueChanged<Project?> onDataWidgetProjectInit,
+  }) : super(
+          onDataWidgetProjectInit: onDataWidgetProjectInit,
+        );
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyDesktopWidgetState();
@@ -265,6 +323,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                       child: ProjectDetailDataWidget(
                         projectId: theProject.id!,
+                        onProjectChanged: widget.onDataWidgetProjectInit,
                       ),
                     ),
                   )

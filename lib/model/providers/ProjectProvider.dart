@@ -1,4 +1,3 @@
-import 'package:flutter/services.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';

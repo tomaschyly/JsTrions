@@ -19,11 +19,15 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class ProjectDetailDataWidget extends AbstractDataWidget {
   final int projectId;
+  final ValueChanged<Project?>? onProjectChanged;
 
   /// ProjectDetailDataWidget initialization
   ProjectDetailDataWidget({
+    Key? key,
     required this.projectId,
+    this.onProjectChanged,
   }) : super(
+          key: key,
           dataRequests: [
             GetProjectDataRequest(projectId: projectId),
             GetProgrammingLanguagesDataRequest(),
@@ -32,12 +36,15 @@ class ProjectDetailDataWidget extends AbstractDataWidget {
 
   /// Create state for widget
   @override
-  State<StatefulWidget> createState() => _ProjectDetailDataWidgetState();
+  State<StatefulWidget> createState() => ProjectDetailDataWidgetState();
 }
 
-class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> {
+class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> {
+  Project? get project => _project;
+
   final _topKey = GlobalKey();
   int? _projectId;
+  Project? _project;
   bool _projectDirNotFound = false;
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
@@ -293,8 +300,13 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
 
   /// Check if Projects exists, init translations from Project based on parameters
   Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages) async {
-    if (project.id != _projectId) {
+    if ((project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
       _projectId = project.id;
+      _project = project;
+
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        widget.onProjectChanged?.call(_project);
+      });
 
       final directory = Directory(project.directory);
 
@@ -386,10 +398,14 @@ class _ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetai
       //TODO calcualte info?
 
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
-        Scrollable.ensureVisible(
-          _topKey.currentContext!,
-          alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-        );
+        final theContext = _topKey.currentContext;
+
+        if (theContext != null) {
+          Scrollable.ensureVisible(
+            theContext,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+          );
+        }
       });
     });
   }

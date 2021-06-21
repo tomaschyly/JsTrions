@@ -49,6 +49,19 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
   final _directoryFocus = FocusNode();
   final _translationAssetsFocus = FocusNode();
 
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    final theProject = widget.project;
+    if (theProject != null) {
+      _nameController.text = theProject.name;
+      _directoryController.text = theProject.directory;
+      _translationAssetsController.text = theProject.translationAssets;
+    }
+  }
+
   /// Manually dispose of resources
   @override
   void dispose() {

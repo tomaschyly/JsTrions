@@ -34,6 +34,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
         translationKeys: _translationKeys,
       );
 
+  int? _projectId;
   List<int> _selectedProgrammingLanguages = [];
   List<TranslationKey> _translationKeys = [];
   Map<int, TextEditingController> _fieldsControllers = Map();
@@ -91,6 +92,8 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
         }
 
         sortProgrammingLanguagesAlphabetycally(programmingLanguages.programmingLanguages);
+
+        _initProject(programmingLanguages.programmingLanguages);
 
         return AnimatedSize(
           duration: kThemeAnimationDuration,
@@ -155,6 +158,26 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
     );
   }
 
+  /// Initialize by existing Project
+  void _initProject(List<ProgrammingLanguage> programmingLanguages) {
+    final theProject = widget.project;
+    if (theProject != null && theProject.id != _projectId) {
+      _projectId = theProject.id;
+      print('TCH_d theProject ${theProject.toJson()}'); //TODO remove
+      for (ProgrammingLanguage programmingLanguage in programmingLanguages) {
+        if (_selectedProgrammingLanguages.contains(programmingLanguage.id)) {
+          final translationKey = _translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
+
+          final controller = TextEditingController();
+          controller.addListener(() => translationKey.key = controller.text);
+
+          _fieldsControllers[programmingLanguage.id!] = controller;
+          _fieldsControllers[programmingLanguage.id!]!.text = translationKey.key;
+        }
+      }
+    }
+  }
+
   /// Toggle selection of Programming Language
   void _toggle(ProgrammingLanguage programmingLanguage) {
     setStateNotDisposed(() {
@@ -166,13 +189,17 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
         final translationKey = _translationKeys.firstWhereOrNull((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
 
         if (translationKey == null) {
-          _translationKeys.add(TranslationKey.fromJson(<String, dynamic>{
+          final translationKey = TranslationKey.fromJson(<String, dynamic>{
             'programmingLanguage': programmingLanguage.id,
             'key': programmingLanguage.key,
-          }));
+          });
+          _translationKeys.add(translationKey);
+
+          final controller = TextEditingController();
+          controller.addListener(() => translationKey.key = controller.text);
 
           _fieldsControllers[programmingLanguage.id!]?.dispose();
-          _fieldsControllers[programmingLanguage.id!] = TextEditingController();
+          _fieldsControllers[programmingLanguage.id!] = controller;
           _fieldsControllers[programmingLanguage.id!]!.text = programmingLanguage.key;
         }
       }
