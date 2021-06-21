@@ -12,6 +12,7 @@ import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:path/path.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -249,11 +250,13 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.fill,
                                       child: Container(
-                                        color: kColorPrimaryLight,
-                                        alignment: Alignment.centerRight,
+                                        alignment: Alignment.center,
                                         child: IconButtonWidget(
+                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                            variant: IconButtonVariant.IconOnly,
+                                          ),
                                           svgAssetPath: 'images/edit.svg',
-                                          // onTap: () => _pickDirectory(context, true),
+                                          onTap: () => _processTranslationsForKey(context, theProject, key),
                                         ),
                                       ),
                                     ),
@@ -419,6 +422,44 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _searchQuery = _searchController.text.toLowerCase();
       });
     });
+  }
+
+  /// Add/Edit translations for key and save to Project assets
+  Future<void> _processTranslationsForKey(BuildContext context, Project project, [String? key]) async {
+    final List<String> languages = [];
+    final List<String> translations = [];
+
+    for (String language in project.languages) {
+      languages.add(language);
+
+      final pairs = _translationPairsByLanguage[language]!;
+
+      translations.add(pairs[key] ?? '');
+    }
+
+    final translation = await EditProjectTranslationDialog.show(
+      context,
+      project: project,
+      translation: Translation(
+        key: key,
+        languages: languages,
+        translations: translations,
+      ),
+    );
+
+    if (translation != null) {
+      for (int i = 0; i < translation.languages.length; i++) {
+        final language = translation.languages[i];
+
+        final pairs = _translationPairsByLanguage[language]!;
+
+        pairs[translation.key!] = translation.translations[i];
+      }
+
+      setStateNotDisposed(() {});
+
+      //TODO separe func for saving assets only, project found will be merged first by action
+    }
   }
 }
 
