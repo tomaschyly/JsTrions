@@ -56,6 +56,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final _searchController = TextEditingController();
   Timer? _searchTimer;
   String _searchQuery = '';
+  GlobalKey? _newTranslationKey;
+  String? _newTranslation;
 
   /// Manually dispose of resources
   @override
@@ -244,6 +246,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   children: [
                                     TableCell(
                                       child: Container(
+                                        key: key == _newTranslation ? _newTranslationKey : null,
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
@@ -430,8 +433,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _selectedLanguage = language;
       _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
 
-      //TODO calcualte info?
-
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         final theContext = _topKey.currentContext;
 
@@ -458,6 +459,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Add/Edit translations for key and save to Project assets
   Future<void> _processTranslationsForKey(BuildContext context, Project project, [String? key]) async {
+    final isNew = key == null;
     final List<String> languages = [];
     final List<String> translations = [];
 
@@ -488,7 +490,23 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         pairs[translation.key!] = translation.translations[i];
       }
 
-      setStateNotDisposed(() {});
+      setStateNotDisposed(() {
+        if (isNew) {
+          _newTranslationKey = GlobalKey();
+          _newTranslation = translation.key;
+
+          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            final theContext = _newTranslationKey?.currentContext;
+
+            if (theContext != null) {
+              Scrollable.ensureVisible(
+                theContext,
+                duration: kThemeAnimationDuration,
+              );
+            }
+          });
+        }
+      });
 
       //TODO separe func for saving assets only, project found will be merged first by action
     }
