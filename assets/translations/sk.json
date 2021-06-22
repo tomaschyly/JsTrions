@@ -24,6 +24,7 @@
   "edit_project.field.translation_assets": "Priečinok Prekladov",
   "edit_project.field.translation_assets.error": "Priečinok prekladov neexistuje",
   "edit_project.submit": "Uložiť",
+  "project_detail.add_translation": "Pridať Preklad",
   "edit_project_translation.field.key": "Kľúč",
   "edit_project_translation.title": "Preklady pre Kľúč",
   "edit_project_translation.submit": "Uložiť",

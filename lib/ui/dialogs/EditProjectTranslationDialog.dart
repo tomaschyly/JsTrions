@@ -154,23 +154,25 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
   /// Process translations and send back
   void _process(BuildContext context) {
-    final List<String> languages = [];
-    final List<String> translations = [];
+    if (_formKey.currentState!.validate()) {
+      final List<String> languages = [];
+      final List<String> translations = [];
 
-    for (int i = 0; i < widget.translation.languages.length; i++) {
-      languages.add(widget.translation.languages[i]);
-      translations.add(_fieldsControllers[i]!.text);
+      for (int i = 0; i < widget.translation.languages.length; i++) {
+        languages.add(widget.translation.languages[i]);
+        translations.add(_fieldsControllers[i]!.text);
+      }
+
+      popNotDisposed(
+        context,
+        mounted,
+        Translation(
+          key: _keyController.text,
+          languages: languages,
+          translations: translations,
+        ),
+      );
     }
-
-    popNotDisposed(
-      context,
-      mounted,
-      Translation(
-        key: _keyController.text,
-        languages: languages,
-        translations: translations,
-      ),
-    );
   }
 }
 

@@ -24,6 +24,7 @@
   "edit_project.field.translation_assets": "Translations Directory",
   "edit_project.field.translation_assets.error": "Translations assets directoy does not exist",
   "edit_project.submit": "Save",
+  "project_detail.add_translation": "Add Translation",
   "edit_project_translation.field.key": "Key",
   "edit_project_translation.title": "Translations for Key",
   "edit_project_translation.submit": "Save",

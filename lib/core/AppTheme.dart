@@ -59,6 +59,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
+    preffixIconWidth: kIconSizeNotTouch,
+    preffixIconHeight: kIconSizeNotTouch,
   );
 
   final kButtonDangerStyle = kButtonStyle.copyWith(

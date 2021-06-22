@@ -1,4 +1,5 @@
 import 'dart:async';
+import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
@@ -49,9 +50,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirNotFound = false;
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
-  Map<String, Map<String, String>> _translationPairsByLanguage = Map();
+  Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
   String _selectedLanguage = '';
-  Map<String, String> _selectedLanguagePairs = Map();
+  SplayTreeMap<String, String> _selectedLanguagePairs = SplayTreeMap();
   final _searchController = TextEditingController();
   Timer? _searchTimer;
   String _searchQuery = '';
@@ -191,6 +192,22 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                 Text(
                   tt('project_detail.translations.label'),
                   style: fancyText(kTextHeadline),
+                ),
+                CommonSpaceV(),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  mainAxisAlignment: MainAxisAlignment.end,
+                  children: [
+                    ButtonWidget(
+                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                        widthWrapContent: true,
+                      ),
+                      text: tt('project_detail.add_translation'),
+                      prefixIconSvgAssetPath: 'images/plus.svg',
+                      onTap: () => _processTranslationsForKey(context, theProject),
+                    ),
+                    CommonSpaceH(),
+                  ],
                 ),
                 CommonSpaceV(),
                 Expanded(
@@ -346,7 +363,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         });
 
         if (exists) {
-          final Map<String, Map<String, String>> translationPairsByLanguage = Map();
+          final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
 
           for (String language in project.languages) {
             final file = File(join(translationsAssetsDirectory.path, '$language.json'));
@@ -357,7 +374,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
             final json = jsonDecode(await file.readAsString());
 
-            translationPairsByLanguage[language] = Map<String, String>.from(json);
+            translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
           }
 
           setStateNotDisposed(() {
@@ -396,7 +413,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   void _selectLanguage(String language) {
     setStateNotDisposed(() {
       _selectedLanguage = language;
-      _selectedLanguagePairs = _translationPairsByLanguage[language] ?? Map();
+      _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
 
       //TODO calcualte info?
 
@@ -457,6 +474,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       }
 
       setStateNotDisposed(() {});
+
+
 
       //TODO separe func for saving assets only, project found will be merged first by action
     }
