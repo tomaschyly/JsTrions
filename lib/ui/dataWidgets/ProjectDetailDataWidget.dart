@@ -551,7 +551,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         }
       });
 
-      //TODO separe func for saving assets only, project found will be merged first by action
+      await _saveTranslationsToAssets(context, project);
     }
   }
 
@@ -574,7 +574,22 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       setStateNotDisposed(() {});
 
-      //TODO separe func for saving assets only, project found will be merged first by action
+      await _saveTranslationsToAssets(context, project);
+    }
+  }
+
+  /// Save translations for all languages to Project translations assets directory
+  Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
+    final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+    
+    final encoder = JsonEncoder.withIndent('  ');
+    
+    for (String language in project.languages) {
+      final file = File(join(translationsAssetsDirectory.path, '$language.json'));
+      
+      final pairs = _translationPairsByLanguage[language]!;
+
+      await file.writeAsString(encoder.convert(pairs));
     }
   }
 }
