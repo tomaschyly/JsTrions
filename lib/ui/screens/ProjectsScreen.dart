@@ -13,6 +13,7 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/List.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class ProjectsScreen extends AbstractResposiveScreen {
@@ -82,12 +83,18 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
           icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
         ),
         if (project != null)
-          AppBarOption(
-            onTap: (BuildContext context) {
-              EditProjectDialog.show(context, project: _project);
-            },
-            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
-          ),
+          ...[
+            AppBarOption(
+              onTap: (BuildContext context) {
+                EditProjectDialog.show(context, project: _project);
+              },
+              icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+            ),
+            AppBarOption(
+              onTap: (BuildContext context) => deleteProject(context, project: project),
+              icon: SvgPicture.asset('images/trash.svg', color: kColorRed),
+            ),
+          ],
       ];
     });
   }
@@ -208,7 +215,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   }
 
   /// Select Project, on desktop screens show details, on smaller screens navs to details screen
-  void _selectProject(Project project) {
+  void _selectProject(Project? project) {
     final snapshot = AppDataState.of(context)!;
 
     if ([
@@ -219,7 +226,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
       setStateNotDisposed(() {
         _selectedProject = project;
       });
-    } else {
+    } else if (project != null) {
       _selectedProject = project;
 
       pushNamed(context, ProjectDetailScreen.ROUTE, arguments: <String, String>{
@@ -343,7 +350,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
 
 class _ProjectsListWidget extends AbstractStatefulWidget {
   final String searchQuery;
-  final void Function(Project project) selectProject;
+  final void Function(Project? project) selectProject;
   final Project? selectedProject;
 
   /// ProjectsListWidget initialization
@@ -382,9 +389,25 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       key: _listKey,
       dataRequest: _dataRequest(),
       processResult: (GetProjectsDataRequest dataRequest) {
-        sortProjectsAlphabetycally(dataRequest.result?.projects);
+        final theProjects = dataRequest.result?.projects;
 
-        return dataRequest.result?.projects;
+        sortProjectsAlphabetycally(theProjects);
+
+        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          if (widget.selectedProject != null) {
+            if (theProjects == null) {
+              widget.selectProject(null);
+            } else {
+              final selectedProject = theProjects.firstWhereOrNull((project) => project.id == widget.selectedProject?.id);
+
+              if (selectedProject == null) {
+                widget.selectProject(null);
+              }
+            }
+          }
+        });
+
+        return theProjects;
       },
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(

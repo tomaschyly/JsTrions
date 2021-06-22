@@ -1,10 +1,12 @@
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
+import 'package:js_trions/model/dataTasks/DeleteProjectDataTask.dart';
 import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 /// Save Project, works for both existing and new, and update data
 Future<void> saveProject(
@@ -45,6 +47,42 @@ Future<void> saveProject(
     );
 
     if (popOnSuccess && dataTask.result != null) {
+      Navigator.of(context).pop(dataTask.result?.id);
+    }
+  }
+}
+
+/// If confirmed delete Project from DB
+Future<void> deleteProject(
+  BuildContext context, {
+  required Project project,
+  bool popOnSuccess = true,
+}) async {
+  final snapshot = AppDataState.of(context)!;
+
+  final confirmed = await ConfirmDialog.show(
+    context,
+    isDanger: true,
+    title: tt('dialog.confirm.title'),
+    text: tt('delete_project.text'),
+    noText: tt('dialog.no'),
+    yesText: tt('dialog.yes'),
+  );
+
+  if (confirmed == true) {
+    final dataTask = await MainDataProvider.instance!.executeDataTask<DeleteProjectDataTask>(
+      DeleteProjectDataTask(
+        data: project,
+      ),
+    );
+
+    if (popOnSuccess &&
+        dataTask.result != null &&
+        ![
+          ResponsiveScreen.SmallDesktop,
+          ResponsiveScreen.LargeDesktop,
+          ResponsiveScreen.ExtraLargeDesktop,
+        ].contains(snapshot.responsiveScreen)) {
       Navigator.of(context).pop(dataTask.result?.id);
     }
   }

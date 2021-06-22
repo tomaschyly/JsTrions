@@ -230,7 +230,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 0: IntrinsicColumnWidth(),
                                 1: FixedColumnWidth(kCommonHorizontalMargin),
                                 2: FlexColumnWidth(),
-                                3: FixedColumnWidth(kCommonHorizontalMargin + kButtonHeight),
+                                3: FixedColumnWidth(kButtonHeight),
+                                4: FixedColumnWidth(kCommonHorizontalMargin + kButtonHeight),
                               },
                               children: _selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
                                 rowIsOdd = !rowIsOdd;
@@ -274,6 +275,20 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           ),
                                           svgAssetPath: 'images/edit.svg',
                                           onTap: () => _processTranslationsForKey(context, theProject, key),
+                                        ),
+                                      ),
+                                    ),
+                                    TableCell(
+                                      verticalAlignment: TableCellVerticalAlignment.fill,
+                                      child: Container(
+                                        alignment: Alignment.center,
+                                        child: IconButtonWidget(
+                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                            variant: IconButtonVariant.IconOnly,
+                                            iconColor: kColorRed,
+                                          ),
+                                          svgAssetPath: 'images/trash.svg',
+                                          onTap: () => _deleteTranslationsForKey(context, theProject, key),
                                         ),
                                       ),
                                     ),
@@ -475,7 +490,28 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       setStateNotDisposed(() {});
 
+      //TODO separe func for saving assets only, project found will be merged first by action
+    }
+  }
 
+  /// If users confirms, delete translations for key and save to Project assets
+  Future<void> _deleteTranslationsForKey(BuildContext context, Project project, String key) async {
+    final confirmed = await ConfirmDialog.show(
+      context,
+      isDanger: true,
+      title: tt('dialog.confirm.title'),
+      noText: tt('dialog.no'),
+      yesText: tt('dialog.yes'),
+    );
+
+    if (confirmed == true) {
+      for (String language in project.languages) {
+        final pairs = _translationPairsByLanguage[language]!;
+
+        pairs.remove(key);
+      }
+
+      setStateNotDisposed(() {});
 
       //TODO separe func for saving assets only, project found will be merged first by action
     }

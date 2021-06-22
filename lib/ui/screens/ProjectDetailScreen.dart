@@ -1,6 +1,7 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
@@ -61,13 +62,18 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
 
     setStateNotDisposed(() {
       options.appBarOptions = <AppBarOption>[
-        if (project != null)
+        if (project != null) ...[
           AppBarOption(
             onTap: (BuildContext context) {
               EditProjectDialog.show(context, project: _project);
             },
             icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
           ),
+          AppBarOption(
+            onTap: (BuildContext context) => deleteProject(context, project: project),
+            icon: SvgPicture.asset('images/trash.svg', color: kColorRed),
+          ),
+        ]
       ];
     });
   }

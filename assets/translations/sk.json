@@ -5,6 +5,7 @@
   "dashboard.screen.recent_projects.empty": "Neexistujú žiadne nedávno otvorené projekty",
   "dashboard.screen.title": "Prehľad",
   "delete_programming_language.text": "Ber na vedomie, že Projekty ktoré používajú tento Programovací Jazyk ho už nebudú môcť použiť\nNapr. $projectName",
+  "delete_project.text": "Preklady v Projektovom priečinku nebudú vymazané, iba Projekt v JsTrions bude vymazaný",
   "dialog.confirm.title": "Potvrdiť Akciu",
   "dialog.cancel": "Zrušiť",
   "dialog.no": "Nie",
