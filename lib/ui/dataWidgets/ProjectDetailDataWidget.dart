@@ -172,8 +172,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                   ),
                 ),
                 CommonSpaceV(),
-              ],
-              if (_selectedLanguagePairs.isNotEmpty) ...[
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -235,24 +233,21 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 3: FixedColumnWidth(kButtonHeight),
                                 4: FixedColumnWidth(kCommonHorizontalMargin + kButtonHeight),
                               },
-                              children: _selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
-                                rowIsOdd = !rowIsOdd;
-
-                                return TableRow(
+                              children: [
+                                TableRow(
                                   decoration: BoxDecoration(
-                                    color: rowIsOdd ? kColorPrimary : null,
+                                    color: kColorSecondaryDark,
                                     borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
                                   ),
                                   children: [
                                     TableCell(
                                       child: Container(
-                                        key: key == _newTranslation ? _newTranslationKey : null,
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
                                         child: Text(
-                                          key,
-                                          style: fancyText(kText),
+                                          tt('project_detail.table.key'),
+                                          style: fancyText(kTextBold),
                                         ),
                                       ),
                                     ),
@@ -263,41 +258,85 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         alignment: Alignment.topLeft,
                                         padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
                                         child: Text(
-                                          _selectedLanguagePairs[key]!,
-                                          style: fancyText(kText),
+                                          tt('project_detail.table.translation'),
+                                          style: fancyText(kTextBold),
                                         ),
                                       ),
                                     ),
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.fill,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: IconButtonWidget(
-                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                            variant: IconButtonVariant.IconOnly,
-                                          ),
-                                          svgAssetPath: 'images/edit.svg',
-                                          onTap: () => _processTranslationsForKey(context, theProject, key),
-                                        ),
-                                      ),
+                                      child: Container(),
                                     ),
                                     TableCell(
                                       verticalAlignment: TableCellVerticalAlignment.fill,
-                                      child: Container(
-                                        alignment: Alignment.center,
-                                        child: IconButtonWidget(
-                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                            variant: IconButtonVariant.IconOnly,
-                                            iconColor: kColorRed,
-                                          ),
-                                          svgAssetPath: 'images/trash.svg',
-                                          onTap: () => _deleteTranslationsForKey(context, theProject, key),
-                                        ),
-                                      ),
+                                      child: Container(),
                                     ),
                                   ],
-                                );
-                              }).toList(),
+                                ),
+                                ..._selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
+                                  rowIsOdd = !rowIsOdd;
+
+                                  return TableRow(
+                                    decoration: BoxDecoration(
+                                      color: rowIsOdd ? kColorPrimary : null,
+                                      borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+                                    ),
+                                    children: [
+                                      TableCell(
+                                        child: Container(
+                                          key: key == _newTranslation ? _newTranslationKey : null,
+                                          constraints: BoxConstraints(minHeight: kButtonHeight),
+                                          alignment: Alignment.topLeft,
+                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                          child: Text(
+                                            key,
+                                            style: fancyText(kText),
+                                          ),
+                                        ),
+                                      ),
+                                      CommonSpaceH(),
+                                      TableCell(
+                                        child: Container(
+                                          constraints: BoxConstraints(minHeight: kButtonHeight),
+                                          alignment: Alignment.topLeft,
+                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                          child: Text(
+                                            _selectedLanguagePairs[key]!,
+                                            style: fancyText(kText),
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        verticalAlignment: TableCellVerticalAlignment.fill,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          child: IconButtonWidget(
+                                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                              variant: IconButtonVariant.IconOnly,
+                                            ),
+                                            svgAssetPath: 'images/edit.svg',
+                                            onTap: () => _processTranslationsForKey(context, theProject, key),
+                                          ),
+                                        ),
+                                      ),
+                                      TableCell(
+                                        verticalAlignment: TableCellVerticalAlignment.fill,
+                                        child: Container(
+                                          alignment: Alignment.center,
+                                          child: IconButtonWidget(
+                                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                              variant: IconButtonVariant.IconOnly,
+                                              iconColor: kColorRed,
+                                            ),
+                                            svgAssetPath: 'images/trash.svg',
+                                            onTap: () => _deleteTranslationsForKey(context, theProject, key),
+                                          ),
+                                        ),
+                                      ),
+                                    ],
+                                  );
+                                }).toList(),
+                              ],
                             ),
                           ],
                         ),
@@ -330,6 +369,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// New projectId provided, reset and load new Project
   void _resetForProject() {
+    setStateNotDisposed(() {
+      _selectedLanguage = '';
+      _selectedLanguagePairs = SplayTreeMap();
+    });
+
     updateDataRequests([
       GetProjectDataRequest(projectId: widget.projectId),
       GetProgrammingLanguagesDataRequest(),
@@ -368,7 +412,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _projectDirMacOSRequestAccess = !macOsFileAccess;
         _translationAssetsDirNotFound = false;
         _translationPairsByLanguage = Map();
-        _selectedLanguage = '';
       });
 
       if (exists && macOsFileAccess) {

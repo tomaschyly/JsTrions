@@ -39,6 +39,8 @@
   "project_detail.macos_request_access": "Confirm Access",
   "project_detail.macos_request_access.description": "Because of MacOS App Sandbox, for security reasons, you have to confirm access to Project files every time you start the App",
   "project_detail.screen.title": "Project",
+  "project_detail.table.key": "Key",
+  "project_detail.table.translation": "Translation",
   "project_detail.translation_assets_directory_not_found": "The directory \"$directory\" where translation assets are to be stored does not exist, cannot initialize this Project",
   "project_detail.translations.label": "Translations",
   "projects.screen.field.search": "Search Projects",

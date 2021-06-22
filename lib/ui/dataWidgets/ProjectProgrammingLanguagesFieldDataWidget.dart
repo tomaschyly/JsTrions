@@ -163,7 +163,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
     final theProject = widget.project;
     if (theProject != null && theProject.id != _projectId) {
       _projectId = theProject.id;
-      print('TCH_d theProject ${theProject.toJson()}'); //TODO remove
+
       for (ProgrammingLanguage programmingLanguage in programmingLanguages) {
         if (_selectedProgrammingLanguages.contains(programmingLanguage.id)) {
           final translationKey = _translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
