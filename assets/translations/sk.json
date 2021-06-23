@@ -39,6 +39,7 @@
   "project_detail.actions.source.title": "Zobraz Preklady z",
   "project_detail.actions.title": "Akcie",
   "project_detail.add_translation": "Pridať Preklad",
+  "project_detail.analyze_code": "Analizuj Kód",
   "project_detail.directory_not_found": "Priečinok \"$directory\" neexistuje, nemôžem inicializovať tento Projekt",
   "project_detail.field.search": "Vyhľadaj Preklady",
   "project_detail.macos_request_access": "Potvrď Prístup",

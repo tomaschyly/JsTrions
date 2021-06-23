@@ -61,6 +61,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   GlobalKey? _newTranslationKey;
   String? _newTranslation;
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.Assets;
+  bool _isAnalyzing = false;
 
   /// Manually dispose of resources
   @override
@@ -244,31 +245,41 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                   duration: kThemeAnimationDuration,
                   vsync: this,
                   alignment: Alignment.topCenter,
-                  child: _sourceOfTranslations != SourceOfTranslations.Code
-                      ? Column(
-                          mainAxisSize: MainAxisSize.min,
-                          crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            Row(
-                              mainAxisSize: MainAxisSize.max,
-                              mainAxisAlignment: MainAxisAlignment.end,
-                              children: [
-                                ButtonWidget(
-                                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                    widthWrapContent: true,
-                                  ),
-                                  text: tt('project_detail.add_translation'),
-                                  prefixIconSvgAssetPath: 'images/plus.svg',
-                                  onTap: () => _processTranslationsForKey(context, theProject),
-                                ),
-                                CommonSpaceH(),
-                              ],
+                  child: Column(
+                    mainAxisSize: MainAxisSize.min,
+                    crossAxisAlignment: CrossAxisAlignment.start,
+                    children: [
+                      Row(
+                        mainAxisSize: MainAxisSize.max,
+                        mainAxisAlignment: MainAxisAlignment.end,
+                        children: [
+                          if (_sourceOfTranslations != SourceOfTranslations.Code)
+                            ButtonWidget(
+                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                widthWrapContent: true,
+                              ),
+                              text: tt('project_detail.add_translation'),
+                              prefixIconSvgAssetPath: 'images/plus.svg',
+                              onTap: () => _processTranslationsForKey(context, theProject),
                             ),
-                            CommonSpaceV(),
-                          ],
-                        )
-                      : Container(height: 0),
+                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
+                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                            ButtonWidget(
+                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                widthWrapContent: true,
+                              ),
+                              text: tt('project_detail.analyze_code'),
+                              prefixIconSvgAssetPath: 'images/code.svg',
+                              onTap: () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                              isLoading: _isAnalyzing,
+                            ),
+                          CommonSpaceH(),
+                        ],
+                      ),
+                    ],
+                  ),
                 ),
+                CommonSpaceV(),
                 Expanded(
                   child: Scrollbar(
                     child: SingleChildScrollView(
@@ -335,9 +346,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 ..._selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
                                   rowIsOdd = !rowIsOdd;
 
+                                  Color? rowColor = rowIsOdd ? kColorPrimary : null;
+                                  if (_translationPairsByLanguage[_selectedLanguage]?[key] == null) {
+                                    rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
+                                  }
+
                                   return TableRow(
                                     decoration: BoxDecoration(
-                                      color: rowIsOdd ? kColorPrimary : null,
+                                      color: rowColor,
                                       borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
                                     ),
                                     children: [
@@ -431,6 +447,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     setStateNotDisposed(() {
       _selectedLanguage = '';
       _selectedLanguagePairs = SplayTreeMap();
+      _codePairsByLanguage = Map();
     });
 
     updateDataRequests([
@@ -502,6 +519,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
             WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
+
+              if (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All) {
+                _processProjectCode(project, programmingLanguages);
+              }
             });
           });
         }
@@ -676,6 +697,68 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       await file.writeAsString(encoder.convert(pairs));
     }
+  }
+
+  /// Go through whole Project code depending on Programming Languages and find keys usage, pair with existing translations
+  Future<void> _processProjectCode(Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    setStateNotDisposed(() {
+      _isAnalyzing = true;
+    });
+
+    Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map<String, SplayTreeMap<String, String>>.from(_translationPairsByLanguage);
+    Map<String, SplayTreeMap<String, String>> codePairsByLanguage = Map();
+
+    final Map<String, ProgrammingLanguage> acceptedExtensions = Map();
+
+    for (ProgrammingLanguage programmingLanguage in programmingLanguages) {
+      if (project.programmingLanguages.contains(programmingLanguage.id)) {
+        acceptedExtensions['.${programmingLanguage.extension}'] = programmingLanguage;
+      }
+    }
+
+    final List<String> foundKeys = [];
+
+    final directory = Directory(project.directory);
+
+    await for (var file in directory.list(recursive: true, followLinks: false)) {
+      if (file is File) {
+        final fileExtension = extension(file.path);
+
+        final programmingLanguageForExtension = acceptedExtensions[fileExtension];
+
+        if (programmingLanguageForExtension != null) {
+          final regExp = RegExp(project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key);
+
+          final fileContents = await file.readAsString();
+
+          regExp.allMatches(fileContents).forEach((match) {
+            for (int i = 0; i < match.groupCount; i++) {
+              foundKeys.add(match.group(i)!);
+            }
+          });
+        }
+      }
+    }
+
+    for (String language in project.languages) {
+      final pairs = translationPairsByLanguage[language]!;
+      final codePairs = SplayTreeMap<String, String>();
+
+      for (String key in foundKeys) {
+        codePairs[key] = pairs[key] ?? '';
+      }
+
+      codePairsByLanguage[language] = codePairs;
+    }
+
+    setStateNotDisposed(() {
+      _codePairsByLanguage = codePairsByLanguage;
+      _isAnalyzing = false;
+
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _selectLanguage(_selectedLanguage);
+      });
+    });
   }
 }
 

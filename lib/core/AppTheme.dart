@@ -18,7 +18,8 @@ const kColorTextPrimary = kColorSilver;
 const kColorTextSecondary = Colors.black;
 
 const kColorDanger = kColorRed;
-const kColorWarning = const Color(0xFFffb300);
+const kColorWarning = const Color(0xFFfb8c00);
+const kColorWarningDark = const Color(0xFFc25e00);
 
 const kColorGold = const Color(0xFFffd700);
 const kColorGoldLight = const Color(0xFFffff52);
@@ -64,6 +65,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     borderRadius: platformBorderRadius,
     preffixIconWidth: kIconSizeNotTouch,
     preffixIconHeight: kIconSizeNotTouch,
+    loadingIconWidth: kIconSizeNotTouch,
+    loadingIconHeight: kIconSizeNotTouch,
   );
 
   final kButtonDangerStyle = kButtonStyle.copyWith(
