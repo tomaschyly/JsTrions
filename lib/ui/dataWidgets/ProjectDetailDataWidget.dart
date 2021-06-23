@@ -62,6 +62,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   String? _newTranslation;
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.Assets;
   bool _isAnalyzing = false;
+  bool _displayOnlyCodeOnlyKeys = false;
 
   /// Manually dispose of resources
   @override
@@ -212,6 +213,25 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               ),
                             ],
                           ),
+                          CommonSpaceV(),
+                          Row(
+                            mainAxisSize: MainAxisSize.min,
+                            children: [
+                              Text(
+                                tt('project_detail.actions.code_only_keys'),
+                                style: fancyText(kTextBold),
+                              ),
+                              CommonSpaceH(),
+                              Switch(
+                                value: _displayOnlyCodeOnlyKeys,
+                                onChanged: (bool newValue) {
+                                  setStateNotDisposed(() {
+                                    _displayOnlyCodeOnlyKeys = newValue;
+                                  });
+                                },
+                              ),
+                            ],
+                          ),
                           CommonSpaceVHalf(),
                         ],
                       ),
@@ -343,11 +363,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     ),
                                   ],
                                 ),
-                                ..._selectedLanguagePairs.keys.where((key) => key.toLowerCase().contains(_searchQuery)).map((key) {
+                                ..._selectedLanguagePairs.keys
+                                    .where((key) =>
+                                        (key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery)) &&
+                                        (!_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null))
+                                    .map((key) {
                                   rowIsOdd = !rowIsOdd;
 
+                                  final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+
                                   Color? rowColor = rowIsOdd ? kColorPrimary : null;
-                                  if (_translationPairsByLanguage[_selectedLanguage]?[key] == null) {
+                                  if (isCodeOnly) {
                                     rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
                                   }
 
@@ -389,7 +415,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                                               variant: IconButtonVariant.IconOnly,
                                             ),
-                                            svgAssetPath: 'images/edit.svg',
+                                            svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
                                             onTap: () => _processTranslationsForKey(context, theProject, key),
                                           ),
                                         ),
@@ -398,14 +424,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         verticalAlignment: TableCellVerticalAlignment.fill,
                                         child: Container(
                                           alignment: Alignment.center,
-                                          child: IconButtonWidget(
-                                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                              variant: IconButtonVariant.IconOnly,
-                                              iconColor: kColorDanger,
-                                            ),
-                                            svgAssetPath: 'images/trash.svg',
-                                            onTap: () => _deleteTranslationsForKey(context, theProject, key),
-                                          ),
+                                          child: isCodeOnly
+                                              ? null
+                                              : IconButtonWidget(
+                                                  style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                                    variant: IconButtonVariant.IconOnly,
+                                                    iconColor: kColorDanger,
+                                                  ),
+                                                  svgAssetPath: 'images/trash.svg',
+                                                  onTap: () => _deleteTranslationsForKey(context, theProject, key),
+                                                ),
                                         ),
                                       ),
                                     ],
@@ -637,6 +665,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         final pairs = _translationPairsByLanguage[language]!;
 
         pairs[translation.key!] = translation.translations[i];
+
+        final codePairs = _codePairsByLanguage[language];
+        if (codePairs != null) {
+          codePairs[translation.key!] = translation.translations[i];
+        }
       }
 
       setStateNotDisposed(() {
@@ -727,7 +760,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         final programmingLanguageForExtension = acceptedExtensions[fileExtension];
 
         if (programmingLanguageForExtension != null) {
-          final regExp = RegExp(project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key);
+          final regExp =
+              RegExp(project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key);
 
           final fileContents = await file.readAsString();
 

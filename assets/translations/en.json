@@ -1,4 +1,5 @@
 {
+  "about.screen.title": "About",
   "dashboard.screen.projects.add": "Add Project",
   "dashboard.screen.projects.empty": "You do not have any Projects yet",
   "dashboard.screen.recent_projects": "Recent Projects",
@@ -33,6 +34,7 @@
   "programming_languages.manage.extension": "Extension",
   "programming_languages.manage.key": "RegExp Key",
   "programming_languages.manage.name": "New Language",
+  "project_detail.actions.code_only_keys": "Show Translations only found in Code",
   "project_detail.actions.source.all": "All",
   "project_detail.actions.source.assets": "Assets",
   "project_detail.actions.source.code": "Code",
