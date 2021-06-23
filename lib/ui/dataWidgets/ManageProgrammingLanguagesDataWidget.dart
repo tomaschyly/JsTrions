@@ -183,7 +183,7 @@ class _ChipWidget extends StatelessWidget {
       suffixIcon: IconButtonWidget(
         style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
           variant: IconButtonVariant.IconOnly,
-          color: kColorRed,
+          color: kColorDanger,
         ),
         svgAssetPath: 'images/times.svg',
         onTap: () => deleteProgrammingLanguage(

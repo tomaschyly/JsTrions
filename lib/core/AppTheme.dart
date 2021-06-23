@@ -17,6 +17,9 @@ const kColorSecondaryDark = kColorGoldDarker;
 const kColorTextPrimary = kColorSilver;
 const kColorTextSecondary = Colors.black;
 
+const kColorDanger = kColorRed;
+const kColorWarning = const Color(0xFFffb300);
+
 const kColorGold = const Color(0xFFffd700);
 const kColorGoldLight = const Color(0xFFffff52);
 const kColorGoldDarker = const Color(0xFFc7a600);
@@ -31,7 +34,7 @@ const kFontFamily = 'Kalam';
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
 const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
-const kTextDanger = const TextStyle(color: kColorRed, fontSize: 16);
+const kTextDanger = const TextStyle(color: kColorDanger, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
@@ -109,7 +112,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
           color: kColorTextPrimary,
         ),
       ),
-      dangerColor: kColorRed,
+      dangerColor: kColorDanger,
     ),
     borderRadius: platformBorderRadius,
   );

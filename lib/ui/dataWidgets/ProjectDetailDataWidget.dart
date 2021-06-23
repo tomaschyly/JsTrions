@@ -15,6 +15,7 @@ import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
+import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -41,7 +42,7 @@ class ProjectDetailDataWidget extends AbstractDataWidget {
   State<StatefulWidget> createState() => ProjectDetailDataWidgetState();
 }
 
-class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> {
+class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> with TickerProviderStateMixin {
   Project? get project => _project;
 
   final _topKey = GlobalKey();
@@ -51,6 +52,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
   Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
+  Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
   String _selectedLanguage = '';
   SplayTreeMap<String, String> _selectedLanguagePairs = SplayTreeMap();
   final _searchController = TextEditingController();
@@ -58,6 +60,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   String _searchQuery = '';
   GlobalKey? _newTranslationKey;
   String? _newTranslation;
+  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.Assets;
 
   /// Manually dispose of resources
   @override
@@ -172,6 +175,49 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                   ),
                 ),
                 CommonSpaceV(),
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                  child: ToggleContainerWidget(
+                    title: tt('project_detail.actions.title'),
+                    content: Padding(
+                      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Text(
+                            tt('project_detail.actions.source.title'),
+                            style: fancyText(kTextBold),
+                          ),
+                          CommonSpaceVHalf(),
+                          Wrap(
+                            spacing: kCommonHorizontalMarginHalf,
+                            runSpacing: kCommonVerticalMarginHalf,
+                            children: [
+                              _SourceOfTranslationsChipWidget(
+                                source: SourceOfTranslations.Assets,
+                                selected: _sourceOfTranslations == SourceOfTranslations.Assets,
+                                selectSource: _selectSource,
+                              ),
+                              _SourceOfTranslationsChipWidget(
+                                source: SourceOfTranslations.Code,
+                                selected: _sourceOfTranslations == SourceOfTranslations.Code,
+                                selectSource: _selectSource,
+                              ),
+                              _SourceOfTranslationsChipWidget(
+                                source: SourceOfTranslations.All,
+                                selected: _sourceOfTranslations == SourceOfTranslations.All,
+                                selectSource: _selectSource,
+                              ),
+                            ],
+                          ),
+                          CommonSpaceVHalf(),
+                        ],
+                      ),
+                    ),
+                  ),
+                ),
+                CommonSpaceV(),
                 Row(
                   mainAxisSize: MainAxisSize.max,
                   children: [
@@ -194,22 +240,35 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                   style: fancyText(kTextHeadline),
                 ),
                 CommonSpaceV(),
-                Row(
-                  mainAxisSize: MainAxisSize.max,
-                  mainAxisAlignment: MainAxisAlignment.end,
-                  children: [
-                    ButtonWidget(
-                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                        widthWrapContent: true,
-                      ),
-                      text: tt('project_detail.add_translation'),
-                      prefixIconSvgAssetPath: 'images/plus.svg',
-                      onTap: () => _processTranslationsForKey(context, theProject),
-                    ),
-                    CommonSpaceH(),
-                  ],
+                AnimatedSize(
+                  duration: kThemeAnimationDuration,
+                  vsync: this,
+                  alignment: Alignment.topCenter,
+                  child: _sourceOfTranslations != SourceOfTranslations.Code
+                      ? Column(
+                          mainAxisSize: MainAxisSize.min,
+                          crossAxisAlignment: CrossAxisAlignment.start,
+                          children: [
+                            Row(
+                              mainAxisSize: MainAxisSize.max,
+                              mainAxisAlignment: MainAxisAlignment.end,
+                              children: [
+                                ButtonWidget(
+                                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                    widthWrapContent: true,
+                                  ),
+                                  text: tt('project_detail.add_translation'),
+                                  prefixIconSvgAssetPath: 'images/plus.svg',
+                                  onTap: () => _processTranslationsForKey(context, theProject),
+                                ),
+                                CommonSpaceH(),
+                              ],
+                            ),
+                            CommonSpaceV(),
+                          ],
+                        )
+                      : Container(height: 0),
                 ),
-                CommonSpaceV(),
                 Expanded(
                   child: Scrollbar(
                     child: SingleChildScrollView(
@@ -326,7 +385,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           child: IconButtonWidget(
                                             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                                               variant: IconButtonVariant.IconOnly,
-                                              iconColor: kColorRed,
+                                              iconColor: kColorDanger,
                                             ),
                                             svgAssetPath: 'images/trash.svg',
                                             onTap: () => _deleteTranslationsForKey(context, theProject, key),
@@ -474,7 +533,22 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   void _selectLanguage(String language) {
     setStateNotDisposed(() {
       _selectedLanguage = language;
-      _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
+
+      _selectedLanguagePairs = SplayTreeMap();
+
+      switch (_sourceOfTranslations) {
+        case SourceOfTranslations.Assets:
+          _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
+          break;
+        case SourceOfTranslations.Code:
+          _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
+          break;
+        case SourceOfTranslations.All:
+          _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
+
+          _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
+          break;
+      }
 
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         final theContext = _topKey.currentContext;
@@ -485,6 +559,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
           );
         }
+      });
+    });
+  }
+
+  /// Select SourceOfTranslations & update table
+  void _selectSource(SourceOfTranslations source) {
+    setStateNotDisposed(() {
+      _sourceOfTranslations = source;
+
+      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        _selectLanguage(_selectedLanguage);
       });
     });
   }
@@ -581,12 +666,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   /// Save translations for all languages to Project translations assets directory
   Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
     final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
-    
+
     final encoder = JsonEncoder.withIndent('  ');
-    
+
     for (String language in project.languages) {
       final file = File(join(translationsAssetsDirectory.path, '$language.json'));
-      
+
       final pairs = _translationPairsByLanguage[language]!;
 
       await file.writeAsString(encoder.convert(pairs));
@@ -620,6 +705,56 @@ class _LanguageChipWidget extends StatelessWidget {
         color: commonTheme.buttonsStyle.iconButtonStyle.color,
       ),
       onTap: selected ? null : () => selectLanguage(language),
+    );
+  }
+}
+
+enum SourceOfTranslations {
+  Assets,
+  Code,
+  All,
+}
+
+class _SourceOfTranslationsChipWidget extends StatelessWidget {
+  final SourceOfTranslations source;
+  final bool selected;
+  final void Function(SourceOfTranslations source) selectSource;
+
+  /// SourceOfTranslationsChipWidget initialization
+  _SourceOfTranslationsChipWidget({
+    required this.source,
+    this.selected = false,
+    required this.selectSource,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    String text = '';
+
+    switch (source) {
+      case SourceOfTranslations.All:
+        text = tt('project_detail.actions.source.all');
+        break;
+      case SourceOfTranslations.Assets:
+        text = tt('project_detail.actions.source.assets');
+        break;
+      case SourceOfTranslations.Code:
+        text = tt('project_detail.actions.source.code');
+        break;
+    }
+
+    return ChipWidget(
+      text: text,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+      ),
+      onTap: selected ? null : () => selectSource(source),
     );
   }
 }

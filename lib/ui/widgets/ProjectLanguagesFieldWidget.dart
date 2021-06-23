@@ -152,7 +152,7 @@ class _ChipWidget extends StatelessWidget {
           ? IconButtonWidget(
               style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                 variant: IconButtonVariant.IconOnly,
-                color: kColorRed,
+                color: kColorDanger,
               ),
               svgAssetPath: 'images/times.svg',
               onTap: () => onTap(language),

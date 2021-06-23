@@ -71,7 +71,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
           ),
           AppBarOption(
             onTap: (BuildContext context) => deleteProject(context, project: project),
-            icon: SvgPicture.asset('images/trash.svg', color: kColorRed),
+            icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
           ),
         ]
       ];
