@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/ui/dialogs/FeedbackDialog.dart';
@@ -350,7 +351,7 @@ class _LinksWidget extends StatelessWidget {
   }
 }
 
-class _AttributionWidget extends StatelessWidget {
+class _AttributionWidget extends AbstractStatefulWidget {
   final CrossAxisAlignment crossAxisAlignment;
 
   /// AttributionWidget initialization
@@ -358,9 +359,78 @@ class _AttributionWidget extends StatelessWidget {
     this.crossAxisAlignment = CrossAxisAlignment.start,
   });
 
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _AttributionWidgetState();
+}
+
+class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWidget> {
+  late String _fontAwesome1;
+  late String _fontAwesome2;
+  late String _fontAwesome3;
+  late String _fontAwesome4;
+  late String _fontAwesome5;
+
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    final String fontAwesomeTranslated = tt('about.screen.fontAwesome');
+
+    List<String> processing = fontAwesomeTranslated.split(r' $linkAStart');
+
+    _fontAwesome1 = processing.first + " ";
+
+    processing = processing.last.split(r' $linkAEnd');
+
+    _fontAwesome2 = processing.first.trim();
+
+    processing = processing.last.split(r' $linkBStart');
+
+    _fontAwesome3 = processing.first + " ";
+
+    processing = processing.last.split(r' $linkBEnd');
+
+    _fontAwesome4 = processing.first.trim();
+    _fontAwesome5 = processing.last;
+  }
+
   /// Create view layout from widgets
   @override
-  Widget build(BuildContext context) {
-    return Container();
+  Widget buildContent(BuildContext context) {
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      child: Text.rich(
+        TextSpan(
+          children: [
+            TextSpan(
+              text: _fontAwesome1,
+              style: fancyText(kText),
+            ),
+            TextSpan(
+              text: _fontAwesome2,
+              style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => launch('https://fontawesome.com/'),
+            ),
+            TextSpan(
+              text: _fontAwesome3,
+              style: fancyText(kText),
+            ),
+            TextSpan(
+              text: _fontAwesome4,
+              style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+              recognizer: TapGestureRecognizer()
+                ..onTap = () => launch('https://fontawesome.com/license/free'),
+            ),
+            TextSpan(
+              text: _fontAwesome5,
+              style: fancyText(kText),
+            ),
+          ],
+        ),
+      ),
+    );
   }
 }

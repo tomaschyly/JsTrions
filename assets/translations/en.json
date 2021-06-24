@@ -1,5 +1,6 @@
 {
   "about.screen.contact": "Feedback",
+  "about.screen.fontAwesome": "Icons used in this app are from the great $linkAStart Font Awesome $linkAEnd. $linkBStart The free version $linkBEnd is used.",
   "about.screen.privacy": "Privacy Policy",
   "about.screen.text": "This app is brought to you by Tomáš Chylý, Full Stack Developer & Systems Architect. I wanted to test Flutter on desktop platforms and I got annoyed by manually working with json translations. I also liked the idea of app analyzing my code and finding translations, so I created this app.\n\nIf you have any issues with the app, UI or have ideas for improvement, please use the feedback form below. Thank you!",
   "about.screen.title": "About",
