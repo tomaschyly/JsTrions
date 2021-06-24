@@ -1,5 +1,6 @@
 import 'dart:io';
 
+import 'package:js_trions/config.dart';
 import 'package:js_trions/core/AppPreferences.dart' as AppPreferences;
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/core/AppRouter.dart' as AppRouter;
@@ -90,6 +91,9 @@ class AppState extends AbstractStatefulWidgetState<App> {
         intPrefs: AppPreferences.intPrefs,
       ),
       mainDataProviderOptions: MainDataProviderOptions(
+        httpClientOptions: HTTPClientOptions(
+          hostUrl: kHostUrl,
+        ),
         sembastOptions: SembastOptions(
           databasePath: () async {
             if (Platform.isAndroid || Platform.isIOS) {

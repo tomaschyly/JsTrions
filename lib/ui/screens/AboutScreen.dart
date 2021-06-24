@@ -1,5 +1,6 @@
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/ui/dialogs/FeedbackDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -335,7 +336,17 @@ class _LinksWidget extends StatelessWidget {
 
   /// Send feedback to BE using modal dialog
   Future<void> _sendFeedback(BuildContext context) async {
-    //TODO
+    final sent = await FeedbackDialog.show(context);
+
+    if (sent == true) {
+      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+        content: Text(
+          tt('feedback.submit'),
+          style: fancyText(kText),
+          textAlign: TextAlign.center,
+        ),
+      ));
+    }
   }
 }
 

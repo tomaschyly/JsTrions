@@ -134,6 +134,9 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(
         widthWrapContent: true,
+        iconColor: kColorWarning,
+        loadingIconWidth: kIconSizeNotTouch,
+        loadingIconHeight: kIconSizeNotTouch,
       ),
     ),
     borderRadius: platformBorderRadius,
@@ -165,6 +168,16 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     textAlign: TextAlign.center,
   );
 
+  final kEmailFormFieldStyle = kTextFormFieldStyle.copyWith(
+    keyboardType: TextInputType.emailAddress,
+    validations: [
+      FormFieldValidation(
+        validator: validateEmail,
+        errorText: tt('validation.required'),
+      ),
+    ],
+  );
+
   final kSelectionFormFieldStyle = SelectionFormFieldStyle(
     inputStyle: kTextFormFieldStyle,
   );
@@ -188,6 +201,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
       selectionFormFieldStyle: kSelectionFormFieldStyle,
       preferencesSwitchStyle: kPreferencesSwitchStyle,
     ),
+    emailFormFieldStyle: kEmailFormFieldStyle,
   );
 }
 
@@ -195,6 +209,7 @@ class AppTheme extends CommonTheme {
   final CommonButtonStyle buttonDangerStyle;
   final CommonButtonStyle listItemButtonStyle;
   final IconButtonStyle appBarIconButtonStyle;
+  final TextFormFieldStyle emailFormFieldStyle;
 
   /// AppTheme initialization
   AppTheme({
@@ -206,6 +221,7 @@ class AppTheme extends CommonTheme {
     required this.appBarIconButtonStyle,
     required DialogsStyle dialogsStyle,
     required FormStyle formStyle,
+    required this.emailFormFieldStyle,
   }) : super(
           child: CommonTheme(
             child: child,
