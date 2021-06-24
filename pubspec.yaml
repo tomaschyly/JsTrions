@@ -40,6 +40,8 @@ dependencies:
   file_selector_macos: ^0.0.4
   file_selector_windows: ^0.0.2
 
+  url_launcher: ^6.0.7
+
 flutter:
   uses-material-design: true
 

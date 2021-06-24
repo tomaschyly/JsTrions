@@ -1,8 +1,10 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class AboutScreen extends AbstractResposiveScreen {
   static const String ROUTE = "/about";
@@ -91,17 +93,23 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _InfoWidget(),
+                child: _InfoWidget(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _LinksWidget(),
+                child: _LinksWidget(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _AttributionWidget(),
+                child: _AttributionWidget(
+                  crossAxisAlignment: CrossAxisAlignment.center,
+                ),
               ),
             ],
           ),
@@ -219,22 +227,126 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
 }
 
 class _InfoWidget extends StatelessWidget {
+  final CrossAxisAlignment crossAxisAlignment;
+
+  /// InfoWidget initialization
+  _InfoWidget({
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+  });
+
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: [
+          Text(
+            tt('about.screen.text'),
+            style: fancyText(kText),
+          ),
+          CommonSpaceV(),
+        ],
+      ),
+    );
   }
 }
 
 class _LinksWidget extends StatelessWidget {
+  final CrossAxisAlignment crossAxisAlignment;
+
+  /// LinksWidget initialization
+  _LinksWidget({
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+  });
+
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    return Container();
+    return Padding(
+      padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: crossAxisAlignment,
+        children: [
+          ButtonWidget(
+            text: tt('about.screen.website'),
+            onTap: () => launch('https://tomas-chyly.com/en/'),
+          ),
+          CommonSpaceV(),
+          ButtonWidget(
+            text: tt('about.screen.contact'),
+            onTap: () => _sendFeedback(context),
+          ),
+          CommonSpaceV(),
+          ButtonWidget(
+            text: tt('about.screen.privacy'),
+            onTap: () => launch('https://tomas-chyly.com/en/jstrions-privacy-policy/'),
+          ),
+          CommonSpaceV(),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButtonWidget(
+                svgAssetPath: 'images/linkedin.svg',
+                onTap: () => launch('https://www.linkedin.com/in/tomas-chyly/'),
+              ),
+              CommonSpaceHHalf(),
+              IconButtonWidget(
+                svgAssetPath: 'images/twitter.svg',
+                onTap: () => launch('https://twitter.com/TomasChyly'),
+              ),
+              CommonSpaceHHalf(),
+              IconButtonWidget(
+                svgAssetPath: 'images/github.svg',
+                onTap: () => launch('https://github.com/tomaschyly'),
+              ),
+            ],
+          ),
+          CommonSpaceVHalf(),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.center,
+            children: [
+              IconButtonWidget(
+                iconWidget: SvgPicture.asset('images/dartlang.svg'),
+                onTap: () => launch('https://pub.dev/publishers/tomas-chyly.com/packages'),
+              ),
+              CommonSpaceHHalf(),
+              IconButtonWidget(
+                svgAssetPath: 'images/npm.svg',
+                onTap: () => launch('https://www.npmjs.com/~tomaschyly'),
+              ),
+              CommonSpaceHHalf(),
+              IconButtonWidget(
+                svgAssetPath: 'images/stack_overflow.svg',
+                onTap: () => launch('https://stackoverflow.com/users/1979892/tom%C3%A1%C5%A1-chyl%C3%BD'),
+              ),
+            ],
+          ),
+          CommonSpaceV(),
+        ],
+      ),
+    );
+  }
+
+  /// Send feedback to BE using modal dialog
+  Future<void> _sendFeedback(BuildContext context) async {
+    //TODO
   }
 }
 
 class _AttributionWidget extends StatelessWidget {
+  final CrossAxisAlignment crossAxisAlignment;
+
+  /// AttributionWidget initialization
+  _AttributionWidget({
+    this.crossAxisAlignment = CrossAxisAlignment.start,
+  });
+
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
