@@ -42,6 +42,9 @@ dependencies:
 
   url_launcher: ^6.0.7
 
+dev_dependencies:
+  msix: ^2.1.3
+
 flutter:
   uses-material-design: true
 
@@ -56,3 +59,18 @@ flutter:
     - family: Kalam
       fonts:
         - asset: fonts/Kalam-Regular.ttf
+
+#https://pub.dev/packages/msix
+msix_config:
+  display_name: JsTrions
+  publisher_display_name: Tomas Chyly
+  publisher: CN=B0FFABE7-CCEC-4059-A43F-BC992CC5B5D2
+  identity_name: 37940TomasChyly.JsTrions
+  msix_version: 1.0.0.0
+  icons_background_color: transparent
+  architecture: x64
+  capabilities: "internetClient"
+  logo_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  start_menu_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  tile_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  store: true
