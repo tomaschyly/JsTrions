@@ -279,6 +279,11 @@ class _LinksWidget extends StatelessWidget {
           ),
           CommonSpaceV(),
           ButtonWidget(
+            text: tt('about.screen.repository'),
+            onTap: () => launch('https://github.com/tomaschyly/JsTrions'),
+          ),
+          CommonSpaceV(),
+          ButtonWidget(
             text: tt('about.screen.contact'),
             onTap: () => _sendFeedback(context),
           ),

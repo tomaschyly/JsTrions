@@ -2,6 +2,7 @@
   "about.screen.contact": "Spätná Väzba",
   "about.screen.fontAwesome": "Ikonky v tejto appke sú zo skvelého $linkAStart Font Awesome $linkAEnd. Použítá je $linkBStart verzia zadarmo $linkBEnd.",
   "about.screen.privacy": "Zásady Ochrany Osobných Údajov",
+  "about.screen.repository": "Repozitár Appky",
   "about.screen.text": "Túto appku ti prináša Tomáš Chylý, Full Stack Developer & Systems Architect. Chcel som otestovať Flutter na desktop platformách a vadilo mi ručne pracovať s json prekladmi. Tiež sa mi páčila myšlienka appky, ktorá mi analyzuje kód a nájde preklady, preto som vytvoril túto appku.\n\nAk máš nejaké problémy s appkou, používateľským rozhraním alebo máš nápad na zlepšenie, tak použí formulár pre spätnú väzbu uvedený nižšie. Ďakujem!",
   "about.screen.title": "O Appke",
   "about.screen.website": "Webová Stránka",
