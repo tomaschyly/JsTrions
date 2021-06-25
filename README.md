@@ -6,7 +6,7 @@ Easily manage JSON translations in your project. Should support any framework, p
 
 Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them.
 
-App works fully offline, so it is not dependant on some only service.
+App works fully offline, so it is not dependant on some online service.
 
 ## App Gallery
 
