@@ -10,8 +10,8 @@ App works fully offline, so it is not dependant on some only service.
 
 ## App Gallery
 
-![Projects](/screenshots/MacOS Projects.png)
+![Projects](/screenshots/MacOS-Projects.png)
 
-![Edit Project](/screenshots/MacOS Edit Project.png)
+![Edit Project](/screenshots/MacOS-Edit-Project.png)
 
-![Settings](/screenshots/MacOS Settings.png)
+![Settings](/screenshots/MacOS-Settings.png)
