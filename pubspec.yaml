@@ -1,7 +1,7 @@
 name: js_trions
 description: Flutter cross-platform JSON translations utility app.
 author: Tomáš Chylý <chyly@tomas-chyly.com>
-#homepage:
+homepage: https://tomas-chyly.com/en/project/jstrions/
 repository: https://github.com/tomaschyly/JsTrions
 issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
