@@ -74,81 +74,55 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
     final theKey = widget.translation.key;
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          child: ClipRRect(
-            borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
-            child: Container(
-              width: kPhoneStopBreakpoint,
-              margin: commonTheme.dialogsStyle.listDialogStyle.dialogMargin,
-              decoration: BoxDecoration(
-                color: commonTheme.dialogsStyle.listDialogStyle.backgroundColor,
-                border: Border.all(
-                  color: commonTheme.dialogsStyle.listDialogStyle.color,
-                  width: 1,
-                ),
-                borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
+    return DialogContainer(
+      style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
+      content: [
+        Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DialogHeader(
+                style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
+                title: tt('edit_project_translation.title'),
               ),
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: commonTheme.dialogsStyle.listDialogStyle.dialogPadding,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DialogHeader(
-                            style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
-                            title: tt('edit_project_translation.title'),
-                          ),
-                          CommonSpaceVHalf(),
-                          if (theKey != null)
-                            Text(
-                              theKey,
-                              style: fancyText(kTextBold),
-                            )
-                          else
-                            TextFormFieldWidget(
-                              controller: _keyController,
-                              label: tt('edit_project_translation.field.key'),
-                              validations: [
-                                FormFieldValidation(
-                                  validator: validateRequired,
-                                  errorText: tt('validation.required'),
-                                ),
-                              ],
-                            ),
-                          CommonSpaceVHalf(),
-                          for (int i = 0; i < widget.translation.languages.length; i++)
-                            _TranslationField(
-                              language: widget.translation.languages[i],
-                              controller: _fieldsControllers[i]!,
-                            ),
-                          DialogFooter(
-                            style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
-                            noText: tt('dialog.cancel'),
-                            yesText: tt('edit_project_translation.submit'),
-                            noOnTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            yesOnTap: () => _process(context),
-                          ),
-                        ],
-                      ),
+              CommonSpaceVHalf(),
+              if (theKey != null)
+                Text(
+                  theKey,
+                  style: fancyText(kTextBold),
+                )
+              else
+                TextFormFieldWidget(
+                  controller: _keyController,
+                  label: tt('edit_project_translation.field.key'),
+                  validations: [
+                    FormFieldValidation(
+                      validator: validateRequired,
+                      errorText: tt('validation.required'),
                     ),
-                  ),
+                  ],
                 ),
-              ),
-            ),
+              CommonSpaceVHalf(),
+              for (int i = 0; i < widget.translation.languages.length; i++)
+                _TranslationField(
+                  language: widget.translation.languages[i],
+                  controller: _fieldsControllers[i]!,
+                ),
+            ],
           ),
         ),
       ],
+      dialogFooter: DialogFooter(
+        style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
+        noText: tt('dialog.cancel'),
+        yesText: tt('edit_project_translation.submit'),
+        noOnTap: () {
+          Navigator.of(context).pop();
+        },
+        yesOnTap: () => _process(context),
+      ),
     );
   }
 

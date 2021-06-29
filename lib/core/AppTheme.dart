@@ -102,8 +102,13 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     borderRadius: platformBorderRadius,
   );
 
-  final kConfirmDialogStyle = ConfirmDialogStyle(
+  final kDialogContainerStyle = DialogContainerStyle(
     backgroundColor: kColorPrimaryLight,
+    borderRadius: platformBorderRadius,
+  );
+
+  final kConfirmDialogStyle = ConfirmDialogStyle(
+    dialogContainerStyle: kDialogContainerStyle,
     dialogHeaderStyle: const DialogHeaderStyle(
       textStyle: kTextHeadline,
     ),
@@ -117,11 +122,10 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
       ),
       dangerColor: kColorDanger,
     ),
-    borderRadius: platformBorderRadius,
   );
 
   final kListDialogStyle = ListDialogStyle(
-    backgroundColor: kColorPrimaryLight,
+    dialogContainerStyle: kDialogContainerStyle,
     optionStyle: kButtonStyle.copyWith(
       variant: ButtonVariant.TextOnly,
     ),
@@ -139,7 +143,6 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
         loadingIconHeight: kIconSizeNotTouch,
       ),
     ),
-    borderRadius: platformBorderRadius,
   );
 
   final OutlineInputBorder platformInputBorder = OutlineInputBorder(

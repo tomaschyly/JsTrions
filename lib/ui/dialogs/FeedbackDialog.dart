@@ -63,149 +63,123 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
       backgroundColor: Colors.transparent,
       body: Container(
         alignment: Alignment.center,
-        child: Column(
-          mainAxisSize: MainAxisSize.max,
-          mainAxisAlignment: MainAxisAlignment.start,
-          crossAxisAlignment: CrossAxisAlignment.center,
-          children: [
-            Flexible(
-              child: ClipRRect(
-                borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
-                child: Container(
-                  width: kPhoneStopBreakpoint,
-                  margin: commonTheme.dialogsStyle.listDialogStyle.dialogMargin,
-                  decoration: BoxDecoration(
-                    color: commonTheme.dialogsStyle.listDialogStyle.backgroundColor,
-                    border: Border.all(
-                      color: commonTheme.dialogsStyle.listDialogStyle.color,
-                      width: 1,
-                    ),
-                    borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
+        child: DialogContainer(
+          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
+          content: [
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DialogHeader(
+                    style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
+                    title: tt('feedback.title'),
                   ),
-                  child: Scrollbar(
-                    child: SingleChildScrollView(
-                      child: Container(
-                        padding: commonTheme.dialogsStyle.listDialogStyle.dialogPadding,
-                        child: Form(
-                          key: _formKey,
-                          child: Column(
-                            mainAxisSize: MainAxisSize.min,
-                            crossAxisAlignment: CrossAxisAlignment.start,
+                  CommonSpaceVHalf(),
+                  TextFormFieldWidget(
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                    controller: _nameController,
+                    focusNode: _nameFocus,
+                    nextFocus: _emailFocus,
+                    label: tt('feedback.name'),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  CommonSpaceVHalf(),
+                  TextFormFieldWidget(
+                    style: commonTheme.emailFormFieldStyle,
+                    controller: _emailController,
+                    focusNode: _emailFocus,
+                    nextFocus: _subjectFocus,
+                    label: tt('feedback.email'),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  CommonSpaceVHalf(),
+                  TextFormFieldWidget(
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                      textCapitalization: TextCapitalization.words,
+                    ),
+                    controller: _subjectController,
+                    focusNode: _subjectFocus,
+                    nextFocus: _messageFocus,
+                    label: tt('feedback.subject'),
+                    textInputAction: TextInputAction.next,
+                  ),
+                  CommonSpaceVHalf(),
+                  TextFormFieldWidget(
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                      textCapitalization: TextCapitalization.sentences,
+                    ),
+                    controller: _messageController,
+                    focusNode: _messageFocus,
+                    label: tt('feedback.message'),
+                    lines: 3,
+                    validations: [
+                      FormFieldValidation(
+                        validator: validateRequired,
+                        errorText: tt('validation.required'),
+                      ),
+                    ],
+                  ),
+                  CommonSpaceV(),
+                  Container(
+                    width: kPhoneStopBreakpoint,
+                    child: AnimatedSize(
+                      vsync: this,
+                      duration: kThemeAnimationDuration,
+                      alignment: Alignment.topCenter,
+                      child: Column(
+                        mainAxisSize: MainAxisSize.min,
+                        crossAxisAlignment: CrossAxisAlignment.start,
+                        children: [
+                          Row(
+                            mainAxisSize: MainAxisSize.max,
                             children: [
-                              DialogHeader(
-                                style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
-                                title: tt('feedback.title'),
-                              ),
-                              CommonSpaceVHalf(),
-                              TextFormFieldWidget(
-                                style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                                  textCapitalization: TextCapitalization.words,
-                                ),
-                                controller: _nameController,
-                                focusNode: _nameFocus,
-                                nextFocus: _emailFocus,
-                                label: tt('feedback.name'),
-                                textInputAction: TextInputAction.next,
-                              ),
-                              CommonSpaceVHalf(),
-                              TextFormFieldWidget(
-                                style: commonTheme.emailFormFieldStyle,
-                                controller: _emailController,
-                                focusNode: _emailFocus,
-                                nextFocus: _subjectFocus,
-                                label: tt('feedback.email'),
-                                textInputAction: TextInputAction.next,
-                              ),
-                              CommonSpaceVHalf(),
-                              TextFormFieldWidget(
-                                style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                                  textCapitalization: TextCapitalization.words,
-                                ),
-                                controller: _subjectController,
-                                focusNode: _subjectFocus,
-                                nextFocus: _messageFocus,
-                                label: tt('feedback.subject'),
-                                textInputAction: TextInputAction.next,
-                              ),
-                              CommonSpaceVHalf(),
-                              TextFormFieldWidget(
-                                style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                                  textCapitalization: TextCapitalization.sentences,
-                                ),
-                                controller: _messageController,
-                                focusNode: _messageFocus,
-                                label: tt('feedback.message'),
-                                lines: 3,
-                                validations: [
-                                  FormFieldValidation(
-                                    validator: validateRequired,
-                                    errorText: tt('validation.required'),
-                                  ),
-                                ],
-                              ),
-                              CommonSpaceV(),
-                              Container(
-                                width: kPhoneStopBreakpoint,
-                                child: AnimatedSize(
-                                  vsync: this,
-                                  duration: kThemeAnimationDuration,
-                                  alignment: Alignment.topCenter,
-                                  child: Column(
-                                    mainAxisSize: MainAxisSize.min,
-                                    crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: [
-                                      Row(
-                                        mainAxisSize: MainAxisSize.max,
-                                        children: [
-                                          Expanded(
-                                            child: Text(
-                                              tt('feedback.gdpr'),
-                                              style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.labelStyle!),
-                                            ),
-                                          ),
-                                          CommonSpaceH(),
-                                          Switch(
-                                            value: _gdpr,
-                                            onChanged: (bool newValue) => setStateNotDisposed(() {
-                                              _gdpr = newValue;
-                                              _gdprError = false;
-                                            }),
-                                          ),
-                                        ],
-                                      ),
-                                      if (!_gdpr && _gdprError)
-                                        Padding(
-                                          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                                          child: Text(
-                                            tt('feedback.gdpr.error'),
-                                            style: fancyText(kText.copyWith(color: Colors.red)),
-                                          ),
-                                        ),
-                                    ],
-                                  ),
+                              Expanded(
+                                child: Text(
+                                  tt('feedback.gdpr'),
+                                  style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.labelStyle!),
                                 ),
                               ),
-                              CommonSpaceVHalf(),
-                              DialogFooter(
-                                style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
-                                noText: tt('dialog.cancel'),
-                                yesText: tt('feedback.send'),
-                                noOnTap: () {
-                                  Navigator.of(context).pop();
-                                },
-                                yesOnTap: () => _sendFeedback(context),
-                                yesIsLoading: _isSending,
+                              CommonSpaceH(),
+                              Switch(
+                                value: _gdpr,
+                                onChanged: (bool newValue) => setStateNotDisposed(() {
+                                  _gdpr = newValue;
+                                  _gdprError = false;
+                                }),
                               ),
                             ],
                           ),
-                        ),
+                          if (!_gdpr && _gdprError)
+                            Padding(
+                              padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                              child: Text(
+                                tt('feedback.gdpr.error'),
+                                style: fancyText(kText.copyWith(color: Colors.red)),
+                              ),
+                            ),
+                        ],
                       ),
                     ),
                   ),
-                ),
+                  CommonSpaceVHalf(),
+                ],
               ),
             ),
           ],
+          dialogFooter: DialogFooter(
+            style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
+            noText: tt('dialog.cancel'),
+            yesText: tt('feedback.send'),
+            noOnTap: () {
+              Navigator.of(context).pop();
+            },
+            yesOnTap: () => _sendFeedback(context),
+            yesIsLoading: _isSending,
+          ),
         ),
       ),
     );

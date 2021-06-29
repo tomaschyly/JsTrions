@@ -82,159 +82,133 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
 
     final theProject = widget.project;
 
-    return Column(
-      mainAxisSize: MainAxisSize.max,
-      mainAxisAlignment: MainAxisAlignment.start,
-      crossAxisAlignment: CrossAxisAlignment.center,
-      children: [
-        Flexible(
-          child: ClipRRect(
-            borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
-            child: Container(
-              width: kPhoneStopBreakpoint,
-              margin: commonTheme.dialogsStyle.listDialogStyle.dialogMargin,
-              decoration: BoxDecoration(
-                color: commonTheme.dialogsStyle.listDialogStyle.backgroundColor,
-                border: Border.all(
-                  color: commonTheme.dialogsStyle.listDialogStyle.color,
-                  width: 1,
-                ),
-                borderRadius: commonTheme.dialogsStyle.listDialogStyle.borderRadius,
+    return DialogContainer(
+      style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
+      content: [
+        Form(
+          key: _formKey,
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              DialogHeader(
+                style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
+                title: theProject != null ? tt('edit_project.title.edit').replaceAll(r'$name', theProject.name) : tt('edit_project.title.add'),
               ),
-              child: Scrollbar(
-                child: SingleChildScrollView(
-                  child: Container(
-                    padding: commonTheme.dialogsStyle.listDialogStyle.dialogPadding,
-                    child: Form(
-                      key: _formKey,
-                      child: Column(
-                        mainAxisSize: MainAxisSize.min,
-                        crossAxisAlignment: CrossAxisAlignment.start,
-                        children: [
-                          DialogHeader(
-                            style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
-                            title: theProject != null ? tt('edit_project.title.edit').replaceAll(r'$name', theProject.name) : tt('edit_project.title.add'),
-                          ),
-                          CommonSpaceVHalf(),
-                          TextFormFieldWidget(
-                            controller: _nameController,
-                            focusNode: _nameFocus,
-                            nextFocus: _directoryFocus,
-                            label: tt('edit_project.field.name'),
-                            validations: [
-                              FormFieldValidation(
-                                validator: validateRequired,
-                                errorText: tt('validation.required'),
-                              ),
-                            ],
-                          ),
-                          CommonSpaceVHalf(),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: TextFormFieldWidget(
-                                  controller: _directoryController,
-                                  focusNode: _directoryFocus,
-                                  nextFocus: _translationAssetsFocus,
-                                  label: tt('edit_project.field.directory'),
-                                  validations: [
-                                    FormFieldValidation(
-                                      validator: validateRequired,
-                                      errorText: tt('validation.required'),
-                                    ),
-                                    FormFieldValidation(
-                                      validator: (String? value) {
-                                        final directory = Directory(value!);
+              CommonSpaceVHalf(),
+              TextFormFieldWidget(
+                controller: _nameController,
+                focusNode: _nameFocus,
+                nextFocus: _directoryFocus,
+                label: tt('edit_project.field.name'),
+                validations: [
+                  FormFieldValidation(
+                    validator: validateRequired,
+                    errorText: tt('validation.required'),
+                  ),
+                ],
+              ),
+              CommonSpaceVHalf(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormFieldWidget(
+                      controller: _directoryController,
+                      focusNode: _directoryFocus,
+                      nextFocus: _translationAssetsFocus,
+                      label: tt('edit_project.field.directory'),
+                      validations: [
+                        FormFieldValidation(
+                          validator: validateRequired,
+                          errorText: tt('validation.required'),
+                        ),
+                        FormFieldValidation(
+                          validator: (String? value) {
+                            final directory = Directory(value!);
 
-                                        return directory.existsSync();
-                                      },
-                                      errorText: tt('edit_project.field.directory.error'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              CommonSpaceHHalf(),
-                              IconButtonWidget(
-                                svgAssetPath: 'images/folder.svg',
-                                onTap: () => _pickDirectory(context),
-                              ),
-                            ],
-                          ),
-                          CommonSpaceVHalf(),
-                          Row(
-                            mainAxisSize: MainAxisSize.max,
-                            mainAxisAlignment: MainAxisAlignment.start,
-                            crossAxisAlignment: CrossAxisAlignment.start,
-                            children: [
-                              Expanded(
-                                child: TextFormFieldWidget(
-                                  controller: _translationAssetsController,
-                                  focusNode: _translationAssetsFocus,
-                                  label: tt('edit_project.field.translation_assets'),
-                                  validations: [
-                                    FormFieldValidation(
-                                      validator: validateRequired,
-                                      errorText: tt('validation.required'),
-                                    ),
-                                    FormFieldValidation(
-                                      validator: (String? value) {
-                                        final directory = Directory('${_directoryController.text}$value');
-
-                                        return directory.existsSync();
-                                      },
-                                      errorText: tt('edit_project.field.translation_assets.error'),
-                                    ),
-                                  ],
-                                ),
-                              ),
-                              CommonSpaceHHalf(),
-                              IconButtonWidget(
-                                svgAssetPath: 'images/folder.svg',
-                                onTap: () => _pickDirectory(context, true),
-                              ),
-                            ],
-                          ),
-                          CommonSpaceVHalf(),
-                          ProjectLanguagesFieldWidget(
-                            key: _languagesKey,
-                            project: widget.project,
-                          ),
-                          CommonSpaceVHalf(),
-                          ProjectProgrammingLanguagesFieldDataWidget(
-                            key: _programmingLanguagesKey,
-                            project: widget.project,
-                          ),
-                          DialogFooter(
-                            style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
-                            noText: tt('dialog.cancel'),
-                            yesText: tt('edit_project.submit'),
-                            noOnTap: () {
-                              Navigator.of(context).pop();
-                            },
-                            yesOnTap: () => saveProject(
-                              context,
-                              formKey: _formKey,
-                              project: widget.project,
-                              nameController: _nameController,
-                              directoryController: _directoryController,
-                              translationAssetsController: _translationAssetsController,
-                              languagesKey: _languagesKey,
-                              programmingLanguagesKey: _programmingLanguagesKey,
-                            ),
-                          ),
-                        ],
-                      ),
+                            return directory.existsSync();
+                          },
+                          errorText: tt('edit_project.field.directory.error'),
+                        ),
+                      ],
                     ),
                   ),
-                ),
+                  CommonSpaceHHalf(),
+                  IconButtonWidget(
+                    svgAssetPath: 'images/folder.svg',
+                    onTap: () => _pickDirectory(context),
+                  ),
+                ],
               ),
-            ),
+              CommonSpaceVHalf(),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: TextFormFieldWidget(
+                      controller: _translationAssetsController,
+                      focusNode: _translationAssetsFocus,
+                      label: tt('edit_project.field.translation_assets'),
+                      validations: [
+                        FormFieldValidation(
+                          validator: validateRequired,
+                          errorText: tt('validation.required'),
+                        ),
+                        FormFieldValidation(
+                          validator: (String? value) {
+                            final directory = Directory('${_directoryController.text}$value');
+
+                            return directory.existsSync();
+                          },
+                          errorText: tt('edit_project.field.translation_assets.error'),
+                        ),
+                      ],
+                    ),
+                  ),
+                  CommonSpaceHHalf(),
+                  IconButtonWidget(
+                    svgAssetPath: 'images/folder.svg',
+                    onTap: () => _pickDirectory(context, true),
+                  ),
+                ],
+              ),
+              CommonSpaceVHalf(),
+              ProjectLanguagesFieldWidget(
+                key: _languagesKey,
+                project: widget.project,
+              ),
+              CommonSpaceVHalf(),
+              ProjectProgrammingLanguagesFieldDataWidget(
+                key: _programmingLanguagesKey,
+                project: widget.project,
+              ),
+            ],
           ),
         ),
       ],
+      dialogFooter: DialogFooter(
+        style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
+        noText: tt('dialog.cancel'),
+        yesText: tt('edit_project.submit'),
+        noOnTap: () {
+          Navigator.of(context).pop();
+        },
+        yesOnTap: () => saveProject(
+          context,
+          formKey: _formKey,
+          project: widget.project,
+          nameController: _nameController,
+          directoryController: _directoryController,
+          translationAssetsController: _translationAssetsController,
+          languagesKey: _languagesKey,
+          programmingLanguagesKey: _programmingLanguagesKey,
+        ),
+      ),
     );
   }
 
