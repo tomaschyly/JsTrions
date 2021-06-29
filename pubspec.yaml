@@ -20,7 +20,7 @@ dependencies:
     sdk: flutter
 
   tch_appliable_core: ^0.6.3
-  tch_common_widgets: ^0.6.3
+  tch_common_widgets: ^0.6.5
   
   supercharged: ^2.0.0
   package_info_plus: ^1.0.3

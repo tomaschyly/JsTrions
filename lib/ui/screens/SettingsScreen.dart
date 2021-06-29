@@ -199,6 +199,7 @@ class _GeneralWidget extends StatelessWidget {
                 key: _languageKey,
                 label: tt('settings.screen.language'),
                 selectionTitle: tt('settings.screen.language.selection'),
+                clearText: tt('settings.screen.language.selection.cancel'),
                 initialValue: language,
                 options: <ListDialogOption<String>>[
                   ListDialogOption(
