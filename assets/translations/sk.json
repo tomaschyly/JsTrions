@@ -27,6 +27,7 @@
   "edit_project.field.new_language": "Nový Jazyk",
   "edit_project.field.programming_languages.empty_error": "Nemáš žiadne Programovacie Jazyky, najprv préjdi do Nastavení a pridaj aspoň jeden",
   "edit_project.field.programming_languages.error": "Vyber aspoň jeden",
+  "edit_project.field.programming_languages.hint": "Rada: Použí túto webstránku na pomoc s RegExp ",
   "edit_project.field.translation_assets": "Priečinok Prekladov",
   "edit_project.field.translation_assets.error": "Priečinok prekladov neexistuje",
   "edit_project.submit": "Uložiť",

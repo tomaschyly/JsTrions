@@ -1,3 +1,4 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
@@ -9,6 +10,7 @@ import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
 
 class ProjectProgrammingLanguagesFieldDataWidget extends AbstractDataWidget {
   final Project? project;
@@ -28,7 +30,7 @@ class ProjectProgrammingLanguagesFieldDataWidget extends AbstractDataWidget {
 }
 
 class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidgetState<ProjectProgrammingLanguagesFieldDataWidget>
-    with SingleTickerProviderStateMixin {
+    with TickerProviderStateMixin {
   ProjectProgrammingLanguagesFieldDataWidgetValue get value => ProjectProgrammingLanguagesFieldDataWidgetValue(
         programmingLanguages: _selectedProgrammingLanguages,
         translationKeys: _translationKeys,
@@ -53,7 +55,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
     }
   }
 
-  /// Manually dipose of resources
+  /// Manually dispose of resources
   @override
   void dispose() {
     _fieldsControllers.forEach((key, controller) {
@@ -94,6 +96,8 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
         sortProgrammingLanguagesAlphabetycally(programmingLanguages.programmingLanguages);
 
         _initProject(programmingLanguages.programmingLanguages);
+
+        final availableTranslationKeys = _translationKeys.where((translationKey) => _selectedProgrammingLanguages.contains(translationKey.programmingLanguage));
 
         return AnimatedSize(
           duration: kThemeAnimationDuration,
@@ -141,7 +145,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                   ),
                 ),
               CommonSpaceVHalf(),
-              ..._translationKeys.where((translationKey) => _selectedProgrammingLanguages.contains(translationKey.programmingLanguage)).map((translationKey) {
+              ...availableTranslationKeys.map((translationKey) {
                 final programmingLanguage =
                     programmingLanguages.programmingLanguages.firstWhere((programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage);
 
@@ -151,6 +155,25 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                   textEditingController: _fieldsControllers[programmingLanguage.id!]!,
                 );
               }).toList(),
+              if (availableTranslationKeys.isNotEmpty) ...[
+                Text.rich(
+                  TextSpan(
+                    children: [
+                      TextSpan(
+                        text: tt('edit_project.field.programming_languages.hint'),
+                        style: fancyText(kText),
+                      ),
+                      TextSpan(
+                        text: 'https://regexr.com/',
+                        style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launch('https://regexr.com/'),
+                      ),
+                    ],
+                  ),
+                ),
+                CommonSpaceVHalf(),
+              ],
             ],
           ),
         );
