@@ -1,6 +1,7 @@
 import 'dart:io';
 
 import 'package:flutter/foundation.dart';
+import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -50,10 +51,21 @@ final kPreferencesSwitchStyle = PreferencesSwitchStyle(
 
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
+  final AppDataStateSnapshot snapshot = AppDataState.of(context)!;
+
   BorderRadius platformBorderRadius = const BorderRadius.all(const Radius.circular(8));
+  MainAxisAlignment dialogsMainAxisAlignment = MainAxisAlignment.start;
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
     platformBorderRadius = BorderRadius.circular(0);
+  }
+
+  if ([
+    ResponsiveScreen.ExtraLargeDesktop,
+    ResponsiveScreen.LargeDesktop,
+    ResponsiveScreen.SmallDesktop,
+  ].contains(snapshot.responsiveScreen)) {
+    dialogsMainAxisAlignment = MainAxisAlignment.center;
   }
 
   final kButtonStyle = CommonButtonStyle(
@@ -103,6 +115,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   final kDialogContainerStyle = DialogContainerStyle(
+    mainAxisAlignment: dialogsMainAxisAlignment,
     backgroundColor: kColorPrimaryLight,
     borderRadius: platformBorderRadius,
   );
