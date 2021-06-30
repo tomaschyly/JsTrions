@@ -11,6 +11,7 @@ import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
+import 'package:js_trions/ui/widgets/SettingWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -333,30 +334,96 @@ class _ProjectsWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
-              Text(tt('settings.screen.source.label'), style: fancyText(kTextBold)),
-              CommonSpaceVHalf(),
-              Wrap(
-                spacing: kCommonHorizontalMarginHalf,
-                runSpacing: kCommonVerticalMarginHalf,
-                children: [
-                  _SourceOfTranslationsChipWidget(
-                    source: SourceOfTranslations.All,
-                  ),
-                  _SourceOfTranslationsChipWidget(
-                    source: SourceOfTranslations.Assets,
-                  ),
-                  _SourceOfTranslationsChipWidget(
-                    source: SourceOfTranslations.Code,
-                  ),
-                ],
+              SettingWidget(
+                label: tt('settings.screen.analysis.label'),
+                content: Wrap(
+                  spacing: kCommonHorizontalMarginHalf,
+                  runSpacing: kCommonVerticalMarginHalf,
+                  children: [
+                    _ProjectAnalysisOnInitChipWidget(
+                      analysisOnInit: ProjectAnalysisOnInit.Always,
+                    ),
+                    _ProjectAnalysisOnInitChipWidget(
+                      analysisOnInit: ProjectAnalysisOnInit.Never,
+                    ),
+                    _ProjectAnalysisOnInitChipWidget(
+                      analysisOnInit: ProjectAnalysisOnInit.CodeVisibleOnly,
+                    ),
+                  ],
+                ),
+                description: tt('settings.screen.analysis.description'),
               ),
-              CommonSpaceVHalf(),
-              Text(tt('settings.screen.source.description'), style: fancyText(kText)),
-              CommonSpaceVDouble(),
+              SettingWidget(
+                label: tt('settings.screen.source.label'),
+                content: Wrap(
+                  spacing: kCommonHorizontalMarginHalf,
+                  runSpacing: kCommonVerticalMarginHalf,
+                  children: [
+                    _SourceOfTranslationsChipWidget(
+                      source: SourceOfTranslations.All,
+                    ),
+                    _SourceOfTranslationsChipWidget(
+                      source: SourceOfTranslations.Assets,
+                    ),
+                    _SourceOfTranslationsChipWidget(
+                      source: SourceOfTranslations.Code,
+                    ),
+                  ],
+                ),
+                description: tt('settings.screen.source.description'),
+              ),
             ],
           ),
         ),
       ],
+    );
+  }
+}
+
+class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
+  final ProjectAnalysisOnInit analysisOnInit;
+
+  /// ProjectAnalysisOnInitChipWidget initialization
+  _ProjectAnalysisOnInitChipWidget({
+    required this.analysisOnInit,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final selected = analysisOnInit.index == prefsInt(PREFS_PROJECTS_ANALYSIS);
+
+    String text = '';
+
+    switch (analysisOnInit) {
+      case ProjectAnalysisOnInit.Always:
+        text = tt('settings.screen.analysis.always');
+        break;
+      case ProjectAnalysisOnInit.Never:
+        text = tt('settings.screen.analysis.never');
+        break;
+      case ProjectAnalysisOnInit.CodeVisibleOnly:
+        text = tt('settings.screen.analysis.code');
+        break;
+    }
+
+    return ChipWidget(
+      text: text,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+      ),
+      onTap: selected
+          ? null
+          : () {
+        prefsSetInt(PREFS_PROJECTS_ANALYSIS, analysisOnInit.index);
+
+        AppState.instance.invalidate();
+      },
     );
   }
 }
@@ -398,11 +465,13 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
         height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
         color: commonTheme.buttonsStyle.iconButtonStyle.color,
       ),
-      onTap: selected ? null : () {
-        prefsSetInt(PREFS_PROJECTS_SOURCE, source.index);
+      onTap: selected
+          ? null
+          : () {
+              prefsSetInt(PREFS_PROJECTS_SOURCE, source.index);
 
-        AppState.instance.invalidate();
-      },
+              AppState.instance.invalidate();
+            },
     );
   }
 }

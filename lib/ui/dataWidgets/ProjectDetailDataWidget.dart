@@ -47,6 +47,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   Project? get project => _project;
 
   final _topKey = GlobalKey();
+  ProjectAnalysisOnInit _analysisOnInit = ProjectAnalysisOnInit.Never;
   int? _projectId;
   Project? _project;
   bool _projectDirNotFound = false;
@@ -93,6 +94,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     _searchController.addListener(_searchTranslations);
 
+    _analysisOnInit = ProjectAnalysisOnInit.values[prefsInt(PREFS_PROJECTS_ANALYSIS)!];
     _sourceOfTranslations = SourceOfTranslations.values[prefsInt(PREFS_PROJECTS_SOURCE)!];
   }
 
@@ -551,7 +553,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
 
-              if (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All) {
+              if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
+                _processProjectCode(project, programmingLanguages);
+              } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly && (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
                 _processProjectCode(project, programmingLanguages);
               }
             });
@@ -797,6 +801,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       });
     });
   }
+}
+
+enum ProjectAnalysisOnInit {
+  Always,
+  Never,
+  CodeVisibleOnly,
 }
 
 class _LanguageChipWidget extends StatelessWidget {
