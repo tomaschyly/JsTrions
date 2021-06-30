@@ -1,3 +1,4 @@
+import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
@@ -6,8 +7,10 @@ import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
+import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
+import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -81,6 +84,11 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                child: _ProjectsWidget(),
+              ),
+              Container(
+                width: kPhoneStopBreakpoint,
+                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: _ProgrammingLanguagesWidget(),
               ),
             ],
@@ -133,6 +141,32 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                         child: _GeneralWidget(
                           language: _language,
                         ),
+                      ),
+                    ),
+                  ),
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: kPhoneStopBreakpoint,
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: _ProjectsWidget(),
+                      ),
+                    ),
+                  ),
+                ],
+              ),
+              Row(
+                mainAxisSize: MainAxisSize.max,
+                mainAxisAlignment: MainAxisAlignment.center,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  Expanded(
+                    child: Container(
+                      alignment: Alignment.centerLeft,
+                      child: Container(
+                        width: kPhoneStopBreakpoint,
+                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                       ),
                     ),
                   ),
@@ -278,6 +312,98 @@ class _GeneralWidget extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _ProjectsWidget extends StatelessWidget {
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CategoryHeaderWidget(
+          text: tt('settings.screen.category.projects'),
+          doubleMargin: true,
+        ),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Text(tt('settings.screen.source.label'), style: fancyText(kTextBold)),
+              CommonSpaceVHalf(),
+              Wrap(
+                spacing: kCommonHorizontalMarginHalf,
+                runSpacing: kCommonVerticalMarginHalf,
+                children: [
+                  _SourceOfTranslationsChipWidget(
+                    source: SourceOfTranslations.All,
+                  ),
+                  _SourceOfTranslationsChipWidget(
+                    source: SourceOfTranslations.Assets,
+                  ),
+                  _SourceOfTranslationsChipWidget(
+                    source: SourceOfTranslations.Code,
+                  ),
+                ],
+              ),
+              CommonSpaceVHalf(),
+              Text(tt('settings.screen.source.description'), style: fancyText(kText)),
+              CommonSpaceVDouble(),
+            ],
+          ),
+        ),
+      ],
+    );
+  }
+}
+
+class _SourceOfTranslationsChipWidget extends StatelessWidget {
+  final SourceOfTranslations source;
+
+  /// SourceOfTranslationsChipWidget initialization
+  _SourceOfTranslationsChipWidget({
+    required this.source,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final selected = source.index == prefsInt(PREFS_PROJECTS_SOURCE);
+
+    String text = '';
+
+    switch (source) {
+      case SourceOfTranslations.All:
+        text = tt('project_detail.actions.source.all');
+        break;
+      case SourceOfTranslations.Assets:
+        text = tt('project_detail.actions.source.assets');
+        break;
+      case SourceOfTranslations.Code:
+        text = tt('project_detail.actions.source.code');
+        break;
+    }
+
+    return ChipWidget(
+      text: text,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+      ),
+      onTap: selected ? null : () {
+        prefsSetInt(PREFS_PROJECTS_SOURCE, source.index);
+
+        AppState.instance.invalidate();
+      },
+    );
   }
 }
 

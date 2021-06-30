@@ -7,6 +7,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/Project.dart';
@@ -60,7 +61,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   String _searchQuery = '';
   GlobalKey? _newTranslationKey;
   String? _newTranslation;
-  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.Assets;
+  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
   bool _displayOnlyCodeOnlyKeys = false;
 
@@ -91,6 +92,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     super.firstBuildOnly(context);
 
     _searchController.addListener(_searchTranslations);
+
+    _sourceOfTranslations = SourceOfTranslations.values[prefsInt(PREFS_PROJECTS_SOURCE)!];
   }
 
   /// Create screen content from widgets
@@ -197,6 +200,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             runSpacing: kCommonVerticalMarginHalf,
                             children: [
                               _SourceOfTranslationsChipWidget(
+                                source: SourceOfTranslations.All,
+                                selected: _sourceOfTranslations == SourceOfTranslations.All,
+                                selectSource: _selectSource,
+                              ),
+                              _SourceOfTranslationsChipWidget(
                                 source: SourceOfTranslations.Assets,
                                 selected: _sourceOfTranslations == SourceOfTranslations.Assets,
                                 selectSource: _selectSource,
@@ -204,11 +212,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               _SourceOfTranslationsChipWidget(
                                 source: SourceOfTranslations.Code,
                                 selected: _sourceOfTranslations == SourceOfTranslations.Code,
-                                selectSource: _selectSource,
-                              ),
-                              _SourceOfTranslationsChipWidget(
-                                source: SourceOfTranslations.All,
-                                selected: _sourceOfTranslations == SourceOfTranslations.All,
                                 selectSource: _selectSource,
                               ),
                             ],

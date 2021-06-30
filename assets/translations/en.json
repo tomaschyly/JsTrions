@@ -72,6 +72,7 @@
   "projects.screen.title": "Projects",
   "settings.screen.category.general": "General",
   "settings.screen.category.programming_languages": "Programming Languages",
+  "settings.screen.category.projects": "Projects",
   "settings.screen.font": "Fancy Font",
   "settings.screen.font.off": "Texts in app use default OS dependant font family",
   "settings.screen.font.on": "Fancy font family is applied on texts in app",
@@ -82,6 +83,8 @@
   "settings.screen.reset": "Clear Data",
   "settings.screen.reset.confirm": "Are you sure that you want to delete all your data? You will not be able to get them back.",
   "settings.screen.reset.description": "Use this to delete all your data at once",
+  "settings.screen.source.description": "Choose which source of translations is selected by default on Project detail",
+  "settings.screen.source.label": "Translations Source",
   "settings.screen.title": "Settings",
   "validation.required": "Please fill in the field"
 }
