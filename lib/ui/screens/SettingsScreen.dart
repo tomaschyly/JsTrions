@@ -372,6 +372,13 @@ class _ProjectsWidget extends StatelessWidget {
                 ),
                 description: tt('settings.screen.source.description'),
               ),
+              PreferencesSwitchWidget(
+                label: tt('settings.screen.beautify_json'),
+                prefsKey: PREFS_PROJECTS_BEAUTIFY_JSON,
+                descriptionOn: tt('settings.screen.beautify_json.on'),
+                descriptionOff: tt('settings.screen.beautify_json.off'),
+              ),
+              CommonSpaceVDouble(),
             ],
           ),
         ),

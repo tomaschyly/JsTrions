@@ -728,7 +728,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
     final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
 
-    final encoder = JsonEncoder.withIndent('  ');
+    final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
     for (String language in project.languages) {
       final file = File(join(translationsAssetsDirectory.path, '$language.json'));
