@@ -97,7 +97,9 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
 
         _initProject(programmingLanguages.programmingLanguages);
 
-        final availableTranslationKeys = _translationKeys.where((translationKey) => _selectedProgrammingLanguages.contains(translationKey.programmingLanguage));
+        final availableTranslationKeys = _translationKeys.where((translationKey) =>
+            _selectedProgrammingLanguages.contains(translationKey.programmingLanguage) &&
+            programmingLanguages.programmingLanguages.any((programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage));
 
         return AnimatedSize(
           duration: kThemeAnimationDuration,
@@ -166,8 +168,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                       TextSpan(
                         text: 'https://regexr.com/',
                         style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => launch('https://regexr.com/'),
+                        recognizer: TapGestureRecognizer()..onTap = () => launch('https://regexr.com/'),
                       ),
                     ],
                   ),
