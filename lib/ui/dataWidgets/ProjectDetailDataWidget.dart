@@ -371,7 +371,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 ..._selectedLanguagePairs.keys
                                     .where((key) =>
                                         (key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery)) &&
-                                        (!_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null))
+                                        (!_displayOnlyCodeOnlyKeys ||
+                                            _sourceOfTranslations == SourceOfTranslations.Assets ||
+                                            _translationPairsByLanguage[_selectedLanguage]?[key] == null))
                                     .map((key) {
                                   rowIsOdd = !rowIsOdd;
 
@@ -555,7 +557,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
               if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
                 _processProjectCode(project, programmingLanguages);
-              } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly && (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
+              } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly &&
+                  (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
                 _processProjectCode(project, programmingLanguages);
               }
             });
@@ -741,6 +744,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Go through whole Project code depending on Programming Languages and find keys usage, pair with existing translations
   Future<void> _processProjectCode(Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final start = DateTime.now();
+
     setStateNotDisposed(() {
       _isAnalyzing = true;
     });
@@ -792,14 +797,27 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       codePairsByLanguage[language] = codePairs;
     }
 
+    final diff = DateTime.now().difference(start);
+    final minAnalysisAnimationDuration = 800;
+
     setStateNotDisposed(() {
       _codePairsByLanguage = codePairsByLanguage;
-      _isAnalyzing = false;
+      if (diff.inMilliseconds >= minAnalysisAnimationDuration) {
+        _isAnalyzing = false;
+      }
 
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         _selectLanguage(_selectedLanguage);
       });
     });
+
+    if (diff.inMilliseconds < minAnalysisAnimationDuration) {
+      Future.delayed(Duration(milliseconds: minAnalysisAnimationDuration - diff.inMilliseconds), () {
+        setStateNotDisposed(() {
+          _isAnalyzing = false;
+        });
+      });
+    }
   }
 }
 
