@@ -82,19 +82,18 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
           },
           icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
         ),
-        if (project != null)
-          ...[
-            AppBarOption(
-              onTap: (BuildContext context) {
-                EditProjectDialog.show(context, project: _project);
-              },
-              icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
-            ),
-            AppBarOption(
-              onTap: (BuildContext context) => deleteProject(context, project: project),
-              icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
-            ),
-          ],
+        if (project != null) ...[
+          AppBarOption(
+            onTap: (BuildContext context) {
+              EditProjectDialog.show(context, project: _project);
+            },
+            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+          ),
+          AppBarOption(
+            onTap: (BuildContext context) => deleteProject(context, project: project),
+            icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
+          ),
+        ],
       ];
     });
   }
@@ -383,7 +382,14 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final snapshot = AppDataState.of(context)!;
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final isDesktop = [
+      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.ExtraLargeDesktop,
+    ].contains(snapshot.responsiveScreen);
 
     return ListDataWidget<GetProjectsDataRequest, Project>(
       key: _listKey,
@@ -412,10 +418,10 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(
           style: commonTheme.listItemButtonStyle.copyWith(
-            variant: item.id == widget.selectedProject?.id ? ButtonVariant.Filled : ButtonVariant.TextOnly,
+            variant: isDesktop && item.id == widget.selectedProject?.id ? ButtonVariant.Filled : ButtonVariant.TextOnly,
           ),
           text: item.name,
-          onTap: item.id == widget.selectedProject?.id
+          onTap: isDesktop && item.id == widget.selectedProject?.id
               ? null
               : () {
                   widget.selectProject(item);
