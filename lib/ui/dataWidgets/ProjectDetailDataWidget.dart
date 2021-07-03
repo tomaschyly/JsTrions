@@ -627,13 +627,13 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
 
-              _analyzeTranslations();
-
               if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
                 _processProjectCode(project, programmingLanguages);
               } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly &&
                   (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
                 _processProjectCode(project, programmingLanguages);
+              } else {
+                _analyzeTranslations();
               }
             });
           });
@@ -725,6 +725,22 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         }
 
         if (!languagesNotEqualKeys) {
+          break;
+        }
+      }
+    }
+
+    if (_codePairsByLanguage.isNotEmpty) {
+      final keysInAssets = keysByLanguage[languageTopCount]!;
+
+      for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
+        if (!keysInAssets.contains(key)) {
+          infoList.add(
+            _InfoWidget(
+              text: tt('project_detail.info.code_key_not_translated'),
+              clearInfo: _clearInfo,
+            ),
+          );
           break;
         }
       }
@@ -992,6 +1008,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         _selectLanguage(_selectedLanguage);
+
+        _analyzeTranslations();
       });
     });
 
