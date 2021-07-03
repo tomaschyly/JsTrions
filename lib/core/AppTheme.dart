@@ -18,6 +18,7 @@ const kColorSecondaryDark = kColorGoldDarker;
 const kColorTextPrimary = kColorSilver;
 const kColorTextSecondary = Colors.black;
 
+const kColorSuccess = const Color(0xFF43a047);
 const kColorDanger = kColorRed;
 const kColorWarning = const Color(0xFFfb8c00);
 const kColorWarningDark = const Color(0xFFc25e00);
@@ -36,7 +37,9 @@ const kFontFamily = 'Kalam';
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
 const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
+const kTextSuccess = const TextStyle(color: kColorSuccess, fontSize: 16);
 const kTextDanger = const TextStyle(color: kColorDanger, fontSize: 16);
+const kTextWarning = const TextStyle(color: kColorWarning, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>

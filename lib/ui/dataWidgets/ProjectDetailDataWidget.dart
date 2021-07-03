@@ -67,6 +67,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _displayOnlyCodeOnlyKeys = false;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
+  final List<_InfoWidget> _infoList = [];
 
   /// Manually dispose of resources
   @override
@@ -290,6 +291,20 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 ),
                               ),
                               CommonSpaceV(),
+                              AnimatedSize(
+                                duration: kThemeAnimationDuration,
+                                vsync: this,
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: _infoList,
+                                  ),
+                                ),
+                              ),
                               Text(
                                 tt('project_detail.translations.label'),
                                 style: fancyText(kTextHeadline),
@@ -539,6 +554,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _selectedLanguage = '';
       _selectedLanguagePairs = SplayTreeMap();
       _codePairsByLanguage = Map();
+      _infoList.clear();
     });
 
     updateDataRequests([
@@ -611,6 +627,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
 
+              _analyzeTranslations();
+
               if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
                 _processProjectCode(project, programmingLanguages);
               } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly &&
@@ -624,6 +642,116 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       updateLastSeenOfProject(project);
     }
+  }
+
+  /// Analyze translations for equality, if some has missing translations notify
+  void _analyzeTranslations() {
+    final countByLanguage = Map<String, int>();
+    final keysByLanguage = Map<String, List<String>>();
+
+    for (String language in _translationPairsByLanguage.keys) {
+      final pairsForLanguage = _translationPairsByLanguage[language]!;
+
+      countByLanguage[language] = pairsForLanguage.keys.length;
+      keysByLanguage[language] = pairsForLanguage.keys.toList()..sort();
+    }
+
+    final List<_InfoWidget> infoList = [];
+    bool languagesNotEqualCount = false;
+
+    String languageTopCount = '';
+    String? languageLowerCount;
+    int topCount = -1;
+    int lowerCount = 0;
+
+    for (String language in countByLanguage.keys) {
+      final count = countByLanguage[language]!;
+
+      if (topCount == -1) {
+        languageTopCount = language;
+        topCount = count;
+      } else if (count > topCount) {
+        languageTopCount = language;
+        topCount = count;
+      }
+    }
+
+    for (String language in countByLanguage.keys) {
+      final count = countByLanguage[language]!;
+
+      if (count < topCount) {
+        languageLowerCount = language;
+        lowerCount = count;
+        languagesNotEqualCount = true;
+        break;
+      }
+    }
+
+    if (languagesNotEqualCount) {
+      infoList.add(
+        _InfoWidget(
+          text: tt('project_detail.info.languages_not_equal_count')
+              .replaceFirst(r'$topLanguage', languageTopCount)
+              .replaceFirst(r'$topLanguageCount', topCount.toString())
+              .replaceFirst(r'$lowerLanguage', languageLowerCount!)
+              .replaceFirst(r'$lowerLanguageCount', lowerCount.toString()),
+          clearInfo: _clearInfo,
+        ),
+      );
+    }
+
+    if (!languagesNotEqualCount) {
+      bool languagesNotEqualKeys = false;
+
+      for (String language in keysByLanguage.keys) {
+        final keys = keysByLanguage[language]!;
+
+        for (String otherLanguage in keysByLanguage.keys) {
+          if (otherLanguage != language) {
+            final otherKeys = keysByLanguage[otherLanguage]!;
+
+            languagesNotEqualKeys = listEquals(keys, otherKeys);
+
+            if (!languagesNotEqualKeys) {
+              infoList.add(
+                _InfoWidget(
+                  text: tt('project_detail.info.languages_not_equal_keys').replaceFirst(r'$language', language).replaceFirst(r'$otherLanguage', otherLanguage),
+                  clearInfo: _clearInfo,
+                ),
+              );
+              break;
+            }
+          }
+        }
+
+        if (!languagesNotEqualKeys) {
+          break;
+        }
+      }
+    }
+
+    if (infoList.isEmpty) {
+      infoList.add(
+        _InfoWidget(
+          text: tt('project_detail.info.success'),
+          isSuccess: true,
+          clearInfo: _clearInfo,
+        ),
+      );
+    }
+
+    setStateNotDisposed(() {
+      _infoList.clear();
+
+      _infoList.addAll(infoList);
+    });
+  }
+
+  /// Clear chosen info from list
+  void _clearInfo(_InfoWidget info) {
+    setStateNotDisposed(() {
+      _infoList.remove(info);
+    });
   }
 
   /// Confirm access to Project files by picking the directory
@@ -878,7 +1006,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Toggle scrollTop visibility based on scrolled position.
   void _shouldShowScrollTop() {
-    print('TCH_d ${_scrollController.position.pixels}');
     if (_scrollController.position.pixels > kCommonVerticalMargin && !_showScrollTop.value) {
       _showScrollTop.value = true;
     } else if (_scrollController.position.pixels <= kCommonVerticalMargin && _showScrollTop.value) {
@@ -969,6 +1096,67 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
         color: commonTheme.buttonsStyle.iconButtonStyle.color,
       ),
       onTap: selected ? null : () => selectSource(source),
+    );
+  }
+}
+
+class _InfoWidget extends StatelessWidget {
+  final String text;
+  final bool isSuccess;
+  final bool isDanger;
+  final void Function(_InfoWidget info) clearInfo;
+
+  /// InfoWidget initialization
+  _InfoWidget({
+    required this.text,
+    this.isSuccess = false,
+    this.isDanger = false,
+    required this.clearInfo,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    TextStyle textStyle = kTextWarning;
+
+    if (isSuccess) {
+      textStyle = kTextSuccess;
+    }
+
+    if (isDanger) {
+      textStyle = kTextDanger;
+    }
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                text,
+                style: fancyText(textStyle),
+              ),
+            ),
+            CommonSpaceHHalf(),
+            IconButtonWidget(
+              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                variant: IconButtonVariant.IconOnly,
+                color: kColorDanger,
+              ),
+              svgAssetPath: 'images/times.svg',
+              onTap: () => clearInfo(this),
+            ),
+          ],
+        ),
+        CommonSpaceV(),
+      ],
     );
   }
 }
