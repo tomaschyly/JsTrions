@@ -944,6 +944,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Go through whole Project code depending on Programming Languages and find keys usage, pair with existing translations
   Future<void> _processProjectCode(Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final projectId = widget.projectId;
     final start = DateTime.now();
 
     setStateNotDisposed(() {
@@ -995,6 +996,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       }
 
       codePairsByLanguage[language] = codePairs;
+    }
+
+    if (projectId != widget.projectId) {
+      return;
     }
 
     final diff = DateTime.now().difference(start);
