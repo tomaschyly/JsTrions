@@ -163,7 +163,14 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                           validator: (String? value) {
                             final directory = Directory('${_directoryController.text}$value');
 
-                            return directory.existsSync();
+                            bool exists = false;
+                            try {
+                              exists = directory.existsSync();
+                            } catch (e, t) {
+                              debugPrint('TCH_e $e\n$t');
+                            }
+
+                            return exists;
                           },
                           errorText: tt('edit_project.field.translation_assets.error'),
                         ),
@@ -176,6 +183,11 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                     onTap: () => _pickDirectory(context, true),
                   ),
                 ],
+              ),
+              CommonSpaceVHalf(),
+              Text(
+                tt('edit_project.field.translation_assets.hint'),
+                style: fancyText(kText),
               ),
               CommonSpaceVHalf(),
               ProjectLanguagesFieldWidget(

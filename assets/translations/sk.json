@@ -30,6 +30,7 @@
   "edit_project.field.programming_languages.hint": "Rada: Použí túto webstránku na pomoc s RegExp ",
   "edit_project.field.translation_assets": "Priečinok Prekladov",
   "edit_project.field.translation_assets.error": "Priečinok prekladov neexistuje",
+  "edit_project.field.translation_assets.hint": "Rada: Toto je relatívna cesta vo vnútry Projektového priečinku",
   "edit_project.submit": "Uložiť",
   "edit_project.title.add": "Nový Projekt",
   "edit_project.title.edit": "Upraviť $name",
