@@ -129,7 +129,14 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                           validator: (String? value) {
                             final directory = Directory(value!);
 
-                            return directory.existsSync();
+                            bool exists = false;
+                            try {
+                              exists = directory.existsSync();
+                            } catch (e, t) {
+                              debugPrint('TCH_e $e\n$t');
+                            }
+
+                            return exists;
                           },
                           errorText: tt('edit_project.field.directory.error'),
                         ),
