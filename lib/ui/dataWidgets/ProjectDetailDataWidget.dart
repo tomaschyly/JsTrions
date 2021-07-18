@@ -735,6 +735,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
         if (!keysInAssets.contains(key)) {
+          final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
+
+          if (showCodeOnly) {
+            setStateNotDisposed(() {
+              _displayOnlyCodeOnlyKeys = true;
+            });
+          }
+
           infoList.add(
             _InfoWidget(
               text: tt('project_detail.info.code_key_not_translated'),

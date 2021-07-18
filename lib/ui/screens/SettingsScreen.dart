@@ -353,6 +353,13 @@ class _ProjectsWidget extends StatelessWidget {
                 ),
                 description: tt('settings.screen.analysis.description'),
               ),
+              PreferencesSwitchWidget(
+                label: tt('settings.screen.code_only'),
+                prefsKey: PREFS_PROJECTS_CODE_ONLY,
+                descriptionOn: tt('settings.screen.code_only.on'),
+                descriptionOff: tt('settings.screen.code_only.off'),
+              ),
+              CommonSpaceVDouble(),
               SettingWidget(
                 label: tt('settings.screen.source.label'),
                 content: Wrap(
@@ -427,10 +434,10 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
       onTap: selected
           ? null
           : () {
-        prefsSetInt(PREFS_PROJECTS_ANALYSIS, analysisOnInit.index);
+              prefsSetInt(PREFS_PROJECTS_ANALYSIS, analysisOnInit.index);
 
-        AppState.instance.invalidate();
-      },
+              AppState.instance.invalidate();
+            },
     );
   }
 }
