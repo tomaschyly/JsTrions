@@ -1,6 +1,9 @@
+import 'dart:io';
+
 import 'package:js_trions/config.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/dataTasks/HttpGetDataTask.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -202,10 +205,14 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
 
       final String name = _nameController.text.isNotEmpty ? _nameController.text : 'Anonymous';
 
+      final String version = (await PackageInfo.fromPlatform()).version;
+
       final HttpGetDataTask dataTask = await MainDataProvider.instance!.executeDataTask(HttpGetDataTask(
         url: kFeedbackUrl,
         parameters: <String, String>{
           "app": 'js_trions',
+          "version": version,
+          "platform": Platform.operatingSystem.toLowerCase(),
           "name": name,
           "email": _emailController.text,
           "subject": _subjectController.text,
