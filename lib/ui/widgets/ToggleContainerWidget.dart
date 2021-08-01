@@ -6,11 +6,13 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 class ToggleContainerWidget extends AbstractStatefulWidget {
   final String title;
   final Widget content;
+  final bool borderLess;
 
   /// ToggleContainerWidget initialization
   ToggleContainerWidget({
     required this.title,
     required this.content,
+    this.borderLess = false,
   });
 
   /// Create state for widget
@@ -33,7 +35,7 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
           borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
           border: Border.all(
             width: 1,
-            color: commonTheme.buttonsStyle.buttonStyle.color ?? Colors.transparent,
+            color: widget.borderLess ? Colors.transparent : (commonTheme.buttonsStyle.buttonStyle.color ?? Colors.transparent),
           ),
         ),
         child: AnimatedSize(

@@ -618,7 +618,19 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
             final json = jsonDecode(await file.readAsString());
 
-            translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
+            try {
+              if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
+                final jsonObject = Map<String, dynamic>.from(json);
+
+                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(jsonObject[project.formatObjectInside]);
+              } else {
+                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
+              }
+            } catch (e, t) {
+              debugPrint('TCH_e $e\n$t');
+
+              translationPairsByLanguage[language] = SplayTreeMap<String, String>();
+            }
           }
 
           setStateNotDisposed(() {
@@ -946,7 +958,15 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       final pairs = _translationPairsByLanguage[language]!;
 
-      await file.writeAsString(encoder.convert(pairs));
+      if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
+        final jsonObject = <String, dynamic>{
+          '${project.formatObjectInside}': pairs,
+        };
+
+        await file.writeAsString(encoder.convert(jsonObject));
+      } else {
+        await file.writeAsString(encoder.convert(pairs));
+      }
     }
   }
 
@@ -988,7 +1008,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
           regExp.allMatches(fileContents).forEach((match) {
             for (int i = 0; i < match.groupCount; i++) {
-              foundKeys.add(match.group(i)!);
+              final group = match.group(i);
+
+              if (group != null) {
+                foundKeys.add(group);
+              }
             }
           });
         }

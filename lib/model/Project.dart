@@ -12,6 +12,8 @@ class Project extends DataModel {
   static const String COL_LAST_SEEN = 'last_seen';
   static const String COL_UPDATED = 'updated';
   static const String COL_CREATED = 'created';
+  static const String COL_TRANSLATIONS_JSON_FORMAT = 'translations_json_format';
+  static const String COL_FORMAT_OBJECT_INSIDE = 'format_object_inside';
 
   int? id;
   late String name;
@@ -23,6 +25,8 @@ class Project extends DataModel {
   late int lastSeen;
   late int updated;
   late int created;
+  TranslationsJsonFormat? translationsJsonFormat;
+  String? formatObjectInside;
 
   /// Project initialization from JSON map
   Project.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
@@ -36,6 +40,12 @@ class Project extends DataModel {
     lastSeen = json[COL_LAST_SEEN] ?? 0;
     updated = json[COL_UPDATED];
     created = json[COL_CREATED];
+
+    final int? theFormat = json[COL_TRANSLATIONS_JSON_FORMAT];
+    if (theFormat != null) {
+      translationsJsonFormat = TranslationsJsonFormat.values[theFormat];
+    }
+    formatObjectInside = json[COL_FORMAT_OBJECT_INSIDE];
   }
 
   /// Covert the object into JSON map
@@ -51,6 +61,8 @@ class Project extends DataModel {
       COL_LAST_SEEN: lastSeen,
       COL_UPDATED: updated,
       COL_CREATED: created,
+      COL_TRANSLATIONS_JSON_FORMAT: translationsJsonFormat?.index,
+      COL_FORMAT_OBJECT_INSIDE: formatObjectInside,
     };
 
     if (id != null) {
@@ -79,4 +91,10 @@ class TranslationKey extends DataModel {
       'key': key,
     };
   }
+}
+
+enum TranslationsJsonFormat {
+  None,
+  Simple,
+  ObjectInside,
 }

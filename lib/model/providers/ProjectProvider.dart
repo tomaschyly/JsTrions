@@ -5,6 +5,7 @@ import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
+import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -18,6 +19,7 @@ Future<void> saveProject(
   required TextEditingController translationAssetsController,
   required GlobalKey<ProjectLanguagesFieldWidgetState> languagesKey,
   required GlobalKey<ProjectProgrammingLanguagesFieldDataWidgetState> programmingLanguagesKey,
+  required GlobalKey<ProjectTranslationsJsonFormatFieldWidgetState> translationsJsonFormatKey,
   bool popOnSuccess = true,
 }) async {
   FocusScope.of(context).unfocus();
@@ -26,6 +28,13 @@ Future<void> saveProject(
     final now = DateTime.now().millisecondsSinceEpoch;
 
     final programmingLanguagesValue = programmingLanguagesKey.currentState!.value;
+    ProjectTranslationsJsonFormat? translationsJsonFormatValue = translationsJsonFormatKey.currentState?.value;
+    if (translationsJsonFormatValue == null && project != null) {
+      translationsJsonFormatValue = ProjectTranslationsJsonFormat(
+        translationsJsonFormat: project.translationsJsonFormat ?? TranslationsJsonFormat.Simple,
+        formatObjectInside: project.formatObjectInside,
+      );
+    }
 
     final data = Project.fromJson(<String, dynamic>{
       Project.COL_ID: project?.id,
@@ -38,6 +47,8 @@ Future<void> saveProject(
       Project.COL_LAST_SEEN: project?.lastSeen,
       Project.COL_UPDATED: now,
       Project.COL_CREATED: project?.created ?? now,
+      Project.COL_TRANSLATIONS_JSON_FORMAT: translationsJsonFormatValue?.translationsJsonFormat.index,
+      Project.COL_FORMAT_OBJECT_INSIDE: translationsJsonFormatValue?.formatObjectInside,
     });
 
     final dataTask = await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(
