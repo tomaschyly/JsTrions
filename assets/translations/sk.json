@@ -78,6 +78,7 @@
   "project_detail.table.translation": "Preklad",
   "project_detail.translation_assets_directory_not_found": "Priečinok \"$directory\" kde majú byť assety prekladov neexistuje, nemôžem inicializovať tento Projekt",
   "project_detail.translations.label": "Preklady",
+  "project_detail.translations.stats": "(kľúče: $keys; slová: $words)",
   "projects.screen.field.search": "Vyhľadaj Projekty",
   "projects.screen.title": "Projekty",
   "settings.screen.analysis.always": "Zakaždým",

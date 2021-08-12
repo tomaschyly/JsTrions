@@ -5,6 +5,7 @@ import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
+import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppPreferences.dart';
@@ -68,6 +69,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
   final List<_InfoWidget> _infoList = [];
+  int _keysForCurrent = 0;
+  int _wordsForCurrent = 0;
 
   /// Manually dispose of resources
   @override
@@ -305,9 +308,27 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   ),
                                 ),
                               ),
-                              Text(
-                                tt('project_detail.translations.label'),
-                                style: fancyText(kTextHeadline),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    tt('project_detail.translations.label'),
+                                    style: fancyText(kTextHeadline),
+                                  ),
+                                  CommonSpaceHHalf(),
+                                  Text(
+                                    tt(
+                                      'project_detail.translations.stats',
+                                      parameters: <String, String>{
+                                        r'$keys': _keysForCurrent.toString(),
+                                        r'$words': _wordsForCurrent.toString(),
+                                      },
+                                    ),
+                                    style: fancyText(kText),
+                                  ),
+                                ],
                               ),
                               CommonSpaceV(),
                               AnimatedSize(
@@ -790,6 +811,21 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     });
   }
 
+  /// Calculate statistics for current language
+  void _calculateStats() {
+    _keysForCurrent = _selectedLanguagePairs.keys.length;
+
+    int words = 0;
+
+    for (String key in _selectedLanguagePairs.keys) {
+      String text = _selectedLanguagePairs[key]!;
+
+      words += text.split(' ').length;
+    }
+
+    _wordsForCurrent = words;
+  }
+
   /// Confirm access to Project files by picking the directory
   Future<void> _confirmFilesAccess(Project project) async {
     try {
@@ -828,6 +864,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
           break;
       }
+
+      _calculateStats();
 
       WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
         final theContext = _topKey.currentContext;
@@ -903,6 +941,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       }
 
       setStateNotDisposed(() {
+        _calculateStats();
+
         if (isNew) {
           _newTranslationKey = GlobalKey();
           _newTranslation = translation.key;
@@ -939,9 +979,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         final pairs = _translationPairsByLanguage[language]!;
 
         pairs.remove(key);
+
+        final codePairs = _codePairsByLanguage[language];
+        if (codePairs != null) {
+          codePairs.remove(key);
+        }
       }
 
-      setStateNotDisposed(() {});
+      setStateNotDisposed(() {
+        _calculateStats();
+      });
 
       await _saveTranslationsToAssets(context, project);
     }

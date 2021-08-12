@@ -78,6 +78,7 @@
   "project_detail.table.translation": "Translation",
   "project_detail.translation_assets_directory_not_found": "The directory \"$directory\" where translation assets are to be stored does not exist, cannot initialize this Project",
   "project_detail.translations.label": "Translations",
+  "project_detail.translations.stats": "(keys: $keys; words: $words)",
   "projects.screen.field.search": "Search Projects",
   "projects.screen.title": "Projects",
   "settings.screen.analysis.always": "Always",
