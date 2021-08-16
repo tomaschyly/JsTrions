@@ -143,7 +143,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               content = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: Text(
-                  tt('project_detail.directory_not_found').replaceAll(r'$directory', theProject.directory),
+                  tt('project_detail.directory_not_found').parameters(<String, String>{
+                    r'$directory': theProject.directory,
+                  }),
                   style: fancyText(kTextDanger),
                 ),
               );
@@ -174,8 +176,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               content = Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: Text(
-                  tt('project_detail.translation_assets_directory_not_found')
-                      .replaceAll(r'$directory', '${theProject.directory}${theProject.translationAssets}'),
+                  tt('project_detail.translation_assets_directory_not_found').parameters(<String, String>{
+                    r'$directory': '${theProject.directory}${theProject.translationAssets}',
+                  }),
                   style: fancyText(kTextDanger),
                 ),
               );
@@ -720,7 +723,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     if (languagesNotEqualCount) {
       infoList.add(
         _InfoWidget(
-          text: tt('project_detail.info.languages_not_equal_count', parameters: <String, String>{
+          text: tt('project_detail.info.languages_not_equal_count').parameters(<String, String>{
             r'$topLanguageCode': languageTopCount,
             r'$topLanguageCount': topCount.toString(),
             r'$lowerLanguageCode': languageLowerCount!,
@@ -746,7 +749,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             if (!languagesNotEqualKeys) {
               infoList.add(
                 _InfoWidget(
-                  text: tt('project_detail.info.languages_not_equal_keys').replaceFirst(r'$language', language).replaceFirst(r'$otherLanguage', otherLanguage),
+                  text: tt('project_detail.info.languages_not_equal_keys').parameters(<String, String>{
+                    r'$language': language,
+                    r'$otherLanguage': otherLanguage,
+                  }),
                   clearInfo: _clearInfo,
                 ),
               );
