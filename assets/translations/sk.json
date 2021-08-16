@@ -68,7 +68,7 @@
   "project_detail.directory_not_found": "Priečinok \"$directory\" neexistuje, nemôžem inicializovať tento Projekt",
   "project_detail.field.search": "Vyhľadaj Preklady",
   "project_detail.info.code_key_not_translated": "V kóde Projektu je kľúč, ktorý nie je preložený",
-  "project_detail.info.languages_not_equal_count": "Jazyky nemajú rovnaký počet prekladov, $topLanguage má $topLanguageCount, zatiaľ čo $lowerLanguage má len $lowerLanguageCount",
+  "project_detail.info.languages_not_equal_count": "Jazyky nemajú rovnaký počet prekladov, $topLanguageCode má $topLanguageCount, zatiaľ čo $lowerLanguageCode má len $lowerLanguageCount",
   "project_detail.info.languages_not_equal_keys": "Jazyky nemajú tie isté kľúče preklavod, $language má iné kľúce ako $otherLanguage",
   "project_detail.info.success": "Preklady Projektu analizované a vyzerajú byť vporiadku",
   "project_detail.macos_request_access": "Potvrď Prístup",

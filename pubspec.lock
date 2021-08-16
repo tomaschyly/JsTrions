@@ -454,7 +454,7 @@ packages:
       name: tch_appliable_core
       url: "https://pub.dartlang.org"
     source: hosted
-    version: "0.9.3"
+    version: "0.9.5"
   tch_common_widgets:
     dependency: "direct main"
     description:

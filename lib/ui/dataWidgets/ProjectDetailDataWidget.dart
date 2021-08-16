@@ -319,13 +319,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   ),
                                   CommonSpaceHHalf(),
                                   Text(
-                                    tt(
-                                      'project_detail.translations.stats',
-                                      parameters: <String, String>{
-                                        r'$keys': _keysForCurrent.toString(),
-                                        r'$words': _wordsForCurrent.toString(),
-                                      },
-                                    ),
+                                    tt('project_detail.translations.stats').parameters(<String, String>{
+                                      r'$keys': _keysForCurrent.toString(),
+                                      r'$words': _wordsForCurrent.toString(),
+                                    }),
                                     style: fancyText(kText),
                                   ),
                                 ],
@@ -723,11 +720,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     if (languagesNotEqualCount) {
       infoList.add(
         _InfoWidget(
-          text: tt('project_detail.info.languages_not_equal_count')
-              .replaceFirst(r'$topLanguage', languageTopCount)
-              .replaceFirst(r'$topLanguageCount', topCount.toString())
-              .replaceFirst(r'$lowerLanguage', languageLowerCount!)
-              .replaceFirst(r'$lowerLanguageCount', lowerCount.toString()),
+          text: tt('project_detail.info.languages_not_equal_count', parameters: <String, String>{
+            r'$topLanguageCode': languageTopCount,
+            r'$topLanguageCount': topCount.toString(),
+            r'$lowerLanguageCode': languageLowerCount!,
+            r'$lowerLanguageCount': lowerCount.toString(),
+          }),
           clearInfo: _clearInfo,
         ),
       );
