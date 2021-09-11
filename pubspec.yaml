@@ -20,27 +20,27 @@ dependencies:
     sdk: flutter
 
   tch_appliable_core: ^0.9.6
-  tch_common_widgets: ^0.6.18
+  tch_common_widgets: ^0.7.0
   
   supercharged: ^2.0.0
-  package_info_plus: ^1.0.3
+  package_info_plus: ^1.0.6
 
-  cupertino_icons: ^1.0.2
+  cupertino_icons: ^1.0.3
   flutter_svg: ^0.22.0
 
   intl: ^0.17.0
 
   path: ^1.8.0
-  path_provider: ^2.0.1
-  sqflite: ^2.0.0+3
+  path_provider: ^2.0.3
+  sqflite: ^2.0.0+4
   sembast: ^3.0.2
 
   file_selector: ^0.8.2
-  file_selector_linux: ^0.0.2
-  file_selector_macos: ^0.0.4
-  file_selector_windows: ^0.0.2
+  file_selector_linux: ^0.0.2+1
+  file_selector_macos: ^0.0.4+1
+  file_selector_windows: ^0.0.2+1
 
-  url_launcher: ^6.0.7
+  url_launcher: ^6.0.10
 
 dev_dependencies:
   msix: ^2.1.3
