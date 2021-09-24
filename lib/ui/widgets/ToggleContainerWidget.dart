@@ -1,3 +1,5 @@
+import 'dart:math';
+
 import 'package:flutter_svg/svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -21,7 +23,28 @@ class ToggleContainerWidget extends AbstractStatefulWidget {
 }
 
 class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleContainerWidget> with TickerProviderStateMixin {
+  late final AnimationController _animationController;
   bool _isOpen = false;
+
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    _animationController = AnimationController(
+      vsync: this,
+      upperBound: 0.5,
+      duration: kThemeAnimationDuration,
+    );
+  }
+
+  /// Dispose of resource manually
+  @override
+  void dispose() {
+    _animationController.dispose();
+
+    super.dispose();
+  }
 
   /// Create view layout from widgets
   @override
@@ -40,7 +63,6 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
         ),
         child: AnimatedSize(
           duration: kThemeAnimationDuration,
-          vsync: this,
           alignment: Alignment.topCenter,
           child: Column(
             mainAxisSize: MainAxisSize.min,
@@ -69,11 +91,21 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                           width: commonTheme.buttonsStyle.iconButtonStyle.width,
                           height: commonTheme.buttonsStyle.iconButtonStyle.height,
                           child: Center(
-                            child: SvgPicture.asset(
-                              _isOpen ? 'images/chevron-up.svg' : 'images/chevron-down.svg',
-                              width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
-                              height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
-                              color: commonTheme.buttonsStyle.iconButtonStyle.color,
+                            child: AnimatedBuilder(
+                              animation: _animationController,
+                              builder: (BuildContext context, Widget? child) {
+                                return Transform.rotate(
+                                  angle: _animationController.value * 2 * pi,
+                                  child: child,
+                                );
+                              },
+                              child: SvgPicture.asset(
+                                // _isOpen ? 'images/chevron-up.svg' : 'images/chevron-down.svg',
+                                'images/chevron-down.svg',
+                                width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+                                height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+                                color: commonTheme.buttonsStyle.iconButtonStyle.color,
+                              ),
                             ),
                           ),
                         ),
@@ -83,6 +115,12 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                   onTap: () {
                     setStateNotDisposed(() {
                       _isOpen = !_isOpen;
+
+                      if (_isOpen) {
+                        _animationController.forward();
+                      } else {
+                        _animationController.reverse();
+                      }
                     });
                   },
                 ),
