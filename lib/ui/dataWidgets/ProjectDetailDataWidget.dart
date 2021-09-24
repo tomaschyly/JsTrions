@@ -224,6 +224,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                     CommonSpaceV(),
                     Expanded(
                       child: Scrollbar(
+                        controller: _scrollController,
                         child: SingleChildScrollView(
                           controller: _scrollController,
                           child: Column(
