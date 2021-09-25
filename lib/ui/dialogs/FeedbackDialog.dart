@@ -60,6 +60,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final theme = Theme.of(context);
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     return Scaffold(
@@ -148,6 +149,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                               ),
                               CommonSpaceH(),
                               Switch(
+                                activeColor: theme.colorScheme.secondary,
                                 value: _gdpr,
                                 onChanged: (bool newValue) => setStateNotDisposed(() {
                                   _gdpr = newValue;

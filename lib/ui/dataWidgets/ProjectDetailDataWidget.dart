@@ -112,6 +112,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   @override
   Widget buildContent(BuildContext context) {
     final snapshot = AppDataState.of(context)!;
+    final theme = Theme.of(context);
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     final isDesktop = [
@@ -282,6 +283,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                             ),
                                             CommonSpaceH(),
                                             Switch(
+                                              activeColor: theme.colorScheme.secondary,
                                               value: _displayOnlyCodeOnlyKeys,
                                               onChanged: (bool newValue) {
                                                 setStateNotDisposed(() {
