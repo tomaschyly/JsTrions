@@ -41,11 +41,23 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
+  final ScrollController _scrollController = ScrollController();
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _scrollController.dispose();
+
+    super.dispose();
+  }
+
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
@@ -82,7 +94,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   @override
   Widget buildContent(BuildContext context) {
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           width: double.infinity,
           child: Column(

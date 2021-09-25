@@ -45,7 +45,16 @@ class _AboutScreenState extends AppResponsiveScreenState<AboutScreen> {
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
+  final ScrollController _scrollController = ScrollController();
   String _version = '';
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _scrollController.dispose();
+
+    super.dispose();
+  }
 
   /// Run initializations of screen on first build only
   @override
@@ -61,7 +70,9 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   @override
   Widget buildContent(BuildContext context) {
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           width: double.infinity,
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
@@ -140,7 +151,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   @override
   Widget buildContent(BuildContext context) {
     return Scrollbar(
+      controller: _scrollController,
       child: SingleChildScrollView(
+        controller: _scrollController,
         child: Container(
           width: double.infinity,
           child: Column(
