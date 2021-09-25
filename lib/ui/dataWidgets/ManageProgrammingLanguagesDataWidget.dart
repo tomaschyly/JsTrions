@@ -27,6 +27,7 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
   final _nameFocus = FocusNode();
   final _extensionFocus = FocusNode();
   final _keyFocus = FocusNode();
+  ProgrammingLanguage? _editInProgress;
 
   /// Manually dispose of resources
   @override
@@ -71,7 +72,10 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
                 spacing: kCommonHorizontalMarginHalf,
                 runSpacing: kCommonVerticalMarginHalf,
                 children: programmingLanguages.programmingLanguages
-                    .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(programmingLanguage: programmingLanguage))
+                    .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(
+                          programmingLanguage: programmingLanguage,
+                          edit: _edit,
+                        ))
                     .toList(),
               ),
             ),
@@ -118,14 +122,8 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
                       ),
                       CommonSpaceH(),
                       IconButtonWidget(
-                        svgAssetPath: 'images/plus.svg',
-                        onTap: () => saveProgrammingLanguage(
-                          context,
-                          formKey: _formKey,
-                          nameController: _nameController,
-                          extensionController: _extensionController,
-                          keyController: _keyController,
-                        ),
+                        svgAssetPath: _editInProgress != null ? 'images/save.svg' : 'images/plus.svg',
+                        onTap: () => _save(),
                       ),
                     ],
                   ),
@@ -162,14 +160,47 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
       },
     );
   }
+
+  /// Save existing or create new ProgrammingLanguage
+  void _save() {
+    FocusScope.of(context).unfocus();
+
+    if (_formKey.currentState!.validate()) {
+      saveProgrammingLanguage(
+        context,
+        formKey: _formKey,
+        id: _editInProgress?.id,
+        nameController: _nameController,
+        extensionController: _extensionController,
+        keyController: _keyController,
+      );
+
+      setStateNotDisposed(() {
+        _editInProgress = null;
+      });
+    }
+  }
+
+  /// Start edit of existing ProgrammingLanguage
+  void _edit(ProgrammingLanguage programmingLanguage) {
+    _nameController.text = programmingLanguage.name;
+    _extensionController.text = programmingLanguage.extension;
+    _keyController.text = programmingLanguage.key;
+
+    setStateNotDisposed(() {
+      _editInProgress = programmingLanguage;
+    });
+  }
 }
 
 class _ChipWidget extends StatelessWidget {
   final ProgrammingLanguage programmingLanguage;
+  final void Function(ProgrammingLanguage programmingLanguage) edit;
 
   /// ChipWidget initialization
   _ChipWidget({
     required this.programmingLanguage,
+    required this.edit,
   });
 
   /// Create view layout from widgets
@@ -180,16 +211,30 @@ class _ChipWidget extends StatelessWidget {
     return ChipWidget(
       variant: ChipVariant.LeftPadded,
       text: programmingLanguage.name,
-      suffixIcon: IconButtonWidget(
-        style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-          variant: IconButtonVariant.IconOnly,
-          color: kColorDanger,
-        ),
-        svgAssetPath: 'images/times.svg',
-        onTap: () => deleteProgrammingLanguage(
-          context,
-          programmingLanguage,
-        ),
+      suffixIcon: Row(
+        mainAxisSize: MainAxisSize.min,
+        children: [
+          IconButtonWidget(
+            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+              variant: IconButtonVariant.IconOnly,
+              iconWidth: 16,
+              iconHeight: 16,
+            ),
+            svgAssetPath: 'images/pen.svg',
+            onTap: () => edit(programmingLanguage),
+          ),
+          IconButtonWidget(
+            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+              variant: IconButtonVariant.IconOnly,
+              color: kColorDanger,
+            ),
+            svgAssetPath: 'images/times.svg',
+            onTap: () => deleteProgrammingLanguage(
+              context,
+              programmingLanguage,
+            ),
+          ),
+        ],
       ),
     );
   }
