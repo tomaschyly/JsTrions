@@ -77,7 +77,7 @@ Future<void> saveProgrammingLanguage(
   }
 }
 
-/// Delete existing ProgramminLanguage and update data
+/// Delete existing ProgrammingLanguage and update data
 Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage programmingLanguage) async {
   final anyProject = await anyProjectForProgrammingLanguage(programmingLanguage.id!);
 

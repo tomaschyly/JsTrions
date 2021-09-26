@@ -1,4 +1,5 @@
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/model/providers/InfoProvider.dart';
 import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -36,6 +37,14 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
 
   @override
   Widget tabletScreen(BuildContext context) => _BodyWidget();
+
+  /// Run initializations of screen on first build only
+  @protected
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    determineInfo(context);
+  }
 }
 
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}

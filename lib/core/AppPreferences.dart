@@ -6,6 +6,7 @@ const String PREFS_PROJECTS_SOURCE = 'prefs_projects_source';
 const String PREFS_PROJECTS_ANALYSIS = 'prefs_projects_analysis';
 const String PREFS_PROJECTS_CODE_ONLY = 'prefs_projects_code_only';
 const String PREFS_PROJECTS_BEAUTIFY_JSON = 'prefs_projects_beautify_json';
+const String PREFS_WELCOME = 'prefs_welcome';
 
 /// Int values, it is for init, defaults and in memory storage
 final Map<String, int> intPrefs = {
