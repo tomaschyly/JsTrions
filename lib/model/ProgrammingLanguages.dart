@@ -13,7 +13,7 @@ class ProgrammingLanguages extends DataModel {
     programmingLanguages = list.map((Map<String, dynamic> item) => ProgrammingLanguage.fromJson(item)).toList();
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{

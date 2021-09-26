@@ -10,7 +10,7 @@ class ApiResponse extends DataModel {
     success = json['success'];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'error': error,

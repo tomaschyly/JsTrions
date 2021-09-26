@@ -48,7 +48,7 @@ class Project extends DataModel {
     formatObjectInside = json[COL_FORMAT_OBJECT_INSIDE];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     final json = <String, dynamic>{
@@ -83,7 +83,7 @@ class TranslationKey extends DataModel {
     key = json['key'];
   }
 
-  /// Covert the object into JSON map
+  /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
