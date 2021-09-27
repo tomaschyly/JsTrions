@@ -54,7 +54,7 @@
   "feedback.title": "Spätná Väzba",
   "info.popup.close": "Pokračovať",
   "info.welcome.headline": "Vitaj!",
-  "info.welcome.text": "Ďakujem, že skúšaš JsTrions!\n\nJsTrions ti umožnuje ľahko spravovať JSON preklady v tvojom projekte a analyzovať kód na využívanie prekladov.\n\nProsím maj na pamäti, že táto appka je postavená na Flutter Desktop, ktorý je v súčasnej dobe stále Beta, JsTrions však bol testovaný, aby dostatočne fungoval na produkcii bez významných problémov. Ak nájdeš nejaké problémy, náhlás ich v seckii problémov v úložisku appky.",
+  "info.welcome.text": "Ďakujem, že skúšaš JsTrions!\n\nJsTrions ti umožnuje ľahko spravovať JSON preklady v tvojom projekte a analyzovať kód na využívanie prekladov.\n\nJsTrions bol testovaný, aby fungoval na produkcii bez významných problémov. Ak nájdeš nejaké problémy, náhlás ich v seckii problémov v úložisku appky.",
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
   "programming_languages.manage.extension": "Prípona",
