@@ -7,7 +7,7 @@ issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
 publish_to: 'none'
 
-version: 1.2.0+5 #Win version needs to change also in Runner.rc & msix
+version: 1.2.0+6 #Win version needs to change also in Runner.rc & msix
 
 environment:
   sdk: ">=2.12.0-0 <3.0.0"
