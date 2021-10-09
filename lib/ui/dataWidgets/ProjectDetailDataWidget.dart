@@ -378,7 +378,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 child: Table(
                                   // defaultColumnWidth: IntrinsicColumnWidth(),
                                   columnWidths: <int, TableColumnWidth>{
-                                    0: IntrinsicColumnWidth(),
+                                    // 0: IntrinsicColumnWidth(),
+                                    0: FlexColumnWidth(),
                                     1: FixedColumnWidth(kCommonHorizontalMargin),
                                     2: FlexColumnWidth(),
                                     3: FixedColumnWidth(kButtonHeight),
