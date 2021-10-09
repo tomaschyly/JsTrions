@@ -65,6 +65,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   String? _newTranslation;
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
+  bool _stopAnalysis = false;
   bool _displayOnlyCodeOnlyKeys = false;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
@@ -363,7 +364,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                             ),
                                             text: tt('project_detail.analyze_code'),
                                             prefixIconSvgAssetPath: 'images/code.svg',
-                                            onTap: () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                            onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
                                             isLoading: _isAnalyzing,
                                           ),
                                         CommonSpaceH(),
@@ -912,6 +913,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Add/Edit translations for key and save to Project assets
   Future<void> _processTranslationsForKey(BuildContext context, Project project, [String? key]) async {
+    _interruptAnalysis();
+
     final isNew = key == null;
     final List<String> languages = [];
     final List<String> translations = [];
@@ -1030,6 +1033,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final projectId = widget.projectId;
     final start = DateTime.now();
 
+    _stopAnalysis = false;
     setStateNotDisposed(() {
       _isAnalyzing = true;
     });
@@ -1050,6 +1054,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final directory = Directory(project.directory);
 
     await for (var file in directory.list(recursive: true, followLinks: false)) {
+      if (_stopAnalysis || projectId != widget.projectId) {
+        return;
+      }
+
       if (file is File) {
         final fileExtension = extension(file.path);
 
@@ -1085,7 +1093,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       codePairsByLanguage[language] = codePairs;
     }
 
-    if (projectId != widget.projectId) {
+    if (_stopAnalysis || projectId != widget.projectId) {
       return;
     }
 
@@ -1112,6 +1120,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         });
       });
     }
+  }
+
+  /// Stop any in progress Project code analysis
+  void _interruptAnalysis() {
+    _stopAnalysis = true;
+
+    Future.delayed(kThemeAnimationDuration, () {
+      setStateNotDisposed(() {
+        _isAnalyzing = false;
+      });
+    });
   }
 
   /// Toggle scrollTop visibility based on scrolled position.
