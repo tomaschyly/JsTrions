@@ -1,29 +1,34 @@
+import 'dart:io';
+
+import 'package:file_selector/file_selector.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class ProjectLanguagesFieldWidget extends AbstractStatefulWidget {
+class ProjectIgnoreDirectoriesWidget extends AbstractStatefulWidget {
   final Project? project;
+  final String projectDirectory;
 
-  /// ProjectLanguagesFieldWidget initialization
-  ProjectLanguagesFieldWidget({
+  /// ProjectIgnoreDirectoriesWidget initialization
+  ProjectIgnoreDirectoriesWidget({
     required Key key,
     this.project,
+    required this.projectDirectory,
   }) : super(key: key);
 
   /// Create state for widget
   @override
-  State<StatefulWidget> createState() => ProjectLanguagesFieldWidgetState();
+  State<StatefulWidget> createState() => ProjectIgnoreDirectoriesWidgetState();
 }
 
-class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<ProjectLanguagesFieldWidget> {
-  List<String> get value => List<String>.from(_languages);
+class ProjectIgnoreDirectoriesWidgetState extends AbstractStatefulWidgetState<ProjectIgnoreDirectoriesWidget> {
+  List<String> get value => List<String>.from(_directories);
 
-  List<String> _languages = [];
+  List<String> _directories = [];
   final _formKey = GlobalKey<FormState>();
-  final _languageController = TextEditingController();
+  final _directoryController = TextEditingController();
 
   /// State initialization
   @override
@@ -32,18 +37,22 @@ class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<Proje
 
     final theProject = widget.project;
     if (theProject != null) {
-      _languages.addAll(theProject.languages);
+      _directories = theProject.directories;
     }
 
-    if (_languages.isEmpty) {
-      _languages.add('en');
+    if (_directories.isEmpty) {
+      _directories = <String>[
+        '${Platform.pathSeparator}.git',
+        '${Platform.pathSeparator}.idea',
+        '${Platform.pathSeparator}.vscode',
+      ];
     }
   }
 
   /// Manually dispose of resources
   @override
   void dispose() {
-    _languageController.dispose();
+    _directoryController.dispose();
 
     super.dispose();
   }
@@ -51,7 +60,7 @@ class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<Proje
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
-    _languages.sort((a, b) => a.compareTo(b));
+    _directories.sort((a, b) => a.compareTo(b));
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -63,11 +72,10 @@ class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<Proje
           child: Wrap(
             spacing: kCommonHorizontalMarginHalf,
             runSpacing: kCommonVerticalMarginHalf,
-            children: _languages
-                .map((String language) => _ChipWidget(
-                      language: language,
-                      onTap: _removeLanguage,
-                      canTap: _languages.length > 1,
+            children: _directories
+                .map((String directory) => _ChipWidget(
+                      directory: directory,
+                      onTap: _removeDirectory,
                     ))
                 .toList(),
           ),
@@ -82,8 +90,8 @@ class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<Proje
             children: [
               Expanded(
                 child: TextFormFieldWidget(
-                  controller: _languageController,
-                  label: tt('edit_project.field.new_language'),
+                  controller: _directoryController,
+                  label: tt('edit_project.field.new_ignore_directory'),
                   validations: [
                     FormFieldValidation(
                       validator: validateRequired,
@@ -94,47 +102,74 @@ class ProjectLanguagesFieldWidgetState extends AbstractStatefulWidgetState<Proje
               ),
               CommonSpaceHHalf(),
               IconButtonWidget(
+                svgAssetPath: 'images/folder.svg',
+                onTap: () => _pickDirectory(context),
+              ),
+              CommonSpaceHHalf(),
+              IconButtonWidget(
                 svgAssetPath: 'images/plus.svg',
-                onTap: _addLanguage,
+                onTap: _addDirectory,
               ),
             ],
           ),
+        ),
+        CommonSpaceVHalf(),
+        Text(
+          tt('edit_project.field.ignore_directories.hint'),
+          style: fancyText(kText),
         ),
       ],
     );
   }
 
-  /// Add new Language to selected Languages
-  void _addLanguage() {
+  /// Pick a Directory to ignore
+  Future<void> _pickDirectory(BuildContext context) async {
+    try {
+      final directoryPath = await getDirectoryPath(
+        initialDirectory: widget.projectDirectory.isNotEmpty ? widget.projectDirectory : null,
+      );
+
+      if (directoryPath != null) {
+        setStateNotDisposed(() {
+          _directoryController.text = directoryPath.replaceAll(widget.projectDirectory, '');
+        });
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+    }
+  }
+
+  /// Add new Directory to the list
+  void _addDirectory() {
     FocusScope.of(context).unfocus();
 
     if (_formKey.currentState!.validate()) {
       setStateNotDisposed(() {
-        if (!_languages.contains(_languageController.text)) {
-          _languages.add(_languageController.text);
+        if (!_directories.contains(_directoryController.text)) {
+          _directories.add(_directoryController.text);
 
-          _languageController.text = '';
+          _directoryController.text = '';
         }
       });
     }
   }
 
-  /// Remove Language from selected Languages
-  void _removeLanguage(String language) {
+  /// Remove Directory from list
+  void _removeDirectory(String directory) {
     setStateNotDisposed(() {
-      _languages.remove(language);
+      _directories.remove(directory);
     });
   }
 }
 
 class _ChipWidget extends StatelessWidget {
-  final String language;
-  final void Function(String language) onTap;
+  final String directory;
+  final void Function(String directory) onTap;
   final bool canTap;
 
   /// ChipWidget initialization
   _ChipWidget({
-    required this.language,
+    required this.directory,
     required this.onTap,
     this.canTap = true,
   });
@@ -146,7 +181,7 @@ class _ChipWidget extends StatelessWidget {
 
     return ChipWidget(
       variant: ChipVariant.LeftPadded,
-      text: language,
+      text: directory,
       suffixIcon: canTap
           ? IconButtonWidget(
               style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
@@ -154,7 +189,7 @@ class _ChipWidget extends StatelessWidget {
                 color: kColorDanger,
               ),
               svgAssetPath: 'images/times.svg',
-              onTap: () => onTap(language),
+              onTap: () => onTap(directory),
             )
           : Container(),
     );

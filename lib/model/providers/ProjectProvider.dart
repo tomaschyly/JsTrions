@@ -4,6 +4,7 @@ import 'package:js_trions/model/dataTasks/DeleteProjectDataTask.dart';
 import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -20,6 +21,7 @@ Future<void> saveProject(
   required GlobalKey<ProjectLanguagesFieldWidgetState> languagesKey,
   required GlobalKey<ProjectProgrammingLanguagesFieldDataWidgetState> programmingLanguagesKey,
   required GlobalKey<ProjectTranslationsJsonFormatFieldWidgetState> translationsJsonFormatKey,
+  required GlobalKey<ProjectIgnoreDirectoriesWidgetState> ignoreDirectoriesKey,
   bool popOnSuccess = true,
 }) async {
   FocusScope.of(context).unfocus();
@@ -36,6 +38,11 @@ Future<void> saveProject(
       );
     }
 
+    List<String>? ignoreDirectories = ignoreDirectoriesKey.currentState?.value;
+    if (ignoreDirectories == null && project != null) {
+      ignoreDirectories = project.directories;
+    }
+
     final data = Project.fromJson(<String, dynamic>{
       Project.COL_ID: project?.id,
       Project.COL_NAME: nameController.text,
@@ -49,6 +56,7 @@ Future<void> saveProject(
       Project.COL_CREATED: project?.created ?? now,
       Project.COL_TRANSLATIONS_JSON_FORMAT: translationsJsonFormatValue?.translationsJsonFormat.index,
       Project.COL_FORMAT_OBJECT_INSIDE: translationsJsonFormatValue?.formatObjectInside,
+      Project.COL_IGNORE_DIRECTORIES: ignoreDirectories,
     });
 
     final dataTask = await MainDataProvider.instance!.executeDataTask<SaveProjectDataTask>(

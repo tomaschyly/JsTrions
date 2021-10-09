@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class Project extends DataModel {
@@ -14,6 +16,7 @@ class Project extends DataModel {
   static const String COL_CREATED = 'created';
   static const String COL_TRANSLATIONS_JSON_FORMAT = 'translations_json_format';
   static const String COL_FORMAT_OBJECT_INSIDE = 'format_object_inside';
+  static const String COL_IGNORE_DIRECTORIES = 'ignore_directories';
 
   int? id;
   late String name;
@@ -27,6 +30,7 @@ class Project extends DataModel {
   late int created;
   TranslationsJsonFormat? translationsJsonFormat;
   String? formatObjectInside;
+  late List<String> directories;
 
   /// Project initialization from JSON map
   Project.fromJson(Map<String, dynamic> json) : super.fromJson(json) {
@@ -46,6 +50,16 @@ class Project extends DataModel {
       translationsJsonFormat = TranslationsJsonFormat.values[theFormat];
     }
     formatObjectInside = json[COL_FORMAT_OBJECT_INSIDE];
+
+    List<String>? theLanguages = json[COL_IGNORE_DIRECTORIES] != null ? List<String>.from(json[COL_IGNORE_DIRECTORIES]) : null;
+    if (theLanguages == null) {
+      theLanguages = <String>[
+        '${Platform.pathSeparator}.git',
+        '${Platform.pathSeparator}.idea',
+        '${Platform.pathSeparator}.vscode',
+      ];
+    }
+    directories = theLanguages;
   }
 
   /// Convert the object into JSON map
@@ -63,6 +77,7 @@ class Project extends DataModel {
       COL_CREATED: created,
       COL_TRANSLATIONS_JSON_FORMAT: translationsJsonFormat?.index,
       COL_FORMAT_OBJECT_INSIDE: formatObjectInside,
+      COL_IGNORE_DIRECTORIES: directories,
     };
 
     if (id != null) {

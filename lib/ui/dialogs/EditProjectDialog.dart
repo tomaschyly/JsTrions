@@ -5,6 +5,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
@@ -48,26 +49,34 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
   final _languagesKey = GlobalKey<ProjectLanguagesFieldWidgetState>();
   final _programmingLanguagesKey = GlobalKey<ProjectProgrammingLanguagesFieldDataWidgetState>();
   final _translationsJsonFormatKey = GlobalKey<ProjectTranslationsJsonFormatFieldWidgetState>();
+  final _ignoreDirectoriesKey = GlobalKey<ProjectIgnoreDirectoriesWidgetState>();
   final _nameFocus = FocusNode();
   final _directoryFocus = FocusNode();
   final _translationAssetsFocus = FocusNode();
+  String _directoryPath = '';
 
   /// State initialization
   @override
   void initState() {
     super.initState();
 
+    _directoryController.addListener(_directoryUpdated);
+
     final theProject = widget.project;
     if (theProject != null) {
       _nameController.text = theProject.name;
       _directoryController.text = theProject.directory;
       _translationAssetsController.text = theProject.translationAssets;
+
+      _directoryPath = theProject.directory;
     }
   }
 
   /// Manually dispose of resources
   @override
   void dispose() {
+    _directoryController.removeListener(_directoryUpdated);
+
     _nameController.dispose();
     _directoryController.dispose();
     _translationAssetsController.dispose();
@@ -220,6 +229,12 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                       key: _translationsJsonFormatKey,
                       project: widget.project,
                     ),
+                    CommonSpaceVHalf(),
+                    ProjectIgnoreDirectoriesWidget(
+                      key: _ignoreDirectoriesKey,
+                      project: widget.project,
+                      projectDirectory: _directoryPath,
+                    ),
                   ],
                 ),
                 borderLess: true,
@@ -246,6 +261,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
           languagesKey: _languagesKey,
           programmingLanguagesKey: _programmingLanguagesKey,
           translationsJsonFormatKey: _translationsJsonFormatKey,
+          ignoreDirectoriesKey: _ignoreDirectoriesKey,
         ),
       ),
     );
@@ -271,6 +287,15 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
       }
     } catch (e, t) {
       debugPrint('TCH_e $e\n$t');
+    }
+  }
+
+  /// Directory updated, update value used by widgets
+  void _directoryUpdated() {
+    if (_directoryPath != _directoryController.text) {
+      _directoryPath = _directoryController.text;
+
+      setStateNotDisposed(() {});
     }
   }
 }
