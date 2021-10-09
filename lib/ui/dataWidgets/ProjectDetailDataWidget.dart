@@ -1038,6 +1038,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _isAnalyzing = true;
     });
 
+    List<String> directoriesToIgnore = project.directories.map((String directory) => '${project.directory}$directory').toList();
+
     Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map<String, SplayTreeMap<String, String>>.from(_translationPairsByLanguage);
     Map<String, SplayTreeMap<String, String>> codePairsByLanguage = Map();
 
@@ -1059,6 +1061,19 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       }
 
       if (file is File) {
+        bool skip = false;
+
+        for (String ignore in directoriesToIgnore) {
+          if (file.path.contains(ignore)) {
+            skip = true;
+            break;
+          }
+        }
+
+        if (skip) {
+          continue;
+        }
+
         final fileExtension = extension(file.path);
 
         final programmingLanguageForExtension = acceptedExtensions[fileExtension];
