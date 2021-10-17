@@ -210,22 +210,22 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
       } else {
         _selectedProgrammingLanguages.add(programmingLanguage.id!);
 
-        final translationKey = _translationKeys.firstWhereOrNull((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
+        TranslationKey? translationKey = _translationKeys.firstWhereOrNull((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
 
         if (translationKey == null) {
-          final translationKey = TranslationKey.fromJson(<String, dynamic>{
+          translationKey = TranslationKey.fromJson(<String, dynamic>{
             'programmingLanguage': programmingLanguage.id,
             'key': programmingLanguage.key,
           });
           _translationKeys.add(translationKey);
-
-          final controller = TextEditingController();
-          controller.addListener(() => translationKey.key = controller.text);
-
-          _fieldsControllers[programmingLanguage.id!]?.dispose();
-          _fieldsControllers[programmingLanguage.id!] = controller;
-          _fieldsControllers[programmingLanguage.id!]!.text = programmingLanguage.key;
         }
+
+        final controller = TextEditingController();
+        controller.addListener(() => translationKey!.key = controller.text);
+
+        _fieldsControllers[programmingLanguage.id!]?.dispose();
+        _fieldsControllers[programmingLanguage.id!] = controller;
+        _fieldsControllers[programmingLanguage.id!]!.text = translationKey.key;
       }
     });
   }
