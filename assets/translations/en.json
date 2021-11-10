@@ -69,6 +69,8 @@
   "project_detail.actions.source.title": "Show Translations from",
   "project_detail.actions.title": "Actions",
   "project_detail.add_translation": "Add Translation",
+  "project_detail.analysis.files_analyzed": "Files analyzed: $filesAnalyzed",
+  "project_detail.analysis.start": "Analysis started",
   "project_detail.analyze_code": "Analyze Code",
   "project_detail.directory_not_found": "The directory \"$directory\" does not exist, cannot initialize this Project",
   "project_detail.field.search": "Search Translations",

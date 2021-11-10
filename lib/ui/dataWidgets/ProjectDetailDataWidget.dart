@@ -66,6 +66,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
+  final ValueNotifier<String> _analysisProgress = ValueNotifier('WIP');
   bool _displayOnlyCodeOnlyKeys = false;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
@@ -337,11 +338,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               CommonSpaceV(),
                               AnimatedSize(
                                 duration: kThemeAnimationDuration,
-                                vsync: this,
                                 alignment: Alignment.topCenter,
                                 child: Column(
                                   mainAxisSize: MainAxisSize.min,
-                                  crossAxisAlignment: CrossAxisAlignment.start,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
                                     Row(
                                       mainAxisSize: MainAxisSize.max,
@@ -369,6 +369,35 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           ),
                                         CommonSpaceH(),
                                       ],
+                                    ),
+                                    AnimatedSize(
+                                      duration: kThemeAnimationDuration,
+                                      alignment: Alignment.topCenter,
+                                      child: _isAnalyzing
+                                          ? Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                CommonSpaceVHalf(),
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    ValueListenableBuilder(
+                                                      valueListenable: _analysisProgress,
+                                                      builder: (BuildContext context, String value, Widget? child) {
+                                                        return Text(
+                                                          value,
+                                                          style: fancyText(kText),
+                                                        );
+                                                      },
+                                                    ),
+                                                    CommonSpaceH(),
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+                                          : Container(height: 0),
                                     ),
                                   ],
                                 ),
@@ -1037,6 +1066,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     setStateNotDisposed(() {
       _isAnalyzing = true;
     });
+    _analysisProgress.value = tt('project_detail.analysis.start');
 
     List<String> directoriesToIgnore = project.directories.map((String directory) => '${project.directory}$directory').toList();
 
@@ -1054,6 +1084,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final List<String> foundKeys = [];
 
     final directory = Directory(project.directory);
+    int filesAnalyzed = 0;
 
     await for (var file in directory.list(recursive: true, followLinks: false)) {
       if (_stopAnalysis || projectId != widget.projectId) {
@@ -1092,6 +1123,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                 foundKeys.add(group);
               }
             }
+          });
+
+          filesAnalyzed++;
+          _analysisProgress.value = tt('project_detail.analysis.files_analyzed').parameters(<String, String>{
+            r'$filesAnalyzed': filesAnalyzed.toString(),
           });
         }
       }
