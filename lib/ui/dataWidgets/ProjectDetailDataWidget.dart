@@ -213,12 +213,31 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                       children: [
                         CommonSpaceH(),
                         Expanded(
-                          child: TextFormFieldWidget(
-                            style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                              fullWidthMobileOnly: false,
-                            ),
-                            controller: _searchController,
-                            label: tt('project_detail.field.search'),
+                          child: Stack(
+                            alignment: Alignment.center,
+                            children: [
+                              TextFormFieldWidget(
+                                style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                                  fullWidthMobileOnly: false,
+                                ),
+                                controller: _searchController,
+                                label: tt('project_detail.field.search'),
+                              ),
+                              Positioned(
+                                right: 0,
+                                child: AnimatedOpacity(
+                                  duration: kThemeAnimationDuration,
+                                  opacity: _searchController.text.isNotEmpty ? 1 : 0,
+                                  child: IconButtonWidget(
+                                    style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                      variant: IconButtonVariant.IconOnly,
+                                    ),
+                                    svgAssetPath: 'images/times-circle.svg',
+                                    onTap: _searchController.text.isNotEmpty ? _clearSearch : null,
+                                  ),
+                                ),
+                              ),
+                            ],
                           ),
                         ),
                         CommonSpaceH(),
@@ -937,6 +956,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       setStateNotDisposed(() {
         _searchQuery = _searchController.text.toLowerCase();
       });
+    });
+  }
+
+  /// Clear search query
+  void _clearSearch() {
+    _searchTimer?.cancel();
+
+    _searchController.text = '';
+
+    setStateNotDisposed(() {
+      _searchQuery = _searchController.text.toLowerCase();
     });
   }
 
