@@ -66,7 +66,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
-  final ValueNotifier<String> _analysisProgress = ValueNotifier('WIP');
+  final ValueNotifier<String> _analysisProgress = ValueNotifier('');
   bool _displayOnlyCodeOnlyKeys = false;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
