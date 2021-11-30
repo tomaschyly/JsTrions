@@ -80,8 +80,10 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
             if (recentProjects.isNotEmpty)
               ...recentProjects.take(5).map((project) {
                 return ButtonWidget(
-                  style: commonTheme.listItemButtonStyle,
-                  text: '${project.name} - ${millisToDefault(project.lastSeen)}',
+                  style: commonTheme.listItemButtonStyle.copyWith(
+                    height: kMinInteractiveSize + kCommonVerticalMargin,
+                  ),
+                  text: '${project.name}\n${millisToDefault(project.lastSeen)}',
                   onTap: () {
                     pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{
                       'router-no-animation': '1',
