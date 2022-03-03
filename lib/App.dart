@@ -13,6 +13,7 @@ import 'package:sembast/sembast.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+import 'package:window_manager/window_manager.dart';
 
 class App extends AbstractStatefulWidget {
   /// Create state for widget
@@ -70,6 +71,15 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initializationMinDurationInMilliseconds: 1200,
       initialScreenRoute: DashboardScreen.ROUTE,
       initialScreenRouteArguments: <String, String>{'router-no-animation': '1'},
+      onAppInitStart: (BuildContext context) async {
+        if (Platform.isWindows) {
+          await windowManager.ensureInitialized();
+
+          windowManager.center();
+
+          windowManager.show();
+        }
+      },
       onGenerateRoute: AppRouter.onGenerateRoute,
       builder: appThemeBuilder,
       theme: ThemeData(
