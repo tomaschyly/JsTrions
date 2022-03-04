@@ -238,6 +238,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 ),
                               ),
                             ],
+                            clipBehavior: Clip.none,
                           ),
                         ),
                         CommonSpaceH(),
