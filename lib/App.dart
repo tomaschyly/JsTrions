@@ -77,9 +77,9 @@ class AppState extends AbstractStatefulWidgetState<App> {
 
           if (!(await windowManager.isMaximized()) && !(await windowManager.isFullScreen())) {
             windowManager.center();
-
-            windowManager.show();
           }
+
+          windowManager.show();
         }
       },
       onGenerateRoute: AppRouter.onGenerateRoute,
