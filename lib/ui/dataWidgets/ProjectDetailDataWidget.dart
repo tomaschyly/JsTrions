@@ -3,6 +3,7 @@ import 'dart:collection';
 import 'dart:convert';
 import 'dart:io';
 
+import 'package:archive/archive_io.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter/services.dart';
@@ -19,6 +20,7 @@ import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -312,6 +314,34 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                                   _displayOnlyCodeOnlyKeys = newValue;
                                                 });
                                               },
+                                            ),
+                                          ],
+                                        ),
+                                        CommonSpaceVHalf(),
+                                        Text(
+                                          tt('project_detail.actions.import_export.title'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                        CommonSpaceVHalf(),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.import_translations'),
+                                              prefixIconSvgAssetPath: 'images/file-import.svg',
+                                              onTap: () => _importTranslations(context, theProject, programmingLanguages.programmingLanguages),
+                                            ),
+                                            CommonSpaceHHalf(),
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.export_translations'),
+                                              prefixIconSvgAssetPath: 'images/file-export.svg',
+                                              onTap: () => _exportTranslations(context, theProject),
                                             ),
                                           ],
                                         ),
@@ -639,8 +669,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Check if Projects exists, init translations from Project based on parameters
-  Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages) async {
-    if ((project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
+  Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages, {bool force = false}) async {
+    if (force || (project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
       _projectId = project.id;
       _project = project;
 
@@ -856,7 +886,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     }
 
     setStateNotDisposed(() {
-      _infoList.clear();
+      // _infoList.clear();
 
       _infoList.addAll(infoList);
     });
@@ -969,6 +999,104 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     setStateNotDisposed(() {
       _searchQuery = _searchController.text.toLowerCase();
     });
+  }
+
+  /// Import translations from zip file
+  Future<void> _importTranslations(BuildContext context, Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    try {
+      String typeLabel = tt('project.export.type.label');
+
+      XFile? file = await openFile(
+        initialDirectory: (await getDownloadsDirectory())?.path,
+        acceptedTypeGroups: [
+          XTypeGroup(label: typeLabel, extensions: ['zip'])
+        ],
+      );
+
+      if (file != null) {
+        final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+
+        var decoder = ZipDecoder();
+        Archive archive = decoder.decodeBytes(await file.readAsBytes());
+
+        List<String> languages = project.languages.map((language) => '$language.json').toList();
+
+        for (ArchiveFile file in archive) {
+          if (languages.contains(file.name)) {
+            File targetFile = File(join(translationsAssetsDirectory.path, file.name));
+
+            await targetFile.writeAsBytes(file.content as List<int>);
+          }
+        }
+
+        setStateNotDisposed(() {
+          _infoList.add(
+            _InfoWidget(
+              text: tt('project.import.success'),
+              clearInfo: _clearInfo,
+              isSuccess: true,
+            ),
+          );
+        });
+
+        _initProject(project, programmingLanguages, force: true);
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      setStateNotDisposed(() {
+        _infoList.add(
+          _InfoWidget(
+            text: tt('project.import.failure'),
+            clearInfo: _clearInfo,
+          ),
+        );
+      });
+    }
+  }
+
+  /// Export translations into zip file
+  Future<void> _exportTranslations(BuildContext context, Project project) async {
+    try {
+      final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+
+      String saveName = tt('project.export.name');
+      String typeLabel = tt('project.export.type.label');
+
+      String? savePath = await getSavePath(
+        suggestedName: '$saveName.zip',
+        acceptedTypeGroups: [
+          XTypeGroup(label: typeLabel, extensions: ['zip'])
+        ],
+        initialDirectory: (await getDownloadsDirectory())?.path,
+      );
+
+      if (savePath != null) {
+        var encoder = ZipFileEncoder();
+        encoder.zipDirectory(translationsAssetsDirectory, followLinks: false, filename: savePath);
+
+        setStateNotDisposed(() {
+          _infoList.add(
+            _InfoWidget(
+              text: tt('project.export.success'),
+              clearInfo: _clearInfo,
+              isSuccess: true,
+            ),
+          );
+        });
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      setStateNotDisposed(() {
+        _infoList.add(
+          _InfoWidget(
+            text: tt('project.export.failure'),
+            clearInfo: _clearInfo,
+          ),
+        );
+      });
+    }
   }
 
   /// Add/Edit translations for key and save to Project assets
