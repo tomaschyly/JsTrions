@@ -165,6 +165,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
   /// Use GoogleTranslate to translate from source to all other languages
   Future<void> _googleTranslate(BuildContext context, String language, String query) async {
+    if (language.isEmpty || query.isEmpty) {
+      return;
+    }
+
     for (int i = 0; i < widget.translation.languages.length; i++) {
       String translationLanguage = widget.translation.languages[i];
       TextEditingController controller = _fieldsControllers[i]!;
