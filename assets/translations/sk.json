@@ -42,6 +42,8 @@
   "edit_project.title.add": "Nový Projekt",
   "edit_project.title.edit": "Upraviť $name",
   "edit_project_translation.field.key": "Kľúč",
+  "edit_project_translation.google_translate.fail": "Proces prekladu zlyhal, uistite sa, že ste pripojení na internet",
+  "edit_project_translation.google_translate.hint": "Tip: Pomocou tlačidla prekladu môžeš automaticky prekladať z vybraného jazyka do iných jazykov",
   "edit_project_translation.submit": "Uložiť",
   "edit_project_translation.title": "Preklady pre Kľúč",
   "feedback.email": "Email",

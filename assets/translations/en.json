@@ -42,6 +42,8 @@
   "edit_project.title.add": "New Project",
   "edit_project.title.edit": "Edit $name",
   "edit_project_translation.field.key": "Key",
+  "edit_project_translation.google_translate.fail": "Translation process failed, make sure you are connected to the internet",
+  "edit_project_translation.google_translate.hint": "Hint: You can use the translation button to automatically translate from selected language into other languages",
   "edit_project_translation.submit": "Save",
   "edit_project_translation.title": "Translations for Key",
   "feedback.email": "Email",

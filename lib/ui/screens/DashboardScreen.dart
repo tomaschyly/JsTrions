@@ -1,4 +1,3 @@
-import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/providers/InfoProvider.dart';
 import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';

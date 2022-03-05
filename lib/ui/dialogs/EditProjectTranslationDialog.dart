@@ -1,5 +1,7 @@
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -74,54 +76,66 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
     final theKey = widget.translation.key;
 
-    return DialogContainer(
-      style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
-      content: [
-        Form(
-          key: _formKey,
-          child: Column(
-            mainAxisSize: MainAxisSize.min,
-            crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              DialogHeader(
-                style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
-                title: tt('edit_project_translation.title'),
-              ),
-              CommonSpaceVHalf(),
-              if (theKey != null)
-                Text(
-                  theKey,
-                  style: fancyText(kTextBold),
-                )
-              else
-                TextFormFieldWidget(
-                  controller: _keyController,
-                  label: tt('edit_project_translation.field.key'),
-                  validations: [
-                    FormFieldValidation(
-                      validator: validateRequired,
-                      errorText: tt('validation.required'),
+    return Scaffold(
+      backgroundColor: Colors.transparent,
+      body: Container(
+        alignment: Alignment.center,
+        child: DialogContainer(
+          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
+          content: [
+            Form(
+              key: _formKey,
+              child: Column(
+                mainAxisSize: MainAxisSize.min,
+                crossAxisAlignment: CrossAxisAlignment.start,
+                children: [
+                  DialogHeader(
+                    style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
+                    title: tt('edit_project_translation.title'),
+                  ),
+                  CommonSpaceVHalf(),
+                  if (theKey != null)
+                    Text(
+                      theKey,
+                      style: fancyText(kTextBold),
+                    )
+                  else
+                    TextFormFieldWidget(
+                      controller: _keyController,
+                      label: tt('edit_project_translation.field.key'),
+                      validations: [
+                        FormFieldValidation(
+                          validator: validateRequired,
+                          errorText: tt('validation.required'),
+                        ),
+                      ],
                     ),
-                  ],
-                ),
-              CommonSpaceVHalf(),
-              for (int i = 0; i < widget.translation.languages.length; i++)
-                _TranslationField(
-                  language: widget.translation.languages[i],
-                  controller: _fieldsControllers[i]!,
-                ),
-            ],
+                  CommonSpaceVHalf(),
+                  for (int i = 0; i < widget.translation.languages.length; i++)
+                    _TranslationField(
+                      language: widget.translation.languages[i],
+                      controller: _fieldsControllers[i]!,
+                      onGoogleTranslate: _googleTranslate,
+                    ),
+                  Text(
+                    tt('edit_project_translation.google_translate.hint'),
+                    style: fancyText(kText),
+                  ),
+                  CommonSpaceVHalf(),
+                ],
+              ),
+            ),
+          ],
+          dialogFooter: DialogFooter(
+            style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
+            noText: tt('dialog.cancel'),
+            yesText: tt('edit_project_translation.submit'),
+            noOnTap: () {
+              Navigator.of(context).pop();
+            },
+            yesOnTap: () => _process(context),
           ),
         ),
-      ],
-      dialogFooter: DialogFooter(
-        style: commonTheme.dialogsStyle.listDialogStyle.dialogFooterStyle,
-        noText: tt('dialog.cancel'),
-        yesText: tt('edit_project_translation.submit'),
-        noOnTap: () {
-          Navigator.of(context).pop();
-        },
-        yesOnTap: () => _process(context),
       ),
     );
   }
@@ -148,6 +162,41 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       );
     }
   }
+
+  /// Use GoogleTranslate to translate from source to all other languages
+  Future<void> _googleTranslate(BuildContext context, String language, String query) async {
+    for (int i = 0; i < widget.translation.languages.length; i++) {
+      String translationLanguage = widget.translation.languages[i];
+      TextEditingController controller = _fieldsControllers[i]!;
+
+      if (translationLanguage != language) {
+        GoogleTranslateDataTask dataTask = await MainDataProvider.instance!.executeDataTask(GoogleTranslateDataTask(
+          data: GoogleTranslateParameters(
+            [query],
+            translationLanguage,
+          ),
+        ));
+
+        final theResult = dataTask.result;
+
+        if (theResult != null) {
+          setStateNotDisposed(() {
+            controller.text = theResult.translations.first.translatedText;
+          });
+        } else {
+          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
+            content: Text(
+              tt('edit_project_translation.google_translate.fail'),
+              style: fancyText(kTextDanger),
+              textAlign: TextAlign.center,
+            ),
+          ));
+
+          break;
+        }
+      }
+    }
+  }
 }
 
 class Translation {
@@ -166,27 +215,45 @@ class Translation {
 class _TranslationField extends StatelessWidget {
   final String language;
   final TextEditingController controller;
+  final Future<void> Function(BuildContext context, String language, String query) onGoogleTranslate;
 
   /// TranslationField initialization
   _TranslationField({
     required this.language,
     required this.controller,
+    required this.onGoogleTranslate,
   });
 
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
-        TextFormFieldWidget(
-          controller: controller,
-          label: language,
-          lines: 3,
-          validations: [
-            FormFieldValidation(
-              validator: validateRequired,
-              errorText: tt('validation.required'),
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.start,
+          children: [
+            Expanded(
+              child: TextFormFieldWidget(
+                controller: controller,
+                label: language,
+                lines: 3,
+                validations: [
+                  FormFieldValidation(
+                    validator: validateRequired,
+                    errorText: tt('validation.required'),
+                  ),
+                ],
+              ),
+            ),
+            CommonSpaceH(),
+            IconButtonWidget(
+              svgAssetPath: 'images/language.svg',
+              onTap: () => onGoogleTranslate(context, language, controller.text),
             ),
           ],
         ),
