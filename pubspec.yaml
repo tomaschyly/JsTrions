@@ -46,7 +46,7 @@ dependencies:
   url_launcher: ^6.0.20
 
 dev_dependencies:
-  msix: ^2.6.2
+  msix: ^2.8.18
 
 flutter:
   uses-material-design: true
