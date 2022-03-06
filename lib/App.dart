@@ -72,7 +72,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRoute: DashboardScreen.ROUTE,
       initialScreenRouteArguments: <String, String>{'router-no-animation': '1'},
       onAppInitStart: (BuildContext context) async {
-        if (Platform.isWindows) {
+        if (Platform.isWindows || Platform.isLinux) {
           await windowManager.ensureInitialized();
 
           if (!(await windowManager.isMaximized()) && !(await windowManager.isFullScreen())) {
