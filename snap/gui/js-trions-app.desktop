@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=JsTrions
+Comment=Easily manage JSON translations in your project.
+Exec=js-trions-app
+Icon=${SNAP}/meta/gui/js-trions-app.png
+Terminal=false
+Type=Application
+Categories=Development;
