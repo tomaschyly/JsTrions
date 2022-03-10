@@ -126,5 +126,7 @@
   "settings.screen.source.description": "Vyber aký zdroj prekladov je na detaile Projektu predvolene vybratý",
   "settings.screen.source.label": "Zdroj Prekladov",
   "settings.screen.title": "Nastavenia",
+  "toggle.off": "Vypnuté",
+  "toggle.on": "Zapnuté",
   "validation.required": "Prosím vyplň pole"
 }

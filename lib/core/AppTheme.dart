@@ -47,11 +47,6 @@ TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
 
 const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
 
-final kPreferencesSwitchStyle = PreferencesSwitchStyle(
-  labelStyle: kTextBold,
-  descriptionStyle: kText,
-);
-
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
   final AppDataStateSnapshot snapshot = AppDataState.of(context)!;
@@ -201,6 +196,24 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     inputStyle: kTextFormFieldStyle,
   );
 
+  final kSwitchToggleWidgetStyle = SwitchToggleWidgetStyle(
+    iconButtonStyle: kIconButtonStyle.copyWith(
+      width: 104,
+      iconRestricted: false,
+    ),
+    useText: true,
+    textStyle: kButtonStyle.textStyle,
+    onText: tt('toggle.on'),
+    offText: tt('toggle.off'),
+  );
+
+  final kPreferencesSwitchStyle = PreferencesSwitchStyle(
+    layout: PreferencesSwitchLayout.Vertical,
+    labelStyle: kTextBold,
+    descriptionStyle: kText,
+    useSwitchToggleWidget: true,
+  );
+
   return AppTheme(
     child: child,
     fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
@@ -218,6 +231,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     formStyle: FormStyle(
       textFormFieldStyle: kTextFormFieldStyle,
       selectionFormFieldStyle: kSelectionFormFieldStyle,
+      switchToggleWidgetStyle: kSwitchToggleWidgetStyle,
       preferencesSwitchStyle: kPreferencesSwitchStyle,
     ),
     emailFormFieldStyle: kEmailFormFieldStyle,

@@ -126,5 +126,7 @@
   "settings.screen.source.description": "Choose which source of translations is selected by default on Project detail",
   "settings.screen.source.label": "Translations Source",
   "settings.screen.title": "Settings",
+  "toggle.off": "Off",
+  "toggle.on": "On",
   "validation.required": "Please fill in the field"
 }
