@@ -547,9 +547,9 @@ packages:
   tch_common_widgets:
     dependency: "direct main"
     description:
-      name: tch_common_widgets
-      url: "https://pub.dartlang.org"
-    source: hosted
+      path: "../tch_common_widgets"
+      relative: true
+    source: path
     version: "0.9.2"
   term_glyph:
     dependency: transitive

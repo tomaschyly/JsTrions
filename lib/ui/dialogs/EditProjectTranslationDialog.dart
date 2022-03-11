@@ -81,7 +81,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       body: Container(
         alignment: Alignment.center,
         child: DialogContainer(
-          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle,
+          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle.copyWith(
+              dialogWidth: 992,
+          ),
           content: [
             Form(
               key: _formKey,
@@ -110,7 +112,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         ),
                       ],
                     ),
-                  CommonSpaceVHalf(),
+                  CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
                       language: widget.translation.languages[i],
@@ -262,7 +264,7 @@ class _TranslationField extends StatelessWidget {
             ),
           ],
         ),
-        CommonSpaceVHalf(),
+        CommonSpaceV(),
       ],
     );
   }
