@@ -176,8 +176,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       if (translationLanguage != language) {
         GoogleTranslateDataTask dataTask = await MainDataProvider.instance!.executeDataTask(GoogleTranslateDataTask(
           data: GoogleTranslateParameters(
-            [query],
-            translationLanguage,
+            queries: [query],
+            sourceLanguage: language,
+            targetLanguage: translationLanguage,
           ),
         ));
 

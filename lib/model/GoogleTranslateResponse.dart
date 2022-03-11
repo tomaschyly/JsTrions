@@ -32,7 +32,7 @@ class GoogleTranslateResponse extends DataModel {
 
 class GoogleTranslateTranslation extends DataModel {
   final String translatedText;
-  final String detectedSourceLanguage;
+  final String? detectedSourceLanguage;
 
   /// GoogleTranslateTranslation initialization
   GoogleTranslateTranslation({

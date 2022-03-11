@@ -2,12 +2,17 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 class GoogleTranslateParameters extends DataModel {
   final List<String> queries;
+  final String sourceLanguage;
   final String targetLanguage;
 
   /// GoogleTranslateParameters initialization with parameters
-  GoogleTranslateParameters(this.queries, this.targetLanguage)
-      : super.fromJson({
+  GoogleTranslateParameters({
+    required this.queries,
+    required this.sourceLanguage,
+    required this.targetLanguage,
+  }) : super.fromJson({
           'q': queries,
+          'source': sourceLanguage,
           'target': targetLanguage,
         });
 
