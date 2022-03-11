@@ -89,11 +89,11 @@ BEGIN
     BEGIN
         BLOCK "040904e4"
         BEGIN
-            VALUE "CompanyName", "com.tomaschyly" "\0"
+            VALUE "CompanyName", "Tomáš Chylý" "\0"
             VALUE "FileDescription", "Flutter cross-platform JSON translations utility app." "\0"
             VALUE "FileVersion", VERSION_AS_STRING "\0"
             VALUE "InternalName", "js_trions" "\0"
-            VALUE "LegalCopyright", "Copyright (C) 2021 com.tomas-chyly. All rights reserved." "\0"
+            VALUE "LegalCopyright", "Copyright (C) 2021 Tomáš Chylý. All rights reserved." "\0"
             VALUE "OriginalFilename", "js_trions.exe" "\0"
             VALUE "ProductName", "JsTrions" "\0"
             VALUE "ProductVersion", VERSION_AS_STRING "\0"

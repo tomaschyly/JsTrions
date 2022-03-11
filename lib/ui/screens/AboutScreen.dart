@@ -3,6 +3,7 @@ import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/ui/dialogs/FeedbackDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
+import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -383,6 +384,9 @@ class _AttributionWidget extends AbstractStatefulWidget {
 }
 
 class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWidget> {
+  late String _copyright1;
+  late String _copyright2;
+  late String _copyright3;
   late String _fontAwesome1;
   late String _fontAwesome2;
   late String _fontAwesome3;
@@ -394,9 +398,21 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
   void initState() {
     super.initState();
 
+    final String copyrightTranslated = tt('about.screen.copyright');
+
+    List<String> processing = copyrightTranslated.split(r' $linkAStart');
+
+    _copyright1 = processing.first + " ";
+
+    processing = processing.last.split(r' $linkAEnd');
+
+    _copyright2 = processing.first.trim();
+
+    _copyright3 = processing.last;
+
     final String fontAwesomeTranslated = tt('about.screen.fontAwesome');
 
-    List<String> processing = fontAwesomeTranslated.split(r' $linkAStart');
+    processing = fontAwesomeTranslated.split(r' $linkAStart');
 
     _fontAwesome1 = processing.first + " ";
 
@@ -419,35 +435,62 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
   Widget buildContent(BuildContext context) {
     return Padding(
       padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-      child: Text.rich(
-        TextSpan(
-          children: [
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Text.rich(
+            TextSpan(children: [
+              TextSpan(
+                text: _copyright1,
+                style: fancyText(kText),
+              ),
+              TextSpan(
+                text: _copyright2,
+                style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                recognizer: TapGestureRecognizer()..onTap = () => launch('https://tomas-chyly.com/en/'),
+              ),
+              TextSpan(
+                text: _copyright3,
+                style: fancyText(kText),
+              ),
+            ]),
+          ),
+          CommonSpaceVDouble(),
+          CategoryHeaderWidget(
+            text: tt('about.screen.special_thanks'),
+            doubleMargin: true,
+          ),
+          Text.rich(
             TextSpan(
-              text: _fontAwesome1,
-              style: fancyText(kText),
+              children: [
+                TextSpan(
+                  text: _fontAwesome1,
+                  style: fancyText(kText),
+                ),
+                TextSpan(
+                  text: _fontAwesome2,
+                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/'),
+                ),
+                TextSpan(
+                  text: _fontAwesome3,
+                  style: fancyText(kText),
+                ),
+                TextSpan(
+                  text: _fontAwesome4,
+                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/license/free'),
+                ),
+                TextSpan(
+                  text: _fontAwesome5,
+                  style: fancyText(kText),
+                ),
+              ],
             ),
-            TextSpan(
-              text: _fontAwesome2,
-              style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => launch('https://fontawesome.com/'),
-            ),
-            TextSpan(
-              text: _fontAwesome3,
-              style: fancyText(kText),
-            ),
-            TextSpan(
-              text: _fontAwesome4,
-              style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
-              recognizer: TapGestureRecognizer()
-                ..onTap = () => launch('https://fontawesome.com/license/free'),
-            ),
-            TextSpan(
-              text: _fontAwesome5,
-              style: fancyText(kText),
-            ),
-          ],
-        ),
+          ),
+          CommonSpaceV(),
+        ],
       ),
     );
   }
