@@ -148,10 +148,11 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                                 ),
                               ),
                               CommonSpaceH(),
-                              Switch(
-                                activeColor: theme.colorScheme.secondary,
-                                value: _gdpr,
-                                onChanged: (bool newValue) => setStateNotDisposed(() {
+                              SwitchToggleWidget(
+                                initialValue: _gdpr,
+                                onText: tt('feedback.gdpr.on'),
+                                offText: tt('feedback.gdpr.off'),
+                                onChange: (bool newValue) => setStateNotDisposed(() {
                                   _gdpr = newValue;
                                   _gdprError = false;
                                 }),

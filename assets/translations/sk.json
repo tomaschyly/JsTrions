@@ -49,6 +49,8 @@
   "feedback.email": "Email",
   "feedback.gdpr": "Súhlasím s použiťím mojích osobných údajov výlúčne za účelom tejto komunikácie",
   "feedback.gdpr.error": "Musíš súhlasiť",
+  "feedback.gdpr.off": "Nesúhlasím",
+  "feedback.gdpr.on": "Súhlasím",
   "feedback.message": "Správa",
   "feedback.name": "Meno",
   "feedback.send": "Odoslať",

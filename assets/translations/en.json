@@ -49,6 +49,8 @@
   "feedback.email": "Email",
   "feedback.gdpr": "I agree with use of my personal information for the sole purpose of communication",
   "feedback.gdpr.error": "You need to agree",
+  "feedback.gdpr.off": "I Disagree",
+  "feedback.gdpr.on": "I Agree",
   "feedback.message": "Message",
   "feedback.name": "Name",
   "feedback.send": "Send",
