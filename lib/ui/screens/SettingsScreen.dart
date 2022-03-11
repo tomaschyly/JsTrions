@@ -266,6 +266,8 @@ class _GeneralWidget extends StatelessWidget {
                     prefsSetString(PREFS_LANGUAGE, Translator.instance!.currentLanguage);
 
                     Translator.instance!.initTranslations(context).then((value) {
+                      AppState.instance.invalidate();
+
                       pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
                     });
                   } else {
