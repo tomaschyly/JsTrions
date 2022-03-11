@@ -234,8 +234,6 @@ class _TranslationField extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
-    final commonTheme = CommonTheme.of<AppTheme>(context)!;
-
     return Column(
       mainAxisSize: MainAxisSize.min,
       children: [
