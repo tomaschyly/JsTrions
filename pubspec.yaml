@@ -63,7 +63,9 @@ flutter:
       fonts:
         - asset: fonts/Kalam-Regular.ttf
 
-#https://pub.dev/packages/msix
+# https://pub.dev/packages/msix
+# flutter build windows
+# flutter pub run msix:create
 msix_config:
   display_name: JsTrions
   publisher_display_name: Tomas Chyly
