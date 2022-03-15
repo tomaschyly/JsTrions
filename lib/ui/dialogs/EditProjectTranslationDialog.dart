@@ -82,7 +82,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         alignment: Alignment.center,
         child: DialogContainer(
           style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle.copyWith(
-              dialogWidth: 992,
+            dialogWidth: 992,
           ),
           content: [
             Form(
@@ -102,14 +102,22 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       style: fancyText(kTextBold),
                     )
                   else
-                    TextFormFieldWidget(
-                      controller: _keyController,
-                      label: tt('edit_project_translation.field.key'),
-                      validations: [
-                        FormFieldValidation(
-                          validator: validateRequired,
-                          errorText: tt('validation.required'),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Expanded(
+                          child: TextFormFieldWidget(
+                            controller: _keyController,
+                            label: tt('edit_project_translation.field.key'),
+                            validations: [
+                              FormFieldValidation(
+                                validator: validateRequired,
+                                errorText: tt('validation.required'),
+                              ),
+                            ],
+                          ),
                         ),
+                        Container(width: kButtonHeight + kCommonHorizontalMargin),
                       ],
                     ),
                   CommonSpaceV(),
