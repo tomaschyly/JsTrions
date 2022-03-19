@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/services.dart';
 import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppPreferences.dart';
@@ -298,26 +297,20 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           ],
                                         ),
                                         CommonSpaceV(),
-                                        Row(
-                                          mainAxisSize: MainAxisSize.min,
-                                          children: [
-                                            Text(
-                                              tt('project_detail.actions.code_only_keys'),
-                                              style: fancyText(kTextBold),
-                                            ),
-                                            CommonSpaceH(),
-                                            Switch(
-                                              activeColor: theme.colorScheme.secondary,
-                                              value: _displayOnlyCodeOnlyKeys,
-                                              onChanged: (bool newValue) {
-                                                setStateNotDisposed(() {
-                                                  _displayOnlyCodeOnlyKeys = newValue;
-                                                });
-                                              },
-                                            ),
-                                          ],
+                                        Text(
+                                          tt('project_detail.actions.code_only_keys'),
+                                          style: fancyText(kTextBold),
                                         ),
                                         CommonSpaceVHalf(),
+                                        SwitchToggleWidget(
+                                          initialValue: _displayOnlyCodeOnlyKeys,
+                                          onChange: (bool newValue) {
+                                            setStateNotDisposed(() {
+                                              _displayOnlyCodeOnlyKeys = newValue;
+                                            });
+                                          },
+                                        ),
+                                        CommonSpaceV(),
                                         Text(
                                           tt('project_detail.actions.import_export.title'),
                                           style: fancyText(kTextBold),
