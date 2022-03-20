@@ -34,6 +34,16 @@ Future<void> updateDBForProgrammingLanguage(Database db, int oldVersion, int new
           ProgrammingLanguage.COL_EXTENSION: 'cs',
           ProgrammingLanguage.COL_KEY: r'''(?<=T.Tk \(\')(.*?)(?=\'\))|(?<=T.Tk \(\")(.*?)(?=\"\))''',
         },
+        {
+          ProgrammingLanguage.COL_NAME: 'Javascript JSX',
+          ProgrammingLanguage.COL_EXTENSION: 'jsx',
+          ProgrammingLanguage.COL_KEY: r'''(?<=t \(\')(.*?)(?=\', language\))''',
+        },
+        {
+          ProgrammingLanguage.COL_NAME: 'Typescript JSX',
+          ProgrammingLanguage.COL_EXTENSION: 'tsx',
+          ProgrammingLanguage.COL_KEY: r'''(?<=tt \(\')(.*?)(?=\', language\))''',
+        },
       ],
     });
 
