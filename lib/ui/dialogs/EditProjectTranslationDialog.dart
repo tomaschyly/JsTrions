@@ -1,3 +1,4 @@
+import 'package:flutter/services.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
@@ -97,9 +98,27 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                   ),
                   CommonSpaceVHalf(),
                   if (theKey != null)
-                    Text(
-                      theKey,
-                      style: fancyText(kTextBold),
+                    Row(
+                      mainAxisSize: MainAxisSize.max,
+                      children: [
+                        Flexible(
+                          child: Text(
+                            theKey,
+                            style: fancyText(kTextBold),
+                          ),
+                        ),
+                        CommonSpaceHHalf(),
+                        IconButtonWidget(
+                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                            variant: IconButtonVariant.IconOnly,
+                          ),
+                          svgAssetPath: 'images/clipboard.svg',
+                          onTap: () {
+                            Clipboard.setData(ClipboardData(text: theKey));
+                          },
+                        ),
+                        Container(width: kButtonHeight + kCommonHorizontalMargin),
+                      ],
                     )
                   else
                     Row(
