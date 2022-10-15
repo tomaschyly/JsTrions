@@ -4,6 +4,7 @@
 
 list(APPEND FLUTTER_PLUGIN_LIST
   file_selector_windows
+  screen_retriever
   tch_common_widgets
   url_launcher_windows
   window_manager
