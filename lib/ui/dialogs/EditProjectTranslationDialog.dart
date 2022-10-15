@@ -1,4 +1,6 @@
 import 'package:flutter/services.dart';
+import 'package:html_unescape/html_unescape.dart';
+import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
@@ -198,6 +200,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       return;
     }
 
+    final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
+    final unescape = HtmlUnescape();
+
     for (int i = 0; i < widget.translation.languages.length; i++) {
       String translationLanguage = widget.translation.languages[i];
       TextEditingController controller = _fieldsControllers[i]!;
@@ -214,8 +219,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         final theResult = dataTask.result;
 
         if (theResult != null) {
+          final theText = unescapeHTML ? unescape.convert(theResult.translations.first.translatedText) : theResult.translations.first.translatedText;
+
           setStateNotDisposed(() {
-            controller.text = theResult.translations.first.translatedText;
+            controller.text = theText;
           });
         } else {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(

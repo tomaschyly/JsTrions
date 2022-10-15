@@ -114,6 +114,7 @@
   "settings.screen.category.general": "Všeobecné",
   "settings.screen.category.programming_languages": "Programovacie Jazyky",
   "settings.screen.category.projects": "Projekty",
+  "settings.screen.category.translations": "Automatické Preklady",
   "settings.screen.code_only": "Preklady iba v Kóde",
   "settings.screen.code_only.off": "Po analýze sa nič nezmení",
   "settings.screen.code_only.on": "Po analýze, ak existujú preklady čo sú iba v kóde, aplikácia sa automaticky prepne tak, aby zobrazovala iba tieto preklady",
@@ -130,6 +131,9 @@
   "settings.screen.source.description": "Vyber aký zdroj prekladov je na detaile Projektu predvolene vybratý",
   "settings.screen.source.label": "Zdroj Prekladov",
   "settings.screen.title": "Nastavenia",
+  "settings.screen.translations.no_html_entities": "Žiadne HTML Entity",
+  "settings.screen.translations.no_html_entities.off": "Text bude mať kódované entity HTML.",
+  "settings.screen.translations.no_html_entities.on": "Entity HTML v prekladoch budú v texte bez kódovania znakov.",
   "toggle.off": "Vypnuté",
   "toggle.on": "Zapnuté",
   "validation.required": "Prosím vyplň pole"

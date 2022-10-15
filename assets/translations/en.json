@@ -114,6 +114,7 @@
   "settings.screen.category.general": "General",
   "settings.screen.category.programming_languages": "Programming Languages",
   "settings.screen.category.projects": "Projects",
+  "settings.screen.category.translations": "Automatic Translations",
   "settings.screen.code_only": "Code only Translations",
   "settings.screen.code_only.off": "After analysis nothing will change",
   "settings.screen.code_only.on": "After analysis, if there are code only translations, app will automatically switch to show only those translations",
@@ -130,6 +131,9 @@
   "settings.screen.source.description": "Choose which source of translations is selected by default on Project detail",
   "settings.screen.source.label": "Translations Source",
   "settings.screen.title": "Settings",
+  "settings.screen.translations.no_html_entities": "No HTML Entities",
+  "settings.screen.translations.no_html_entities.off": "Text will have escaped HTML entities.",
+  "settings.screen.translations.no_html_entities.on": "HTML entities in translations will be unescaped in text.",
   "toggle.off": "Off",
   "toggle.on": "On",
   "validation.required": "Please fill in the field"

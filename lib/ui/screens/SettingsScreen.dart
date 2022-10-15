@@ -1,3 +1,5 @@
+import 'dart:convert';
+
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
 import 'package:js_trions/core/AppPreferences.dart';
@@ -96,6 +98,11 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                child: _TranslationsWidget(),
+              ),
+              Container(
+                width: kPhoneStopBreakpoint,
+                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: _ProjectsWidget(),
               ),
               Container(
@@ -181,6 +188,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        child: _TranslationsWidget(),
                       ),
                     ),
                   ),
@@ -328,6 +336,30 @@ class _GeneralWidget extends StatelessWidget {
         ),
       );
     }
+  }
+}
+
+class _TranslationsWidget extends StatelessWidget {
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        CategoryHeaderWidget(
+          text: tt('settings.screen.category.translations'),
+          doubleMargin: true,
+        ),
+        PreferencesSwitchWidget(
+          label: tt('settings.screen.translations.no_html_entities'),
+          prefsKey: PREFS_TRANSLATIONS_NO_HTML,
+          descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
+          descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
+        ),
+        CommonSpaceVDouble(),
+      ],
+    );
   }
 }
 
