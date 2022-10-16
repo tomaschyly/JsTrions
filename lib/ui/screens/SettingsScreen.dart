@@ -351,13 +351,22 @@ class _TranslationsWidget extends StatelessWidget {
           text: tt('settings.screen.category.translations'),
           doubleMargin: true,
         ),
-        PreferencesSwitchWidget(
-          label: tt('settings.screen.translations.no_html_entities'),
-          prefsKey: PREFS_TRANSLATIONS_NO_HTML,
-          descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
-          descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
+        Container(
+          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          child: Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              PreferencesSwitchWidget(
+                label: tt('settings.screen.translations.no_html_entities'),
+                prefsKey: PREFS_TRANSLATIONS_NO_HTML,
+                descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
+                descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
+              ),
+              CommonSpaceVDouble(),
+            ],
+          ),
         ),
-        CommonSpaceVDouble(),
       ],
     );
   }
