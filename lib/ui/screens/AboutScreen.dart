@@ -19,7 +19,7 @@ class AboutScreen extends AbstractResposiveScreen {
 
 class _AboutScreenState extends AppResponsiveScreenState<AboutScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+  AbstractScreenOptions options = AppScreenStateOptions.main(
     screenName: AboutScreen.ROUTE,
     title: tt('about.screen.title'),
   );

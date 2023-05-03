@@ -27,7 +27,7 @@ class SettingsScreen extends AbstractResposiveScreen {
 
 class _SettingsScreenState extends AppResponsiveScreenState<SettingsScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+  AbstractScreenOptions options = AppScreenStateOptions.main(
     screenName: SettingsScreen.ROUTE,
     title: tt('settings.screen.title'),
   );

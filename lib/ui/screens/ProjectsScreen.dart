@@ -26,7 +26,7 @@ class ProjectsScreen extends AbstractResposiveScreen {
 
 class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+  AbstractScreenOptions options = AppScreenStateOptions.main(
     screenName: ProjectsScreen.ROUTE,
     title: tt('projects.screen.title'),
   )..appBarOptions = <AppBarOption>[

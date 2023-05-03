@@ -14,7 +14,7 @@ class DashboardScreen extends AbstractResposiveScreen {
 
 class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.main(
+  AbstractScreenOptions options = AppScreenStateOptions.main(
     screenName: DashboardScreen.ROUTE,
     title: tt('dashboard.screen.title'),
   );

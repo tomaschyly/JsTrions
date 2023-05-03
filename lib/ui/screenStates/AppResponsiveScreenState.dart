@@ -7,7 +7,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class AppScreenStateOptions extends AbstractScreenStateOptions {
+class AppScreenStateOptions extends AbstractScreenOptions {
   /// AppScreenStateOptions initialization for default app state
   AppScreenStateOptions.basic({
     required String screenName,
@@ -163,7 +163,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                       ),
                       iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
                       onTap: () {
-                        option.onTap(context);
+                        option.onTap!(context);
                       },
                     ),
                   );
@@ -213,7 +213,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> exten
                                 ),
                               ),
                             ),
-                          option.title,
+                          option.title!,
                         ],
                       ),
                     ),

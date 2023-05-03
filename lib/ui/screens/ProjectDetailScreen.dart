@@ -19,7 +19,7 @@ class ProjectDetailScreen extends AbstractResposiveScreen {
 
 class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailScreen> {
   @override
-  AbstractScreenStateOptions options = AppScreenStateOptions.basic(
+  AbstractScreenOptions options = AppScreenStateOptions.basic(
     screenName: ProjectDetailScreen.ROUTE,
     title: tt('project_detail.screen.title'),
   );
