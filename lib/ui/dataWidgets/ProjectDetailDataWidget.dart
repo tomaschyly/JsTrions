@@ -67,6 +67,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
   final ValueNotifier<String> _analysisProgress = ValueNotifier('');
+  final _displayOnlyCodeOnlyKeysKey = GlobalKey<SwitchToggleWidgetState>();
   bool _displayOnlyCodeOnlyKeys = false;
   final ScrollController _scrollController = ScrollController();
   final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
@@ -302,6 +303,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         ),
                                         CommonSpaceVHalf(),
                                         SwitchToggleWidget(
+                                          key: _displayOnlyCodeOnlyKeysKey,
                                           initialValue: _displayOnlyCodeOnlyKeys,
                                           onChange: (bool newValue) {
                                             setStateNotDisposed(() {
@@ -857,6 +859,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
 
           if (showCodeOnly) {
+            _displayOnlyCodeOnlyKeysKey.currentState?.changeValue(true);
+
             setStateNotDisposed(() {
               _displayOnlyCodeOnlyKeys = true;
             });

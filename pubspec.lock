@@ -568,10 +568,9 @@ packages:
   tch_common_widgets:
     dependency: "direct main"
     description:
-      name: tch_common_widgets
-      sha256: "2b19ba7a1f5afdee18bde667413ce83bd2f58c7a56f3f2c2d8dedf9ed704c0da"
-      url: "https://pub.dev"
-    source: hosted
+      path: "G:/Development/FlutterProjs/tch_common_widgets"
+      relative: false
+    source: path
     version: "0.23.0"
   term_glyph:
     dependency: transitive
