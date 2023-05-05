@@ -235,6 +235,12 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
       preferencesSwitchStyle: kPreferencesSwitchStyle,
     ),
     emailFormFieldStyle: kEmailFormFieldStyle,
+    tooltipStyle: TooltipStyle(
+      decoration: BoxDecoration(
+        color: Colors.black,
+        borderRadius: platformBorderRadius,
+      ),
+    ),
   );
 }
 
@@ -255,6 +261,7 @@ class AppTheme extends CommonTheme {
     required DialogsStyle dialogsStyle,
     required FormStyle formStyle,
     required this.emailFormFieldStyle,
+    required TooltipStyle tooltipStyle,
   }) : super(
           child: CommonTheme(
             child: child,
@@ -262,10 +269,12 @@ class AppTheme extends CommonTheme {
             buttonsStyle: buttonsStyle,
             dialogsStyle: dialogsStyle,
             formStyle: formStyle,
+            tooltipStyle: tooltipStyle,
           ),
           fontFamily: fontFamily,
           buttonsStyle: buttonsStyle,
           dialogsStyle: dialogsStyle,
           formStyle: formStyle,
+          tooltipStyle: tooltipStyle,
         );
 }

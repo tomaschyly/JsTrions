@@ -120,6 +120,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: theKey));
                           },
+                          tooltip: tt('edit_project_translation.copy_key.tooltip').parameters({
+                            r'$key': theKey,
+                          }),
                         ),
                         Container(width: kButtonHeight + kCommonHorizontalMargin),
                       ],
@@ -303,6 +306,9 @@ class _TranslationField extends StatelessWidget {
             IconButtonWidget(
               svgAssetPath: 'images/language.svg',
               onTap: () => onGoogleTranslate(context, language, controller.text),
+              tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
+                r'$language': language,
+              }),
             ),
           ],
         ),

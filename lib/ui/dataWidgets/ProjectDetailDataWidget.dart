@@ -6,7 +6,6 @@ import 'dart:io';
 import 'package:archive/archive_io.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
-import 'package:flutter/widgets.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
@@ -554,6 +553,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                                 ),
                                                 svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
                                                 onTap: () => _processTranslationsForKey(context, theProject, key),
+                                                tooltip: tt('project_detail.table.edit.tooltip').parameters({
+                                                  r'$key': key,
+                                                }),
                                               ),
                                             ),
                                           ),
@@ -570,6 +572,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                                       ),
                                                       svgAssetPath: 'images/trash.svg',
                                                       onTap: () => _deleteTranslationsForKey(context, theProject, key),
+                                                      tooltip: tt('project_detail.table.delete.tooltip').parameters({
+                                                        r'$key': key,
+                                                      }),
                                                     ),
                                             ),
                                           ),
