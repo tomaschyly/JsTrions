@@ -148,3 +148,10 @@ Future<Project?> anyProjectForProgrammingLanguage(int programmingLanguage) async
 
   return null;
 }
+
+/// If language code is from code and country, return code only
+String languageCodeOnly(String languageCode) {
+  final parts = languageCode.split('_');
+
+  return parts.first;
+}
