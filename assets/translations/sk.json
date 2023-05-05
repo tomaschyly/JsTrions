@@ -95,6 +95,7 @@
   "project_detail.info.languages_not_equal_count": "Jazyky nemajú rovnaký počet prekladov, $topLanguageCode má $topLanguageCount, zatiaľ čo $lowerLanguageCode má len $lowerLanguageCount",
   "project_detail.info.languages_not_equal_keys": "Jazyky nemajú tie isté kľúče preklavod, $language má iné kľúce ako $otherLanguage",
   "project_detail.info.success": "Preklady Projektu analizované a vyzerajú byť vporiadku",
+  "project_detail.info_list.clear_all": "Vymazať všetky správy",
   "project_detail.macos_request_access": "Potvrď Prístup",
   "project_detail.macos_request_access.description": "Z dôvodu MacOS App Sandbox, z bezpečnostných dôvodov, musíš potvrdiť prístup k súborom Projektu pri každóm spustení Appky",
   "project_detail.screen.title": "Projekt",

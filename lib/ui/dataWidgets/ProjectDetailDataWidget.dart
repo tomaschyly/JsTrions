@@ -356,7 +356,24 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   child: Column(
                                     mainAxisSize: MainAxisSize.min,
                                     crossAxisAlignment: CrossAxisAlignment.start,
-                                    children: _infoList,
+                                    children: [
+                                      ..._infoList,
+                                      if (_infoList.length > 1)
+                                        ...[
+                                          ButtonWidget(
+                                            style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                              widthWrapContent: true,
+                                            ),
+                                            text: tt('project_detail.info_list.clear_all'),
+                                            onTap: () {
+                                              setStateNotDisposed(() {
+                                                _infoList.clear();
+                                              });
+                                            },
+                                          ),
+                                          CommonSpaceV(),
+                                        ],
+                                    ],
                                   ),
                                 ),
                               ),

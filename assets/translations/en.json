@@ -95,6 +95,7 @@
   "project_detail.info.languages_not_equal_count": "Languages do not have same number of translations, $topLanguageCode has $topLanguageCount, while $lowerLanguageCode has only $lowerLanguageCount",
   "project_detail.info.languages_not_equal_keys": "Languages do not have same translation keys, $language has different keys then $otherLanguage",
   "project_detail.info.success": "Project translations analyzed and look fine",
+  "project_detail.info_list.clear_all": "Clear all messages",
   "project_detail.macos_request_access": "Confirm Access",
   "project_detail.macos_request_access.description": "Because of MacOS App Sandbox, for security reasons, you have to confirm access to Project files every time you start the App",
   "project_detail.screen.title": "Project",
