@@ -66,7 +66,6 @@ class ProjectTranslationsJsonFormatFieldWidgetState extends AbstractStatefulWidg
         ),
         AnimatedSize(
           duration: kThemeAnimationDuration,
-          vsync: this,
           alignment: Alignment.topCenter,
           child: _translationsJsonFormat == TranslationsJsonFormat.ObjectInside
               ? Column(

@@ -66,7 +66,6 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
           children: [
             AnimatedSize(
               duration: kThemeAnimationDuration,
-              vsync: this,
               alignment: Alignment.topCenter,
               child: Wrap(
                 spacing: kCommonHorizontalMarginHalf,

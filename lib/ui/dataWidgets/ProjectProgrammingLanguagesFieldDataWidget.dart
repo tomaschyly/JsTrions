@@ -103,7 +103,6 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
 
         return AnimatedSize(
           duration: kThemeAnimationDuration,
-          vsync: this,
           alignment: Alignment.topCenter,
           child: Column(
             mainAxisSize: MainAxisSize.min,

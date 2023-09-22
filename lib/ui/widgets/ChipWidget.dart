@@ -50,7 +50,7 @@ class ChipWidget extends StatelessWidget {
 
     if (onTap != null) {
       chip = ClipRRect(
-        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius ?? BorderRadius.zero,
         child: Material(
           color: Colors.transparent,
           child: InkWell(

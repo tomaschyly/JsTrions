@@ -348,7 +348,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               CommonSpaceV(),
                               AnimatedSize(
                                 duration: kThemeAnimationDuration,
-                                vsync: this,
                                 alignment: Alignment.topCenter,
                                 child: Container(
                                   width: double.infinity,

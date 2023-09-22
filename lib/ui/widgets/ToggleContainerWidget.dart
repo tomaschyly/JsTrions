@@ -52,7 +52,7 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     return ClipRRect(
-      borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+      borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius ?? BorderRadius.zero,
       child: Container(
         decoration: BoxDecoration(
           borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,

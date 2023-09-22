@@ -131,7 +131,6 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                   Container(
                     width: kPhoneStopBreakpoint,
                     child: AnimatedSize(
-                      vsync: this,
                       duration: kThemeAnimationDuration,
                       alignment: Alignment.topCenter,
                       child: Column(
