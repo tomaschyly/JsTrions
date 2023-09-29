@@ -16,7 +16,7 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/List.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class ProjectsScreen extends AbstractResposiveScreen {
+class ProjectsScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/projects";
 
   /// Create state for widget

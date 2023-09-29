@@ -9,7 +9,7 @@ import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class ProjectDetailScreen extends AbstractResposiveScreen {
+class ProjectDetailScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/projects/project";
 
   /// Create state for widget

@@ -108,7 +108,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
   }
 }
 
-abstract class AppResponsiveScreenState<T extends AbstractResposiveScreen> extends AbstractResposiveScreenState<T> {
+abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> extends AbstractResponsiveScreenState<T> {
+  @protected
+  Color get backgroundColor => kColorPrimaryLight;
+
   /// Create default AppBar
   @protected
   PreferredSizeWidget? createAppBar(BuildContext context) {

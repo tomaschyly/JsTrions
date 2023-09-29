@@ -85,6 +85,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       onGenerateRoute: AppRouter.onGenerateRoute,
       builder: appThemeBuilder,
       theme: ThemeData(
+        // tmp fixes using AppResponsiveScreenState color
         backgroundColor: kColorPrimaryLight,
         primaryColor: kColorPrimary,
         primaryColorLight: kColorPrimaryLight,

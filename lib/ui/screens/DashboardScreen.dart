@@ -4,7 +4,7 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class DashboardScreen extends AbstractResposiveScreen {
+class DashboardScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/dashboard";
 
   /// Create state for widget

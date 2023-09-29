@@ -9,7 +9,7 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
-class AboutScreen extends AbstractResposiveScreen {
+class AboutScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/about";
 
   /// Create state for widget

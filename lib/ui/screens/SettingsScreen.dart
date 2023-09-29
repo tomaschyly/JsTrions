@@ -17,7 +17,7 @@ import 'package:js_trions/ui/widgets/SettingWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-class SettingsScreen extends AbstractResposiveScreen {
+class SettingsScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/settings";
 
   /// Create state for widget
