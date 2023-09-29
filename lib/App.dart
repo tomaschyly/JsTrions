@@ -42,7 +42,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initializationUi: Builder(
         builder: (BuildContext context) {
           return Scaffold(
-            backgroundColor: Theme.of(context).backgroundColor,
+            backgroundColor: kColorPrimaryLight,
             body: Container(
               child: Center(
                 child: Padding(
@@ -85,8 +85,6 @@ class AppState extends AbstractStatefulWidgetState<App> {
       onGenerateRoute: AppRouter.onGenerateRoute,
       builder: appThemeBuilder,
       theme: ThemeData(
-        // tmp fixes using AppResponsiveScreenState color
-        backgroundColor: kColorPrimaryLight,
         primaryColor: kColorPrimary,
         primaryColorLight: kColorPrimaryLight,
         primaryColorDark: kColorPrimaryDark,
@@ -96,6 +94,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
         splashColor: kColorSecondary,
         shadowColor: kColorShadow,
         colorScheme: ThemeData().colorScheme.copyWith(
+          background: kColorPrimaryLight,
           secondary: kColorSecondary,
         ),
       ),

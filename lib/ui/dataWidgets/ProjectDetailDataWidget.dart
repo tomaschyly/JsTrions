@@ -20,6 +20,7 @@ import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class ProjectDetailDataWidget extends AbstractDataWidget {
@@ -690,7 +691,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _projectId = project.id;
       _project = project;
 
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      addPostFrameCallback((timeStamp) {
         widget.onProjectChanged?.call(_project);
       });
 
@@ -757,7 +758,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           setStateNotDisposed(() {
             _translationPairsByLanguage = translationPairsByLanguage;
 
-            WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+            addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
 
               if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
@@ -973,7 +974,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       _calculateStats();
 
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      addPostFrameCallback((timeStamp) {
         final theContext = _topKey.currentContext;
 
         if (theContext != null) {
@@ -991,7 +992,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     setStateNotDisposed(() {
       _sourceOfTranslations = source;
 
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      addPostFrameCallback((timeStamp) {
         _selectLanguage(_selectedLanguage);
       });
     });
@@ -1164,7 +1165,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           _newTranslationKey = GlobalKey();
           _newTranslation = translation.key;
 
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          addPostFrameCallback((timeStamp) {
             final theContext = _newTranslationKey?.currentContext;
 
             if (theContext != null) {
@@ -1334,7 +1335,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _isAnalyzing = false;
       }
 
-      WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+      addPostFrameCallback((timeStamp) {
         _selectLanguage(_selectedLanguage);
 
         _analyzeTranslations();

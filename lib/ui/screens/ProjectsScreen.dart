@@ -14,6 +14,7 @@ import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/List.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class ProjectsScreen extends AbstractResponsiveScreen {
@@ -38,6 +39,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
       ),
     ];
 
+  ResponsiveScreen? _lastResponsiveScreen;
   Project? _project;
 
   @override
@@ -70,9 +72,44 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
         onDataWidgetProjectInit: _onDataWidgetProjectInit,
       );
 
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    addPostFrameCallback((timeStamp) {
+      _onDataWidgetProjectInit(_project);
+    });
+  }
+
+  /// Create view layout from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    final snapshot = AppDataState.of(context)!;
+
+    addPostFrameCallback((timeStamp) {
+      if (_lastResponsiveScreen != snapshot.responsiveScreen) {
+        _lastResponsiveScreen = snapshot.responsiveScreen;
+
+        _onDataWidgetProjectInit(_project);
+      }
+    });
+
+    return super.buildContent(context);
+  }
+
   /// On Project is initialized in DataWidget
   void _onDataWidgetProjectInit(Project? project) {
+    final snapshot = AppDataState.of(context)!;
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
     _project = project;
+
+    final isDesktop = [
+      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.SmallDesktop,
+    ].contains(snapshot.responsiveScreen);
 
     setStateNotDisposed(() {
       options.appBarOptions = <AppBarOption>[
@@ -81,6 +118,20 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
             EditProjectDialog.show(context);
           },
           icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
+          button: isDesktop
+              ? ButtonWidget(
+                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                    variant: ButtonVariant.TextOnly,
+                    contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                    widthWrapContent: true,
+                  ),
+                  text: tt('project_detail.add_project'),
+                  prefixIconSvgAssetPath: 'images/plus.svg',
+                  onTap: () {
+                    EditProjectDialog.show(context);
+                  },
+                )
+              : null,
         ),
         if (project != null) ...[
           AppBarOption(
@@ -88,10 +139,39 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
               EditProjectDialog.show(context, project: _project);
             },
             icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+            button: isDesktop
+                ? ButtonWidget(
+                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                      variant: ButtonVariant.TextOnly,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                      widthWrapContent: true,
+                    ),
+                    text: tt('project_detail.edit_project'),
+                    prefixIconSvgAssetPath: 'images/edit.svg',
+                    onTap: () {
+                      EditProjectDialog.show(context, project: _project);
+                    },
+                  )
+                : null,
           ),
           AppBarOption(
             onTap: (BuildContext context) => deleteProject(context, project: project),
             icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
+            button: isDesktop
+                ? ButtonWidget(
+                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                      variant: ButtonVariant.TextOnly,
+                      contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                      widthWrapContent: true,
+                      iconColor: kColorDanger,
+                    ),
+                    text: tt('project_detail.delete_project'),
+                    prefixIconSvgAssetPath: 'images/trash.svg',
+                    onTap: () {
+                      deleteProject(context, project: project);
+                    },
+                  )
+                : null,
           ),
         ],
       ];

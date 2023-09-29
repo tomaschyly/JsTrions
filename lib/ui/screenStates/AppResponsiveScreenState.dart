@@ -1,9 +1,9 @@
 import 'package:flutter_svg/svg.dart';
+import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/ui/screens/AboutScreen.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:js_trions/ui/screens/SettingsScreen.dart';
-import 'package:js_trions/core/AppTheme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -109,9 +109,6 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 }
 
 abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> extends AbstractResponsiveScreenState<T> {
-  @protected
-  Color get backgroundColor => kColorPrimaryLight;
-
   /// Create default AppBar
   @protected
   PreferredSizeWidget? createAppBar(BuildContext context) {
@@ -159,16 +156,17 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
 
                   return Padding(
                     padding: const EdgeInsets.only(right: 12),
-                    child: IconButtonWidget(
-                      style: appTheme.appBarIconButtonStyle.copyWith(
-                        iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
-                        iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
-                      ),
-                      iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
-                      onTap: () {
-                        option.onTap!(context);
-                      },
-                    ),
+                    child: option.button ??
+                        IconButtonWidget(
+                          style: appTheme.appBarIconButtonStyle.copyWith(
+                            iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                            iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                          ),
+                          iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                          onTap: () {
+                            option.onTap!(context);
+                          },
+                        ),
                   );
                 },
               ))
