@@ -13,7 +13,7 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/List.dart';
+import 'package:tch_appliable_core/utils/list.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 

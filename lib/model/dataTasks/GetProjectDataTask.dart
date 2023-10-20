@@ -2,7 +2,7 @@ import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/Projects.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/List.dart';
+import 'package:tch_appliable_core/utils/list.dart';
 
 class GetProjectDataTask extends DataTask<ProjectQuery, Project> {
   /// GetProjectDataTask initialization

@@ -6,7 +6,7 @@ import 'package:js_trions/model/providers/ProjectProvider.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/Text.dart';
+import 'package:tch_appliable_core/utils/text.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class DashboardProjectsDataWidget extends AbstractDataWidget {
