@@ -1082,7 +1082,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       String saveName = tt('project.export.name');
       String typeLabel = tt('project.export.type.label');
 
-      String? savePath = await getSavePath(
+      FileSaveLocation? savePath = await getSaveLocation(
         suggestedName: '$saveName.zip',
         acceptedTypeGroups: [
           XTypeGroup(label: typeLabel, extensions: ['zip'])
@@ -1092,7 +1092,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       if (savePath != null) {
         var encoder = ZipFileEncoder();
-        encoder.zipDirectory(translationsAssetsDirectory, followLinks: false, filename: savePath);
+        encoder.zipDirectory(translationsAssetsDirectory, followLinks: false, filename: savePath.path);
 
         setStateNotDisposed(() {
           _infoList.add(
