@@ -166,7 +166,11 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                       ),
                       TextSpan(
                         text: 'https://regexr.com/',
-                        style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                        style: fancyText(kTextBold.copyWith(
+                          color: kColorSecondary,
+                          decoration: TextDecoration.underline,
+                          decorationColor: kColorSecondary,
+                        )),
                         recognizer: TapGestureRecognizer()..onTap = () => launch('https://regexr.com/'),
                       ),
                     ],

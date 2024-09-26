@@ -447,7 +447,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
               ),
               TextSpan(
                 text: _copyright2,
-                style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                style: fancyText(kTextBold.copyWith(
+                  color: kColorSecondary,
+                  decoration: TextDecoration.underline,
+                  decorationColor: kColorSecondary,
+                )),
                 recognizer: TapGestureRecognizer()..onTap = () => launch('https://tomas-chyly.com/en/'),
               ),
               TextSpan(
@@ -470,7 +474,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
                 ),
                 TextSpan(
                   text: _fontAwesome2,
-                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  style: fancyText(kTextBold.copyWith(
+                    color: kColorSecondary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: kColorSecondary,
+                  )),
                   recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/'),
                 ),
                 TextSpan(
@@ -479,7 +487,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
                 ),
                 TextSpan(
                   text: _fontAwesome4,
-                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  style: fancyText(kTextBold.copyWith(
+                    color: kColorSecondary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: kColorSecondary,
+                  )),
                   recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/license/free'),
                 ),
                 TextSpan(
