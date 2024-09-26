@@ -94,7 +94,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
         splashColor: kColorSecondary,
         shadowColor: kColorShadow,
         colorScheme: ThemeData().colorScheme.copyWith(
-          background: kColorPrimaryLight,
+          surface: kColorPrimaryLight,
           secondary: kColorSecondary,
         ),
       ),
