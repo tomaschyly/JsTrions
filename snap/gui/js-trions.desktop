@@ -1,0 +1,8 @@
+[Desktop Entry]
+Name=JsTrions
+Comment=Easy to use AI assisted translations of your projects.
+Exec=js-trions
+Icon=${SNAP}/meta/gui/js-trions.png
+Terminal=false
+Type=Application
+Categories=Development;
