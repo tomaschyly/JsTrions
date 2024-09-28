@@ -2,7 +2,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/Projects.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';

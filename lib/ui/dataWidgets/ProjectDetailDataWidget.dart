@@ -13,7 +13,7 @@ import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
@@ -720,9 +720,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       });
 
       if (exists && macOsFileAccess) {
-        final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+        final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
-        exists = await translationsAssetsDirectory.exists();
+        exists = translationsAssetsDirectory != null;
 
         setStateNotDisposed(() {
           _translationAssetsDirNotFound = !exists;
@@ -732,7 +732,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
 
           for (String language in project.languages) {
-            final file = File(join(translationsAssetsDirectory.path, '$language.json'));
+            final file = File(join(translationsAssetsDirectory, '$language.json'));
 
             if (!(await file.exists())) {
               await file.writeAsString('{}');
@@ -1033,7 +1033,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       );
 
       if (file != null) {
-        final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+        final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
         var decoder = ZipDecoder();
         Archive archive = decoder.decodeBytes(await file.readAsBytes());
@@ -1042,7 +1042,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
         for (ArchiveFile file in archive) {
           if (languages.contains(file.name)) {
-            File targetFile = File(join(translationsAssetsDirectory.path, file.name));
+            File targetFile = File(join(translationsAssetsDirectory!, file.name));
 
             await targetFile.writeAsBytes(file.content as List<int>);
           }
@@ -1077,7 +1077,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   /// Export translations into zip file
   Future<void> _exportTranslations(BuildContext context, Project project) async {
     try {
-      final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+      final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
       String saveName = tt('project.export.name');
       String typeLabel = tt('project.export.type.label');
@@ -1092,7 +1092,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       if (savePath != null) {
         var encoder = ZipFileEncoder();
-        encoder.zipDirectory(translationsAssetsDirectory, followLinks: false, filename: savePath.path);
+        encoder.zipDirectory(Directory(translationsAssetsDirectory!), followLinks: false, filename: savePath.path);
 
         setStateNotDisposed(() {
           _infoList.add(
@@ -1214,12 +1214,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Save translations for all languages to Project translations assets directory
   Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
-    final translationsAssetsDirectory = Directory('${project.directory}${project.translationAssets}');
+    final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
     final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
     for (String language in project.languages) {
-      final file = File(join(translationsAssetsDirectory.path, '$language.json'));
+      final file = File(join(translationsAssetsDirectory!, '$language.json'));
 
       final pairs = _translationPairsByLanguage[language]!;
 

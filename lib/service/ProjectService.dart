@@ -1,3 +1,5 @@
+import 'dart:io';
+
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectDataTask.dart';
@@ -154,4 +156,31 @@ String languageCodeOnly(String languageCode) {
   final parts = languageCode.split('_');
 
   return parts.first;
+}
+
+/// Get real translations assets directory, either as relative or full path
+String? getRealTranslationsAssetsDirectory(String projectDirectory, String translationsAssetsDirectory) {
+  Directory directory = Directory('$projectDirectory$translationsAssetsDirectory');
+
+  String? path;
+  try {
+    if (directory.existsSync()) {
+      path = directory.path;
+    } else {
+      directory = Directory(translationsAssetsDirectory);
+
+      if (directory.existsSync()) {
+        path = directory.path;
+      }
+    }
+  } catch (e, t) {
+    debugPrint('TCH_e $e\n$t');
+  }
+
+  return path;
+}
+
+/// Get real translations assets directory, either as relative or full path
+String? getRealTranslationsAssetsDirectoryForProject(Project project) {
+  return getRealTranslationsAssetsDirectory(project.directory, project.translationAssets);
 }
