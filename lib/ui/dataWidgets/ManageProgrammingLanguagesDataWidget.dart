@@ -2,7 +2,7 @@ import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
-import 'package:js_trions/model/providers/ProgrammingLanguageProvider.dart';
+import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';

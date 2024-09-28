@@ -2,7 +2,7 @@ import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/service/ProjectService.dart';
 import 'package:sembast/sembast.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';

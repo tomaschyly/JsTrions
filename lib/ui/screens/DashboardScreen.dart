@@ -1,4 +1,4 @@
-import 'package:js_trions/model/providers/InfoProvider.dart';
+import 'package:js_trions/service/InfoService.dart';
 import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';

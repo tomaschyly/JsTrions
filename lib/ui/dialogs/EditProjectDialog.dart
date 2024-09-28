@@ -3,7 +3,7 @@ import 'dart:io';
 import 'package:file_selector/file_selector.dart';
 import 'package:js_trions/core/AppTheme.dart';
 import 'package:js_trions/model/Project.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
+import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
@@ -180,16 +180,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
                         ),
                         FormFieldValidation(
                           validator: (String? value) {
-                            final directory = Directory('${_directoryController.text}$value');
-
-                            bool exists = false;
-                            try {
-                              exists = directory.existsSync();
-                            } catch (e, t) {
-                              debugPrint('TCH_e $e\n$t');
-                            }
-
-                            return exists;
+                            return getRealTranslationsAssetsDirectory(_directoryController.text, value ?? '') != null;
                           },
                           errorText: tt('edit_project.field.translation_assets.error'),
                         ),
