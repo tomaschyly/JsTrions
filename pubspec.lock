@@ -584,11 +584,10 @@ packages:
   tch_common_widgets:
     dependency: "direct main"
     description:
-      name: tch_common_widgets
-      sha256: "830c9a72d4ae5033f1fc1169c364fa379e8ef4db8f976cacd625c357f52b9f7c"
-      url: "https://pub.dev"
-    source: hosted
-    version: "0.36.2"
+      path: "../tch_common_widgets"
+      relative: true
+    source: path
+    version: "0.36.3"
   term_glyph:
     dependency: transitive
     description:

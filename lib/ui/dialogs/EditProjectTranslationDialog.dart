@@ -8,7 +8,6 @@ import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
 import 'package:js_trions/service/ProjectService.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
-import 'package:dio/dio.dart';
 
 class EditProjectTranslationDialog extends AbstractStatefulWidget {
   final Project project;
@@ -49,6 +48,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   final _formKey = GlobalKey<FormState>();
   final _keyController = TextEditingController();
   final Map<int, TextEditingController> _fieldsControllers = Map();
+  final Map<int, FocusNode> _fieldsFocusNodes = Map();
+  int _focusedIndex = -1;
+  bool _fullScreen = false;
 
   /// State initialization
   @override
@@ -59,7 +61,12 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       _fieldsControllers[i] = TextEditingController()..text = widget.translation.translations[i];
+
+      _fieldsFocusNodes[i] = FocusNode();
+      _fieldsFocusNodes[i]!.addListener(_onFocus);
     }
+
+    _fullScreen = prefsInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED) == 1;
   }
 
   /// Manually dispose of resources
@@ -70,6 +77,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     _fieldsControllers.forEach((key, controller) {
       controller.dispose();
     });
+    _fieldsFocusNodes.forEach((key, focusNode) {
+      focusNode.dispose();
+    });
 
     super.dispose();
   }
@@ -77,7 +87,16 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+    final snapshot = AppDataState.of(context)!;
+    final commonTheme = context.commonTheme;
+
+    final isDesktop = [
+      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.Tablet,
+      ResponsiveScreen.LargePhone,
+    ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
 
@@ -87,7 +106,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         alignment: Alignment.center,
         child: DialogContainer(
           style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle.copyWith(
-            dialogWidth: 992,
+            dialogWidth: _fullScreen ? double.infinity : 992,
+            stretchContent: _fullScreen,
           ),
           content: [
             Form(
@@ -99,6 +119,20 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                   DialogHeader(
                     style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
                     title: tt('edit_project_translation.title'),
+                    trailing: IconButtonWidget(
+                      style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                        variant: IconButtonVariant.IconOnly,
+                        iconWidth: kButtonHeight,
+                        iconHeight: kButtonHeight,
+                      ),
+                      svgAssetPath: _fullScreen ? 'images/icons8-shrink.svg' : 'images/icons8-enlarge.svg',
+                      onTap: () => setStateNotDisposed(() {
+                        _fullScreen = !_fullScreen;
+
+                        prefsSetInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED, _fullScreen ? 1 : 0);
+                      }),
+                      tooltip: _fullScreen ? tt('edit_project_translation.shrink.tooltip') : tt('edit_project_translation.enlarge.tooltip'),
+                    ),
                   ),
                   CommonSpaceVHalf(),
                   if (theKey != null)
@@ -149,8 +183,12 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                   CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
+                      fullscreen: _fullScreen,
+                      isDesktop: isDesktop,
+                      isFocused: i == _focusedIndex,
                       language: widget.translation.languages[i],
                       controller: _fieldsControllers[i]!,
+                      focusNode: _fieldsFocusNodes[i]!,
                       onGoogleTranslate: _googleTranslate,
                     ),
                   Text(
@@ -174,6 +212,20 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         ),
       ),
     );
+  }
+
+  /// Callback for FocusNode, if focused, find index in map and then set focused index
+  void _onFocus() {
+    _focusedIndex = -1;
+
+    for (int i = 0; i < _fieldsFocusNodes.length; i++) {
+      if (_fieldsFocusNodes[i]!.hasFocus) {
+        _focusedIndex = i;
+        break;
+      }
+    }
+
+    setStateNotDisposed(() {});
   }
 
   /// Process translations and send back
@@ -267,14 +319,22 @@ class Translation {
 }
 
 class _TranslationField extends StatelessWidget {
+  final bool fullscreen;
+  final bool isDesktop;
+  final bool isFocused;
   final String language;
   final TextEditingController controller;
+  final FocusNode focusNode;
   final Future<void> Function(BuildContext context, String language, String query) onGoogleTranslate;
 
   /// TranslationField initialization
   _TranslationField({
+    required this.fullscreen,
+    required this.isDesktop,
+    required this.isFocused,
     required this.language,
     required this.controller,
+    required this.focusNode,
     required this.onGoogleTranslate,
   });
 
@@ -292,8 +352,9 @@ class _TranslationField extends StatelessWidget {
             Expanded(
               child: TextFormFieldWidget(
                 controller: controller,
+                focusNode: focusNode,
                 label: language,
-                lines: 3,
+                lines: (fullscreen && isDesktop) || isFocused ? 5 : 3,
                 validations: [
                   FormFieldValidation(
                     validator: validateRequired,

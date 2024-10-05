@@ -218,7 +218,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   firstBuildOnly(BuildContext context) {
     super.firstBuildOnly(context);
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    addPostFrameCallback((timeStamp) {
       popNotDisposed(context, mounted);
     });
   }
