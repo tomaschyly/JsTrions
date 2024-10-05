@@ -308,6 +308,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           onChange: (bool newValue) {
                                             setStateNotDisposed(() {
                                               _displayOnlyCodeOnlyKeys = newValue;
+
+                                              _processSelectedLanguagePairs();
                                             });
                                           },
                                         ),
@@ -901,6 +903,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
             setStateNotDisposed(() {
               _displayOnlyCodeOnlyKeys = true;
+
+              _processSelectedLanguagePairs();
             });
           }
 
