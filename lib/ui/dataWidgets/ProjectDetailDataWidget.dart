@@ -462,7 +462,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 ),
                               ),
                               CommonSpaceV(),
-                              Container(
+                            ],
+                          ),
+                        ),
+                        SliverMainAxisGroup(
+                          slivers: [
+                            SliverAppBar(
+                              pinned: true,
+                              backgroundColor: Colors.transparent,
+                              toolbarHeight: kButtonHeight,
+                              titleSpacing: 0,
+                              title: Container(
                                 margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                                 decoration: BoxDecoration(
                                   color: kColorSecondaryDark,
@@ -500,88 +510,88 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   ],
                                 ),
                               ),
-                            ],
-                          ),
-                        ),
-                        SliverList.builder(
-                          itemCount: _processedKeys.length,
-                          itemBuilder: (context, index) {
-                            final rowIsOdd = (index % 2) == 1;
-                            final key = _processedKeys[index];
-                            final value = _processedLanguagePairs[key]!;
+                            ),
+                            SliverList.builder(
+                              itemCount: _processedKeys.length,
+                              itemBuilder: (context, index) {
+                                final rowIsOdd = (index % 2) == 1;
+                                final key = _processedKeys[index];
+                                final value = _processedLanguagePairs[key]!;
 
-                            final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+                                final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
-                            Color? rowColor = rowIsOdd ? kColorPrimary : null;
-                            if (isCodeOnly) {
-                              rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
-                            }
+                                Color? rowColor = rowIsOdd ? kColorPrimary : null;
+                                if (isCodeOnly) {
+                                  rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
+                                }
 
-                            return Container(
-                              margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                              decoration: BoxDecoration(
-                                color: rowColor,
-                                borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-                              ),
-                              child: Row(
-                                mainAxisSize: MainAxisSize.max,
-                                children: [
-                                  Expanded(
-                                    child: Container(
-                                      key: key == _newTranslation ? _newTranslationKey : null,
-                                      constraints: BoxConstraints(minHeight: kButtonHeight),
-                                      alignment: Alignment.topLeft,
-                                      padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                      child: Text(
-                                        key,
-                                        style: fancyText(kText),
-                                      ),
-                                    ),
+                                return Container(
+                                  margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                                  decoration: BoxDecoration(
+                                    color: rowColor,
+                                    borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
                                   ),
-                                  CommonSpaceH(),
-                                  Expanded(
-                                    child: Container(
-                                      constraints: BoxConstraints(minHeight: kButtonHeight),
-                                      alignment: Alignment.topLeft,
-                                      padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                      child: Text(
-                                        value,
-                                        style: fancyText(kText),
+                                  child: Row(
+                                    mainAxisSize: MainAxisSize.max,
+                                    children: [
+                                      Expanded(
+                                        child: Container(
+                                          key: key == _newTranslation ? _newTranslationKey : null,
+                                          constraints: BoxConstraints(minHeight: kButtonHeight),
+                                          alignment: Alignment.topLeft,
+                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                          child: Text(
+                                            key,
+                                            style: fancyText(kText),
+                                          ),
+                                        ),
                                       ),
-                                    ),
-                                  ),
-                                  CommonSpaceHHalf(),
-                                  IconButtonWidget(
-                                    style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                      variant: IconButtonVariant.IconOnly,
-                                    ),
-                                    svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
-                                    onTap: () => _processTranslationsForKey(context, theProject, key),
-                                    tooltip: tt('project_detail.table.edit.tooltip').parameters({
-                                      r'$key': key,
-                                    }),
-                                  ),
-                                  CommonSpaceHHalf(),
-                                  if (!isCodeOnly)
-                                    IconButtonWidget(
-                                      style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                        variant: IconButtonVariant.IconOnly,
-                                        iconColor: kColorDanger,
+                                      CommonSpaceH(),
+                                      Expanded(
+                                        child: Container(
+                                          constraints: BoxConstraints(minHeight: kButtonHeight),
+                                          alignment: Alignment.topLeft,
+                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                          child: Text(
+                                            value,
+                                            style: fancyText(kText),
+                                          ),
+                                        ),
                                       ),
-                                      svgAssetPath: 'images/trash.svg',
-                                      onTap: () => _deleteTranslationsForKey(context, theProject, key),
-                                      tooltip: tt('project_detail.table.delete.tooltip').parameters({
-                                        r'$key': key,
-                                      }),
-                                    )
-                                  else
-                                    const SizedBox(
-                                      width: kButtonHeight,
-                                    ),
-                                ],
-                              ),
-                            );
-                          },
+                                      CommonSpaceHHalf(),
+                                      IconButtonWidget(
+                                        style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                          variant: IconButtonVariant.IconOnly,
+                                        ),
+                                        svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+                                        onTap: () => _processTranslationsForKey(context, theProject, key),
+                                        tooltip: tt('project_detail.table.edit.tooltip').parameters({
+                                          r'$key': key,
+                                        }),
+                                      ),
+                                      CommonSpaceHHalf(),
+                                      if (!isCodeOnly)
+                                        IconButtonWidget(
+                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                            variant: IconButtonVariant.IconOnly,
+                                            iconColor: kColorDanger,
+                                          ),
+                                          svgAssetPath: 'images/trash.svg',
+                                          onTap: () => _deleteTranslationsForKey(context, theProject, key),
+                                          tooltip: tt('project_detail.table.delete.tooltip').parameters({
+                                            r'$key': key,
+                                          }),
+                                        )
+                                      else
+                                        const SizedBox(
+                                          width: kButtonHeight,
+                                        ),
+                                    ],
+                                  ),
+                                );
+                              },
+                            ),
+                          ],
                         ),
                         SliverToBoxAdapter(
                           child: Container(
