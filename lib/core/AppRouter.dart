@@ -1,4 +1,3 @@
-import 'package:flutter/material.dart';
 import 'package:js_trions/ui/screens/AboutScreen.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';

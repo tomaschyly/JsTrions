@@ -226,7 +226,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
         setStateNotDisposed(() {
           _isSending = false;
 
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             popNotDisposed(context, mounted, true);
           });
         });

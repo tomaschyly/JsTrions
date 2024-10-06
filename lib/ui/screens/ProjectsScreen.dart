@@ -499,7 +499,7 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
 
         sortProjectsAlphabetycally(theProjects);
 
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           if (widget.selectedProject != null) {
             if (theProjects == null) {
               widget.selectProject(null);
