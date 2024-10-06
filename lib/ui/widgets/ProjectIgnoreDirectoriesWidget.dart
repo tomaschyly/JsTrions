@@ -171,6 +171,7 @@ class _ChipWidget extends StatelessWidget {
   _ChipWidget({
     required this.directory,
     required this.onTap,
+    this.canTap = false,
   });
 
   /// Create view layout from widgets
