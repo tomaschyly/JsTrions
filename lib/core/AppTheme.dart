@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:js_trions/App.dart';
-import 'package:js_trions/core/AppPreferences.dart';
+import 'package:js_trions/core/app_preferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 

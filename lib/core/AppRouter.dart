@@ -2,7 +2,7 @@ import 'package:js_trions/ui/screens/AboutScreen.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
-import 'package:js_trions/ui/screens/SettingsScreen.dart';
+import 'package:js_trions/ui/screens/settings_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 /// Generate Route with Screen for RoutingArguments from Route name

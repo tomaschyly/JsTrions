@@ -1,18 +1,18 @@
-
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
-import 'package:js_trions/core/AppPreferences.dart';
 import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/model/ProgrammingLanguageQuery.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
+import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
-import 'package:js_trions/ui/widgets/SettingWidget.dart';
+import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -90,14 +90,14 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _GeneralWidget(
-                  language: _language,
-                ),
+                child: _TranslationsWidget(),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _TranslationsWidget(),
+                child: _GeneralWidget(
+                  language: _language,
+                ),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
@@ -158,9 +158,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _GeneralWidget(
-                          language: _language,
-                        ),
+                        child: _TranslationsWidget(),
                       ),
                     ),
                   ),
@@ -170,7 +168,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _ProjectsWidget(),
+                        child: _GeneralWidget(
+                          language: _language,
+                        ),
                       ),
                     ),
                   ),
@@ -187,7 +187,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _TranslationsWidget(),
+                        child: _ProjectsWidget(),
                       ),
                     ),
                   ),
@@ -339,9 +339,16 @@ class _GeneralWidget extends StatelessWidget {
 }
 
 class _TranslationsWidget extends StatelessWidget {
+  final _translationsProviderKey = GlobalKey<SelectionFormFieldWidgetState>();
+
+  /// TranslationsWidget initialization
+  _TranslationsWidget();
+
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -356,6 +363,38 @@ class _TranslationsWidget extends StatelessWidget {
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SelectionFormFieldWidget<TranslationsProvider>(
+                key: _translationsProviderKey,
+                label: tt('settings.screen.translationProvider'),
+                selectionTitle: tt('settings.screen.translationProvider.selection'),
+                clearText: tt('settings.screen.translationProvider.selection.cancel'),
+                initialValue: provider,
+                options: <ListDialogOption<TranslationsProvider>>[
+                  ListDialogOption(
+                    text: tt('common.googleTranslate'),
+                    value: TranslationsProvider.google,
+                  ),
+                  ListDialogOption(
+                    text: tt('common.openai'),
+                    value: TranslationsProvider.openai,
+                  ),
+                ],
+                onChange: (TranslationsProvider? newValue) {
+                  if (newValue != null) {
+                    prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
+                  } else {
+                    Future.delayed(kThemeAnimationDuration).then((value) {
+                      _translationsProviderKey.currentState!.setValue(provider);
+                    });
+                  }
+                },
+              ),
+              CommonSpaceV(),
+              Text(
+                tt('settings.screen.translationProvider.description'),
+                style: fancyText(kText),
+              ),
+              CommonSpaceVDouble(),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
                 prefsKey: PREFS_TRANSLATIONS_NO_HTML,

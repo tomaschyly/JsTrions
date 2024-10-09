@@ -1,4 +1,4 @@
-import 'package:js_trions/core/AppPreferences.dart';
+import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/model/Info.dart';
 import 'package:js_trions/ui/dialogs/InfoDialog.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
