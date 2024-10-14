@@ -1,5 +1,5 @@
 import 'package:flutter_svg/svg.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/ui/screens/AboutScreen.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';

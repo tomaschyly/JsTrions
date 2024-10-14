@@ -1,7 +1,7 @@
 import 'package:flutter/services.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:js_trions/core/app_preferences.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';

@@ -1,12 +1,15 @@
+import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/config.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/model/ProgrammingLanguageQuery.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/model/translations_provider.dart';
+import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
 import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
@@ -14,7 +17,10 @@ import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/form.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/settings";
@@ -277,10 +283,6 @@ class _GeneralWidget extends StatelessWidget {
 
                       pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
                     });
-                  } else {
-                    Future.delayed(kThemeAnimationDuration).then((value) {
-                      _languageKey.currentState!.setValue(language);
-                    });
                   }
                 },
               ),
@@ -382,10 +384,6 @@ class _TranslationsWidget extends StatelessWidget {
                 onChange: (TranslationsProvider? newValue) {
                   if (newValue != null) {
                     prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
-                  } else {
-                    Future.delayed(kThemeAnimationDuration).then((value) {
-                      _translationsProviderKey.currentState!.setValue(provider);
-                    });
                   }
                 },
               ),
@@ -395,6 +393,7 @@ class _TranslationsWidget extends StatelessWidget {
                 style: fancyText(kText),
               ),
               CommonSpaceVDouble(),
+              if (provider == TranslationsProvider.openai) _TranslationsOpenAIWidget(),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
                 prefsKey: PREFS_TRANSLATIONS_NO_HTML,
@@ -407,6 +406,145 @@ class _TranslationsWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _TranslationsOpenAIWidget extends AbstractStatefulWidget {
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _TranslationsOpenAIWidgetState();
+}
+
+class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_TranslationsOpenAIWidget> {
+  final _formKey = GlobalKey<FormState>();
+  final _apiKeyController = TextEditingController();
+  final _organizationController = TextEditingController();
+  final _apiKeyFocus = FocusNode();
+  final _organizationFocus = FocusNode();
+  late String _apiKeyDesc1;
+  late String _apiKeyDescLink;
+
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    final String apiKeyDesc = tt('settings.screen.openAIApiKey.description');
+
+    List<String> processing = apiKeyDesc.split(RegExp(r'<a>|</a>')).where((part) => part.isNotEmpty).toList();
+
+    _apiKeyDesc1 = processing[0];
+    _apiKeyDescLink = processing[1];
+  }
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _apiKeyController.dispose();
+    _organizationController.dispose();
+    _apiKeyFocus.dispose();
+    _organizationFocus.dispose();
+
+    super.dispose();
+  }
+
+  /// Build content from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SettingWidget(
+                  label: null,
+                  content: TextFormFieldWidget(
+                    controller: _apiKeyController,
+                    focusNode: _apiKeyFocus,
+                    nextFocus: _organizationFocus,
+                    label: tt('settings.screen.openAIApiKey'),
+                    textInputAction: TextInputAction.next,
+                    validations: [
+                      FormFieldValidation(
+                        validator: validateRequired,
+                        errorText: tt('validation.required'),
+                      ),
+                    ],
+                  ),
+                  description: null,
+                  trailing: Text.rich(
+                    TextSpan(children: [
+                      TextSpan(
+                        text: _apiKeyDesc1,
+                        style: fancyText(kText),
+                      ),
+                      TextSpan(
+                        text: _apiKeyDescLink,
+                        style: fancyText(kTextBold.copyWith(
+                          color: kColorSecondary,
+                          decoration: TextDecoration.underline,
+                          decorationColor: kColorSecondary,
+                        )),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrlString(kOpenAIGetApKey),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: 'images/save.svg',
+                onTap: () => _save(context),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SettingWidget(
+                  label: null,
+                  content: TextFormFieldWidget(
+                    controller: _organizationController,
+                    focusNode: _organizationFocus,
+                    label: tt('settings.screen.openAI.organization'),
+                    onFieldSubmitted: (_) => _save(context),
+                  ),
+                  description: tt('settings.screen.openAI.organization.description'),
+                ),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: 'images/save.svg',
+                onTap: () => _save(context),
+              ),
+            ],
+          ),
+        ],
+      ),
+    );
+  }
+
+  /// Save OpenAI preferences
+  void _save(BuildContext context) {
+    clearFocus(context);
+
+    if (_formKey.currentState!.validate()) {
+      prefsSetString(PREFS_TRANSLATIONS_OPENAI_API_KEY, _apiKeyController.text);
+      prefsSetString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION, _organizationController.text);
+
+      initOpenAIClient();
+    }
   }
 }
 

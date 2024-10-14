@@ -2,8 +2,8 @@ import 'dart:io';
 
 import 'package:js_trions/config.dart';
 import 'package:js_trions/core/app_preferences.dart' as AppPreferences;
-import 'package:js_trions/core/AppTheme.dart';
-import 'package:js_trions/core/AppRouter.dart' as AppRouter;
+import 'package:js_trions/core/app_theme.dart';
+import 'package:js_trions/core/app_router.dart' as AppRouter;
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/ui/screens/DashboardScreen.dart';

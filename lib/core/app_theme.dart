@@ -168,7 +168,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
           labelStyle: kTextBold,
           contentPadding: EdgeInsets.symmetric(
             horizontal: kCommonHorizontalMarginHalf,
-            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 7 : 10,
+            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 8 : 8,
           ),
           enabledBorder: platformInputBorder,
           disabledBorder: platformInputBorder,
