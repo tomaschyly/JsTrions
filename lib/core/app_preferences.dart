@@ -12,6 +12,8 @@ const String PREFS_WELCOME = 'prefs_welcome';
 const String PREFS_TRANSLATIONS_PROVIDER = 'prefs_translations_provider';
 const String PREFS_TRANSLATIONS_OPENAI_API_KEY = 'prefs_translations_openai_api_key';
 const String PREFS_TRANSLATIONS_OPENAI_ORGANIZATION = 'prefs_translations_openai_organization';
+const String PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL = 'prefs_translations_openai_selected_model';
+const String PREFS_TRANSLATIONS_FALLBACK = 'prefs_translations_fallback';
 const String PREFS_TRANSLATIONS_NO_HTML = 'prefs_translations_no_html';
 
 /// Int values, it is for init, defaults and in memory storage
@@ -22,5 +24,11 @@ final Map<String, int> intPrefs = {
   PREFS_PROJECTS_BEAUTIFY_JSON: 1,
   PREFS_PROJECTS_CODE_ONLY: 1,
   PREFS_TRANSLATIONS_PROVIDER: TranslationsProvider.google.index,
+  PREFS_TRANSLATIONS_FALLBACK: 1,
   PREFS_TRANSLATIONS_NO_HTML: 1,
+};
+
+/// String values, it is for init, defaults and in memory storage
+final Map<String, String> stringPrefs = {
+  PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL: 'gpt-4o-mini',
 };

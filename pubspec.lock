@@ -617,18 +617,18 @@ packages:
     dependency: "direct main"
     description:
       name: tch_appliable_core
-      sha256: dd00754549852e1826e5bbe83afb58c902c8b2b287879b3af90025e199c8e2bf
+      sha256: "8bbad0604f3a668fe3d1feb0a67271b388cf74fedf4e1ca0fbe7f2c33b45eaa2"
       url: "https://pub.dev"
     source: hosted
-    version: "0.33.3"
+    version: "0.33.4+1"
   tch_common_widgets:
     dependency: "direct main"
     description:
       name: tch_common_widgets
-      sha256: "2898ac0f9bd292cee6b2da8c1080fae60907c07feab51b2a5577443811890b5c"
+      sha256: fc751b311dce3ad9477ea78ff04bdcd288a40214ee9169c909513d99564bf5e4
       url: "https://pub.dev"
     source: hosted
-    version: "0.36.4"
+    version: "0.36.4+1"
   term_glyph:
     dependency: transitive
     description:

@@ -2,8 +2,8 @@ import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
 import 'package:js_trions/config.dart';
-import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguageQuery.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
@@ -19,7 +19,6 @@ import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/form.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
-import 'package:url_launcher/url_launcher.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends AbstractResponsiveScreen {
@@ -393,7 +392,15 @@ class _TranslationsWidget extends StatelessWidget {
                 style: fancyText(kText),
               ),
               CommonSpaceVDouble(),
-              if (provider == TranslationsProvider.openai) _TranslationsOpenAIWidget(),
+              AnimatedSize(
+                duration: kThemeAnimationDuration,
+                alignment: Alignment.topCenter,
+                child: provider == TranslationsProvider.openai
+                    ? _TranslationsOpenAIWidget()
+                    : const SizedBox(
+                        width: double.infinity,
+                      ),
+              ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
                 prefsKey: PREFS_TRANSLATIONS_NO_HTML,
@@ -423,6 +430,9 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
   final _organizationFocus = FocusNode();
   late String _apiKeyDesc1;
   late String _apiKeyDescLink;
+  bool _obscureApiKey = true;
+  List<ListDialogOption<String>> _openAIModelsAsOptions = [];
+  final _selectModelKey = GlobalKey<SelectionFormFieldWidgetState>();
 
   /// State initialization
   @override
@@ -435,6 +445,11 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
 
     _apiKeyDesc1 = processing[0];
     _apiKeyDescLink = processing[1];
+
+    _apiKeyController.text = prefsString(PREFS_TRANSLATIONS_OPENAI_API_KEY) ?? '';
+    _organizationController.text = prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION) ?? '';
+
+    _updateOpenAIModelsAsOptions();
   }
 
   /// Manually dispose of resources
@@ -471,6 +486,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                     nextFocus: _organizationFocus,
                     label: tt('settings.screen.openAIApiKey'),
                     textInputAction: TextInputAction.next,
+                    obscureText: _obscureApiKey,
                     validations: [
                       FormFieldValidation(
                         validator: validateRequired,
@@ -492,12 +508,16 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                           decoration: TextDecoration.underline,
                           decorationColor: kColorSecondary,
                         )),
-                        recognizer: TapGestureRecognizer()
-                          ..onTap = () => launchUrlString(kOpenAIGetApKey),
+                        recognizer: TapGestureRecognizer()..onTap = () => launchUrlString(kOpenAIGetApKey),
                       ),
                     ]),
                   ),
                 ),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: _obscureApiKey ? 'images/icons8-eye.svg' : 'images/icons8-invisible.svg',
+                onTap: () => setStateNotDisposed(() => _obscureApiKey = !_obscureApiKey),
               ),
               CommonSpaceH(),
               IconButtonWidget(
@@ -530,20 +550,59 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               ),
             ],
           ),
+          if (_openAIModelsAsOptions.isNotEmpty) ...[
+            SelectionFormFieldWidget<String>(
+              key: _selectModelKey,
+              label: tt('settings.screen.openAI.selectModel'),
+              selectionTitle: tt('settings.screen.openAI.selectModel.selection'),
+              clearText: tt('settings.screen.openAI.selectModel.selection.cancel'),
+              initialValue: prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL),
+              options: _openAIModelsAsOptions,
+              onChange: (String? newValue) {
+                if (newValue != null) {
+                  prefsSetString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL, newValue);
+                }
+              },
+            ),
+            CommonSpaceV(),
+            Text(
+              tt('settings.screen.openAI.selectModel.description'),
+              style: fancyText(kText),
+            ),
+            CommonSpaceVDouble(),
+          ],
+          PreferencesSwitchWidget(
+            label: tt('settings.screen.translations.fallback'),
+            prefsKey: PREFS_TRANSLATIONS_FALLBACK,
+            descriptionOn: tt('settings.screen.translations.fallback.on'),
+            descriptionOff: tt('settings.screen.translations.fallback.off'),
+          ),
+          CommonSpaceVDouble(),
         ],
       ),
     );
   }
 
+  /// Update OpenAI models options
+  Future<void> _updateOpenAIModelsAsOptions() async {
+    final options = await getOpenAIModelsAsOptions();
+
+    setStateNotDisposed(() {
+      _openAIModelsAsOptions = options;
+    });
+  }
+
   /// Save OpenAI preferences
-  void _save(BuildContext context) {
+  Future<void> _save(BuildContext context) async {
     clearFocus(context);
 
     if (_formKey.currentState!.validate()) {
       prefsSetString(PREFS_TRANSLATIONS_OPENAI_API_KEY, _apiKeyController.text);
       prefsSetString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION, _organizationController.text);
 
-      initOpenAIClient();
+      await initOpenAIClient();
+
+      _updateOpenAIModelsAsOptions();
     }
   }
 }
