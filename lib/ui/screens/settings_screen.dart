@@ -603,6 +603,12 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
       await initOpenAIClient();
 
       _updateOpenAIModelsAsOptions();
+
+      openAITranslateText(
+        text: 'Toto je text na test prekladov.',
+        sourceLanguage: 'sk',
+        targetLanguage: 'en',
+      );
     }
   }
 }

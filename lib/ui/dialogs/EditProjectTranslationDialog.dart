@@ -5,7 +5,10 @@ import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
+import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/service/google_translate_service.dart';
+import 'package:js_trions/service/openai_service.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -259,13 +262,18 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
     final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
     final unescape = HtmlUnescape();
+    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final fallback = prefsInt(PREFS_TRANSLATIONS_FALLBACK) == 1;
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       String translationLanguage = widget.translation.languages[i];
       TextEditingController controller = _fieldsControllers[i]!;
 
       if (translationLanguage != language) {
-        if (languageCodeOnly(language) == languageCodeOnly(translationLanguage)) {
+        final sourceLanguage = languageCodeOnly(language);
+        final targetLanguage = languageCodeOnly(translationLanguage);
+
+        if (sourceLanguage == targetLanguage) {
           setStateNotDisposed(() {
             controller.text = query;
           });
@@ -273,18 +281,26 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           continue;
         }
 
-        GoogleTranslateDataTask dataTask = await MainDataProvider.instance!.executeDataTask(GoogleTranslateDataTask(
-          data: GoogleTranslateParameters(
-            queries: [query],
-            sourceLanguage: languageCodeOnly(language),
-            targetLanguage: languageCodeOnly(translationLanguage),
-          ),
-        ));
+        String? result;
 
-        final theResult = dataTask.result;
+        if (provider == TranslationsProvider.openai) {
+          result = await openAITranslateText(
+            text: query,
+            sourceLanguage: sourceLanguage,
+            targetLanguage: targetLanguage,
+          );
+        }
 
-        if (theResult != null) {
-          final theText = unescapeHTML ? unescape.convert(theResult.translations.first.translatedText) : theResult.translations.first.translatedText;
+        if (provider == TranslationsProvider.google || (fallback && result == null)) {
+          result = await googleTranslateTranslateText(
+            query: query,
+            sourceLanguage: sourceLanguage,
+            targetLanguage: targetLanguage,
+          );
+        }
+
+        if (result != null) {
+          final theText = unescapeHTML ? unescape.convert(result) : result;
 
           setStateNotDisposed(() {
             controller.text = theText;
