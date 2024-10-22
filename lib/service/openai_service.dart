@@ -57,12 +57,12 @@ Future<String?> openAITranslateText({
           model: ChatCompletionModel.modelId(theModelId!),
           messages: [
             ChatCompletionMessage.system(
-              content: 'You are a helpful assistant that translates text for users.',
+              content: 'You are a helpful assistant that translates text for users. Respond only with translated text, do not add anything extra.',
             ),
             ChatCompletionMessage.user(
               content: ChatCompletionUserMessageContent.string(userQuery),
             ),
-            if (context != null)
+            if (context != null && context.isNotEmpty)
               ChatCompletionMessage.user(
                 content: ChatCompletionUserMessageContent.string(
                   'Context for this translations is: $context',

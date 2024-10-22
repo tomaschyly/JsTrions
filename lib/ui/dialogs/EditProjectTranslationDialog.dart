@@ -102,6 +102,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
+    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -192,7 +193,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       language: widget.translation.languages[i],
                       controller: _fieldsControllers[i]!,
                       focusNode: _fieldsFocusNodes[i]!,
-                      onGoogleTranslate: _googleTranslate,
+                      onAITranslate: _aiTranslate,
+                      provider: provider,
                     ),
                   Text(
                     tt('edit_project_translation.google_translate.hint'),
@@ -254,8 +256,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     }
   }
 
-  /// Use GoogleTranslate to translate from source to all other languages
-  Future<void> _googleTranslate(BuildContext context, String language, String query) async {
+  /// Use AI translations provider to translate from source to all other languages
+  Future<void> _aiTranslate(BuildContext context, String language, String query) async {
     if (language.isEmpty || query.isEmpty) {
       return;
     }
@@ -341,7 +343,8 @@ class _TranslationField extends StatelessWidget {
   final String language;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final Future<void> Function(BuildContext context, String language, String query) onGoogleTranslate;
+  final Future<void> Function(BuildContext context, String language, String query) onAITranslate;
+  final TranslationsProvider provider;
 
   /// TranslationField initialization
   _TranslationField({
@@ -351,7 +354,8 @@ class _TranslationField extends StatelessWidget {
     required this.language,
     required this.controller,
     required this.focusNode,
-    required this.onGoogleTranslate,
+    required this.onAITranslate,
+    required this.provider,
   });
 
   /// Create view layout from widgets
@@ -381,8 +385,8 @@ class _TranslationField extends StatelessWidget {
             ),
             CommonSpaceH(),
             IconButtonWidget(
-              svgAssetPath: 'images/language.svg',
-              onTap: () => onGoogleTranslate(context, language, controller.text),
+              svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
+              onTap: () => onAITranslate(context, language, controller.text),
               tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
                 r'$language': language,
               }),
