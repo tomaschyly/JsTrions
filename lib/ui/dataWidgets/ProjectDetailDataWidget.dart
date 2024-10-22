@@ -14,7 +14,7 @@ import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
 import 'package:js_trions/service/ProjectService.dart';
-import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
+import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';

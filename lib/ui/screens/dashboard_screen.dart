@@ -2,6 +2,7 @@ import 'package:js_trions/service/InfoService.dart';
 import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class DashboardScreen extends AbstractResponsiveScreen {
@@ -98,46 +99,57 @@ class _BodyDesktopWidget extends _AbstractBodyWidget {
 }
 
 class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidget> {
+  final _containerKey = GlobalKey();
+  double _tileWidth = 0;
+
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    addPostFrameCallback((timeStamp) {
+      _calculateTileWidth();
+    });
+
     return Scrollbar(
       controller: _scrollController,
       child: SingleChildScrollView(
         controller: _scrollController,
         child: Container(
+          key: _containerKey,
           width: double.infinity,
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
               CommonSpaceV(),
-              Row(
-                mainAxisSize: MainAxisSize.max,
-                mainAxisAlignment: MainAxisAlignment.center,
-                crossAxisAlignment: CrossAxisAlignment.start,
-                children: [
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                      child: Container(
-                        width: kPhoneStopBreakpoint,
-                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+              if (_tileWidth > 0)
+                Padding(
+                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                  child: Wrap(
+                    spacing: kCommonHorizontalMargin,
+                    runSpacing: kCommonHorizontalMargin,
+                    children: [
+                      SizedBox(
+                        width: _tileWidth,
                         child: DashboardProjectsDataWidget(),
                       ),
-                    ),
+                    ],
                   ),
-                  Expanded(
-                    child: Container(
-                      alignment: Alignment.centerLeft,
-                    ),
-                  ),
-                ],
-              ),
+                ),
             ],
           ),
         ),
       ),
     );
+  }
+
+  /// Calculate tile width from container size, 2 tiles per row with 3x 16px spaces
+  void _calculateTileWidth() {
+    final tileWidth = (_containerKey.currentContext?.size?.width ?? 0) / 2.0 - 32.0;
+
+    if (tileWidth != _tileWidth) {
+      setStateNotDisposed(() {
+        _tileWidth = tileWidth;
+      });
+    }
   }
 }

@@ -1,5 +1,5 @@
 import 'package:js_trions/ui/screens/AboutScreen.dart';
-import 'package:js_trions/ui/screens/DashboardScreen.dart';
+import 'package:js_trions/ui/screens/dashboard_screen.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
 import 'package:js_trions/ui/screens/settings_screen.dart';

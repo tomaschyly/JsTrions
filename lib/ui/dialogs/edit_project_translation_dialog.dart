@@ -197,7 +197,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       provider: provider,
                     ),
                   Text(
-                    tt('edit_project_translation.google_translate.hint'),
+                    tt('edit_project_translation.ai_translate.hint'),
                     style: fancyText(kText),
                   ),
                   CommonSpaceVHalf(),
@@ -284,6 +284,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         }
 
         String? result;
+        String? message;
 
         if (provider == TranslationsProvider.openai) {
           result = await openAITranslateText(
@@ -291,6 +292,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             sourceLanguage: sourceLanguage,
             targetLanguage: targetLanguage,
           );
+
+          if (result == null) {
+            message = tt('edit_project_translation.openai.fail');
+          }
         }
 
         if (provider == TranslationsProvider.google || (fallback && result == null)) {
@@ -299,6 +304,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             sourceLanguage: sourceLanguage,
             targetLanguage: targetLanguage,
           );
+
+          if (result == null) {
+            message = tt('edit_project_translation.google_translate.fail');
+          }
         }
 
         if (result != null) {
@@ -307,10 +316,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           setStateNotDisposed(() {
             controller.text = theText;
           });
-        } else {
+        } else if (message != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              tt('edit_project_translation.google_translate.fail'),
+              message,
               style: fancyText(kTextDanger),
               textAlign: TextAlign.center,
             ),
