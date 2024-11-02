@@ -7,12 +7,14 @@ import 'package:archive/archive_io.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jiffy/jiffy.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
+import 'package:js_trions/model/translation_key_metadata.dart';
 import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
@@ -56,6 +58,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirNotFound = false;
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
+  Map<String, TranslationKeyMetadata> _metadata = Map();
   Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
   Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
   String _selectedLanguage = '';
@@ -709,6 +712,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Check if Projects exists, init translations from Project based on parameters
+  /// Check and init existing metadata
   Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages, {bool force = false}) async {
     if (force || (project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
       _projectId = project.id;
@@ -752,7 +756,26 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         });
 
         if (exists) {
+          final Map<String, TranslationKeyMetadata> metadata = Map();
           final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
+
+          final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
+
+          if (await metadataFile.exists()) {
+            try {
+              final json = jsonDecode(await metadataFile.readAsString());
+
+              for (dynamic key in json.keys) {
+                final value = TranslationKeyMetadata.fromJson(key, json[key]);
+
+                if (value != null) {
+                  metadata[key] = value;
+                }
+              }
+            } catch (e, t) {
+              debugPrint('TCH_e $e\n$t');
+            }
+          }
 
           for (String language in project.languages) {
             final file = File(join(translationsAssetsDirectory, '$language.json'));
@@ -779,6 +802,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           }
 
           setStateNotDisposed(() {
+            _metadata = metadata;
             _translationPairsByLanguage = translationPairsByLanguage;
 
             addPostFrameCallback((timeStamp) {
@@ -1188,10 +1212,15 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         key: key,
         languages: languages,
         translations: translations,
+        translationKeyMetadata: _metadata[key],
       ),
     );
 
     if (translation != null) {
+      if (translation.translationKeyMetadata != null) {
+        _metadata[translation.key!] = translation.translationKeyMetadata!;
+      }
+
       for (int i = 0; i < translation.languages.length; i++) {
         final language = translation.languages[i];
 
@@ -1265,13 +1294,29 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Save translations for all languages to Project translations assets directory
+  /// Save also metadata
   Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
     final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
+    final now = Jiffy.now();
     final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
+    final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
+    final Map<String, dynamic> metadata = {
+      r'$JsTrions': {
+        'message': tt('project.metadata.message').parameters({
+          r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
+        }),
+      },
+      ..._metadata.map(
+        (key, value) => MapEntry(key, value.toJson()),
+      ),
+    };
+
+    await metadataFile.writeAsString(encoder.convert(metadata));
+
     for (String language in project.languages) {
-      final file = File(join(translationsAssetsDirectory!, '$language.json'));
+      final file = File(join(translationsAssetsDirectory, '$language.json'));
 
       final pairs = _translationPairsByLanguage[language]!;
 

@@ -11,7 +11,7 @@ import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/ui/dataWidgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';

@@ -7,7 +7,7 @@ import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
 import 'package:js_trions/model/dataTasks/GetProjectDataTask.dart';
 import 'package:js_trions/service/ProjectService.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/ui/dataWidgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';

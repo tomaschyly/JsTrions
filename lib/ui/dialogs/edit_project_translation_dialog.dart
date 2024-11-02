@@ -5,6 +5,7 @@ import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
+import 'package:js_trions/model/translation_key_metadata.dart';
 import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/service/google_translate_service.dart';
@@ -50,6 +51,8 @@ class EditProjectTranslationDialog extends AbstractStatefulWidget {
 class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<EditProjectTranslationDialog> {
   final _formKey = GlobalKey<FormState>();
   final _keyController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _descriptionFocusNode = FocusNode();
   final Map<int, TextEditingController> _fieldsControllers = Map();
   final Map<int, FocusNode> _fieldsFocusNodes = Map();
   int _focusedIndex = -1;
@@ -62,6 +65,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     super.initState();
 
     _keyController.text = widget.translation.key ?? '';
+    _descriptionController.text = widget.translation.translationKeyMetadata?.description ?? '';
+
+    _descriptionFocusNode.addListener(_onDescriptionFocus);
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       _fieldsControllers[i] = TextEditingController()..text = widget.translation.translations[i];
@@ -77,6 +83,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   @override
   void dispose() {
     _keyController.dispose();
+    _descriptionController.dispose();
+    _descriptionFocusNode.dispose();
 
     _fieldsControllers.forEach((key, controller) {
       controller.dispose();
@@ -186,6 +194,25 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       ],
                     ),
                   CommonSpaceV(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: TextFormFieldWidget(
+                          controller: _descriptionController,
+                          focusNode: _descriptionFocusNode,
+                          label: tt('edit_project_translation.field.description'),
+                          lines: _descriptionFocusNode.hasFocus ? 5 : 3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  CommonSpaceVHalf(),
+                  Text(
+                    tt('edit_project_translation.field.hint'),
+                    style: fancyText(kText),
+                  ),
+                  CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
                       index: i,
@@ -222,6 +249,11 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     );
   }
 
+  /// Callback for FocusNode of description
+  void _onDescriptionFocus() {
+    setStateNotDisposed(() {});
+  }
+
   /// Callback for FocusNode, if focused, find index in map and then set focused index
   void _onFocus() {
     _focusedIndex = -1;
@@ -242,6 +274,18 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       final List<String> languages = [];
       final List<String> translations = [];
 
+      TranslationKeyMetadata? translationKeyMetadata = widget.translation.translationKeyMetadata;
+
+      if (_descriptionController.text.isNotEmpty && translationKeyMetadata == null) {
+        translationKeyMetadata = TranslationKeyMetadata(
+          key: _keyController.text,
+          description: _descriptionController.text,
+        );
+      } else if (translationKeyMetadata != null) {
+        translationKeyMetadata.key = _keyController.text;
+        translationKeyMetadata.description = _descriptionController.text;
+      }
+
       for (int i = 0; i < widget.translation.languages.length; i++) {
         languages.add(widget.translation.languages[i]);
         translations.add(_fieldsControllers[i]!.text);
@@ -254,6 +298,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           key: _keyController.text,
           languages: languages,
           translations: translations,
+          translationKeyMetadata: translationKeyMetadata,
         ),
       );
     }
@@ -298,6 +343,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             text: query,
             sourceLanguage: sourceLanguage,
             targetLanguage: targetLanguage,
+            context: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
           );
 
           if (result == null) {
@@ -347,12 +393,14 @@ class Translation {
   final String? key;
   final List<String> languages;
   final List<String> translations;
+  final TranslationKeyMetadata? translationKeyMetadata;
 
   /// Translation initialization
   Translation({
     required this.key,
     required this.languages,
     required this.translations,
+    this.translationKeyMetadata,
   });
 }
 

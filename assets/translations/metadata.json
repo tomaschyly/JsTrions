@@ -1,0 +1,9 @@
+{
+  "$JsTrions": {
+    "key": "$JsTrions"
+  },
+  "feedback.submit": {
+    "key": "feedback.submit",
+    "description": "Speak personally, as friend"
+  }
+}

@@ -1,5 +1,5 @@
 import 'package:js_trions/model/translations_provider.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/ui/dataWidgets/project_detail_data_widget.dart';
 
 const String PREFS_LANGUAGE = "prefs_language";
 const String PREFS_FANCY_FONT = 'prefs_fancy_font';
