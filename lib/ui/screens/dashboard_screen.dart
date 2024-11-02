@@ -1,6 +1,9 @@
 import 'package:js_trions/service/InfoService.dart';
+import 'package:js_trions/service/google_translate_service.dart';
+import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
+import 'package:js_trions/ui/widgets/dashboard/dashboard_info_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -21,22 +24,36 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
   );
 
   @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        info: _info,
+      );
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        info: _info,
+      );
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget();
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
+        info: _info,
+      );
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget();
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
+        info: _info,
+      );
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget();
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
+        info: _info,
+      );
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget();
+  Widget tabletScreen(BuildContext context) => _BodyWidget(
+        info: _info,
+      );
+
+  List<DashboardInfoPayload> _info = [];
 
   /// Run initializations of screen on first build only
   @protected
@@ -44,10 +61,19 @@ class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
     super.firstBuildOnly(context);
 
     determineInfo(context);
+
+    getGoogleTranslateDashboardInfo(_info);
+
+    getOpenAIDashboardInfo(_info);
   }
 }
 
-abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
+abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
+  final List<DashboardInfoPayload> info;
+
+  /// AbstractBodyWidget initialization
+  _AbstractBodyWidget({required this.info});
+}
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
   final ScrollController _scrollController = ScrollController();
@@ -76,6 +102,19 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
             children: [
               CommonSpaceV(),
               DashboardProjectsDataWidget(),
+              ...widget.info.map((info) {
+                return Column(
+                  mainAxisSize: MainAxisSize.min,
+                  children: [
+                    CommonSpaceVDouble(),
+                    DashboardInfoWidget(
+                      title: info.title,
+                      text: info.text,
+                      isDanger: info.isDanger,
+                    ),
+                  ],
+                );
+              }),
             ],
           ),
         ),
@@ -85,6 +124,9 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 }
 
 class _BodyWidget extends _AbstractBodyWidget {
+  /// BodyWidget initialization
+  _BodyWidget({required super.info});
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyWidgetState();
@@ -93,6 +135,9 @@ class _BodyWidget extends _AbstractBodyWidget {
 class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
 
 class _BodyDesktopWidget extends _AbstractBodyWidget {
+  /// BodyDesktopWidget initialization
+  _BodyDesktopWidget({required super.info});
+
   /// Create state for widget
   @override
   State<StatefulWidget> createState() => _BodyDesktopWidgetState();
@@ -132,6 +177,16 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                         width: _tileWidth,
                         child: DashboardProjectsDataWidget(),
                       ),
+                      ...widget.info.map((info) {
+                        return SizedBox(
+                          width: _tileWidth,
+                          child: DashboardInfoWidget(
+                            title: info.title,
+                            text: info.text,
+                            isDanger: info.isDanger,
+                          ),
+                        );
+                      }),
                     ],
                   ),
                 ),

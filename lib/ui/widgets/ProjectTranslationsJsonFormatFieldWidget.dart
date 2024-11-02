@@ -132,6 +132,8 @@ class _ChipWidget extends StatelessWidget {
       case TranslationsJsonFormat.ObjectInside:
         text = tt('edit_project.field.translations_json_format.object_inside');
         break;
+      default:
+        debugPrint('TCH_e Unknown TranslationsJsonFormat $translationsJsonFormat');
     }
 
     return ChipWidget(
