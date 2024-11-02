@@ -54,6 +54,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   final Map<int, FocusNode> _fieldsFocusNodes = Map();
   int _focusedIndex = -1;
   bool _fullScreen = false;
+  int _loadingIndex = -1;
 
   /// State initialization
   @override
@@ -187,6 +188,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                   CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
+                      index: i,
                       fullscreen: _fullScreen,
                       isDesktop: isDesktop,
                       isFocused: i == _focusedIndex,
@@ -195,6 +197,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       focusNode: _fieldsFocusNodes[i]!,
                       onAITranslate: _aiTranslate,
                       provider: provider,
+                      loadingIndex: _loadingIndex,
                     ),
                   Text(
                     tt('edit_project_translation.ai_translate.hint'),
@@ -257,10 +260,14 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   }
 
   /// Use AI translations provider to translate from source to all other languages
-  Future<void> _aiTranslate(BuildContext context, String language, String query) async {
+  Future<void> _aiTranslate(BuildContext context, int index, String language, String query) async {
     if (language.isEmpty || query.isEmpty) {
       return;
     }
+
+    setStateNotDisposed(() {
+      _loadingIndex = index;
+    });
 
     final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
     final unescape = HtmlUnescape();
@@ -329,6 +336,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         }
       }
     }
+
+    setStateNotDisposed(() {
+      _loadingIndex = -1;
+    });
   }
 }
 
@@ -346,17 +357,20 @@ class Translation {
 }
 
 class _TranslationField extends StatelessWidget {
+  final int index;
   final bool fullscreen;
   final bool isDesktop;
   final bool isFocused;
   final String language;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final Future<void> Function(BuildContext context, String language, String query) onAITranslate;
+  final Future<void> Function(BuildContext context, int index, String language, String query) onAITranslate;
   final TranslationsProvider provider;
+  final int loadingIndex;
 
   /// TranslationField initialization
   _TranslationField({
+    required this.index,
     required this.fullscreen,
     required this.isDesktop,
     required this.isFocused,
@@ -365,6 +379,7 @@ class _TranslationField extends StatelessWidget {
     required this.focusNode,
     required this.onAITranslate,
     required this.provider,
+    required this.loadingIndex,
   });
 
   /// Create view layout from widgets
@@ -395,10 +410,11 @@ class _TranslationField extends StatelessWidget {
             CommonSpaceH(),
             IconButtonWidget(
               svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
-              onTap: () => onAITranslate(context, language, controller.text),
+              onTap: () => onAITranslate(context, index, language, controller.text),
               tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
                 r'$language': language,
               }),
+              isLoading: loadingIndex == index,
             ),
           ],
         ),

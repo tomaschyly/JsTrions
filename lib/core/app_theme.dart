@@ -98,6 +98,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     height: kButtonHeight,
     iconWidth: kIconSizeNotTouch,
     iconHeight: kIconSizeNotTouch,
+    loadingIconWidth: kIconSizeNotTouch,
+    loadingIconHeight: kIconSizeNotTouch,
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
   );
