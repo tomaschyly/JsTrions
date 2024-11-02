@@ -474,11 +474,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                         SliverMainAxisGroup(
                           slivers: [
                             SliverAppBar(
+                              leading: Container(),
                               pinned: true,
                               backgroundColor: Colors.transparent,
                               toolbarHeight: kButtonHeight,
+                              expandedHeight: kButtonHeight,
                               titleSpacing: 0,
-                              title: Container(
+                              flexibleSpace: Container(
+                                height: kButtonHeight,
                                 margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                                 decoration: BoxDecoration(
                                   color: kColorSecondaryDark,
@@ -490,8 +493,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     Expanded(
                                       child: Container(
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
-                                        alignment: Alignment.topLeft,
-                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                                         child: Text(
                                           tt('project_detail.table.key'),
                                           style: fancyText(kTextBold),
@@ -502,8 +505,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     Expanded(
                                       child: Container(
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
-                                        alignment: Alignment.topLeft,
-                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                                         child: Text(
                                           tt('project_detail.table.translation'),
                                           style: fancyText(kTextBold),
