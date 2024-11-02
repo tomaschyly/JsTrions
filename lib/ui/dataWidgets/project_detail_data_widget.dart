@@ -21,6 +21,7 @@ import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/debouncer.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
@@ -1308,9 +1309,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
         }),
       },
-      ..._metadata.map(
-        (key, value) => MapEntry(key, value.toJson()),
-      ),
+      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => entry.key != r'$JsTrions').toMap().map(
+            (key, value) => MapEntry(key, value.toJson()),
+          ),
     };
 
     await metadataFile.writeAsString(encoder.convert(metadata));
