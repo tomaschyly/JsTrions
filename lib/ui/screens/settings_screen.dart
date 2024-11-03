@@ -383,6 +383,8 @@ class _TranslationsWidget extends StatelessWidget {
                 onChange: (TranslationsProvider? newValue) {
                   if (newValue != null) {
                     prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
+                  } else {
+                    _translationsProviderKey.currentState?.setValue(provider);
                   }
                 },
               ),
@@ -561,6 +563,8 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               onChange: (String? newValue) {
                 if (newValue != null) {
                   prefsSetString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL, newValue);
+                } else {
+                  _selectModelKey.currentState?.setValue(prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL));
                 }
               },
             ),
