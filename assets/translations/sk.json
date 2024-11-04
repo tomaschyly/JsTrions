@@ -89,6 +89,7 @@
   "project.export.type.label": "Archív",
   "project.import.failure": "Preklady sa nepodarilo importovať",
   "project.import.success": "Import prekladov bol úspešný",
+  "project.metadata.description": "Jednoduché AI asistované preklady vašich projektov. Použite JsTrions na analýzu kódu projektu na použitie prekladov, potom môžete ľahko vidieť, ktoré preklady chýbajú a pridať ich. JsTrions dobre funguje s prekladačom poskytovaným mojím Flutter balíkom tch_appliable_core, ale je kompatibilný s akýmikoľvek jednoduchými json prekladmi.",
   "project.metadata.message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa $date, needitujte, pokiaľ neviete, čo robiť",
   "project_detail.actions.code_only_keys": "Zobraz Preklady nájdené iba v Kóde",
   "project_detail.actions.import_export.title": "Importovať/Exportovať do/z zip súboru",

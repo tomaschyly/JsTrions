@@ -8,6 +8,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
+import 'package:js_trions/config.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
@@ -1311,6 +1312,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'message': tt('project.metadata.message').parameters({
           r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
         }),
+        'description': tt('project.metadata.description'),
+        'website': kAppWebsite,
+        'windows': kDownloadWin,
+        'macos': kDownloadMacOS,
       },
       ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => entry.key != r'$JsTrions').toMap().map(
             (key, value) => MapEntry(key, value.toJson()),
