@@ -60,6 +60,7 @@
   "edit_project_translation.google_translate.fail": "Proces prekladu zlyhal, uistite sa, že ste pripojení na internet",
   "edit_project_translation.google_translate.tooltip": "Použite AI na preklad ostatných z $language",
   "edit_project_translation.openai.fail": "Prekladový proces zlyhal, uistite sa, že ste pripojení na internet a máte k dispozícii nevyužitý kredit",
+  "edit_project_translation.openai_chat.tooltip": "Chatuj s AI na vytvorenie textu pre $language",
   "edit_project_translation.shrink.tooltip": "Zmenšiť dialóg",
   "edit_project_translation.submit": "Uložiť",
   "edit_project_translation.title": "Preklady pre Kľúč",

@@ -207,11 +207,13 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       ),
                     ],
                   ),
-                  CommonSpaceVHalf(),
-                  Text(
-                    tt('edit_project_translation.field.hint'),
-                    style: fancyText(kText),
-                  ),
+                  if (provider == TranslationsProvider.openai) ...[
+                    CommonSpaceVHalf(),
+                    Text(
+                      tt('edit_project_translation.field.hint'),
+                      style: fancyText(kText),
+                    ),
+                  ],
                   CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
@@ -456,13 +458,31 @@ class _TranslationField extends StatelessWidget {
               ),
             ),
             CommonSpaceH(),
-            IconButtonWidget(
-              svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
-              onTap: () => onAITranslate(context, index, language, controller.text),
-              tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
-                r'$language': language,
-              }),
-              isLoading: loadingIndex == index,
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButtonWidget(
+                  svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
+                  onTap: () => onAITranslate(context, index, language, controller.text),
+                  tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
+                    r'$language': language,
+                  }),
+                  isLoading: loadingIndex == index,
+                ),
+                if (provider == TranslationsProvider.openai) ...[
+                  CommonSpaceVHalf(),
+                  IconButtonWidget(
+                    svgAssetPath: 'images/icons8-messaging.svg',
+                    onTap: () {
+                      //TODO
+                    },
+                    tooltip: tt('edit_project_translation.openai_chat.tooltip').parameters({
+                      r'$language': language,
+                    }),
+                  ),
+                ],
+              ],
             ),
           ],
         ),
