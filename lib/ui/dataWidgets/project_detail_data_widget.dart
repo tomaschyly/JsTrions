@@ -25,6 +25,7 @@ import 'package:path_provider/path_provider.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/debouncer.dart';
+import 'package:tch_appliable_core/utils/text.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -526,7 +527,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               itemBuilder: (context, index) {
                                 final rowIsOdd = (index % 2) == 1;
                                 final key = _processedKeys[index];
-                                final value = _processedLanguagePairs[key]!;
+                                final value = truncateText(
+                                  _processedLanguagePairs[key]!,
+                                  200,
+                                  addDots: true,
+                                );
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
