@@ -2,14 +2,13 @@ import 'package:flutter/services.dart';
 import 'package:html_unescape/html_unescape.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
-import 'package:js_trions/model/GoogleTranslateParameters.dart';
 import 'package:js_trions/model/Project.dart';
-import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
 import 'package:js_trions/model/translation_key_metadata.dart';
 import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/service/google_translate_service.dart';
 import 'package:js_trions/service/openai_service.dart';
+import 'package:js_trions/ui/dialogs/openai_chat_dialog.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -225,6 +224,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       controller: _fieldsControllers[i]!,
                       focusNode: _fieldsFocusNodes[i]!,
                       onAITranslate: _aiTranslate,
+                      onChatWithAI: _chatWithAI,
                       provider: provider,
                       loadingIndex: _loadingIndex,
                     ),
@@ -389,6 +389,17 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       _loadingIndex = -1;
     });
   }
+
+  /// Chat with AI to brainstorm best text/translation
+  Future<void> _chatWithAI(BuildContext context, int index, String language) async {
+    if (language.isEmpty) {
+      return;
+    }
+
+    final result = await OpenAIChatDialog.show(context);
+    print('TCH_dialog result: $result'); //TODO remove
+    //TODO
+  }
 }
 
 class Translation {
@@ -415,6 +426,7 @@ class _TranslationField extends StatelessWidget {
   final TextEditingController controller;
   final FocusNode focusNode;
   final Future<void> Function(BuildContext context, int index, String language, String query) onAITranslate;
+  final Future<void> Function(BuildContext context, int index, String language) onChatWithAI;
   final TranslationsProvider provider;
   final int loadingIndex;
 
@@ -428,6 +440,7 @@ class _TranslationField extends StatelessWidget {
     required this.controller,
     required this.focusNode,
     required this.onAITranslate,
+    required this.onChatWithAI,
     required this.provider,
     required this.loadingIndex,
   });
@@ -474,9 +487,7 @@ class _TranslationField extends StatelessWidget {
                   CommonSpaceVHalf(),
                   IconButtonWidget(
                     svgAssetPath: 'images/icons8-messaging.svg',
-                    onTap: () {
-                      //TODO
-                    },
+                    onTap: () => onChatWithAI(context, index, language),
                     tooltip: tt('edit_project_translation.openai_chat.tooltip').parameters({
                       r'$language': language,
                     }),

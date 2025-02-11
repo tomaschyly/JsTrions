@@ -8,6 +8,7 @@ const String PREFS_PROJECTS_ANALYSIS = 'prefs_projects_analysis';
 const String PREFS_PROJECTS_CODE_ONLY = 'prefs_projects_code_only';
 const String PREFS_PROJECTS_BEAUTIFY_JSON = 'prefs_projects_beautify_json';
 const String PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED = 'prefs_projects_edit_translation_dialog_enlarged';
+const String PREFS_OPENAI_CHAT_DIALOG_ENLARGED = 'prefs_openai_chat_dialog_enlarged';
 const String PREFS_WELCOME = 'prefs_welcome';
 const String PREFS_TRANSLATIONS_PROVIDER = 'prefs_translations_provider';
 const String PREFS_TRANSLATIONS_OPENAI_API_KEY = 'prefs_translations_openai_api_key';
