@@ -157,6 +157,7 @@
   "settings.screen.openAI.organization.description": "Voliteľne môžete zadať organizáciu, ktorej bude používanie účtované",
   "settings.screen.openAI.selectModel": "Model",
   "settings.screen.openAI.selectModel.description": "Model, ktorý sa použije na poskytovanie prekladov AI",
+  "settings.screen.openAI.selectModel.filter": "Filtrovať modely",
   "settings.screen.openAI.selectModel.selection": "Vyber Model",
   "settings.screen.openAI.selectModel.selection.cancel": "Zrušiť",
   "settings.screen.openAIApiKey": "OpenAI API Kľúč",

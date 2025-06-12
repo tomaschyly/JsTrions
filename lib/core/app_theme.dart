@@ -35,7 +35,8 @@ const kColorSilverLighter = const Color(0xFFf2f2f2);
 const kFontFamily = 'Kalam';
 
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
-const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
+const kTextBold = const TextStyle(
+    color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 const kTextSuccess = const TextStyle(color: kColorSuccess, fontSize: 16);
 const kTextDanger = const TextStyle(color: kColorDanger, fontSize: 16);
@@ -43,15 +44,27 @@ const kTextWarning = const TextStyle(color: kColorWarning, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
-    force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
+    force || prefsInt(PREFS_FANCY_FONT) == 1
+        ? textStyle.copyWith(fontFamily: kFontFamily)
+        : textStyle;
 
 const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
+
+/// Shorthand to get AppTheme from context
+AppTheme getAppTheme(BuildContext context) =>
+    CommonTheme.of<AppTheme>(context)!;
+
+extension AppThemeExtension on BuildContext {
+  /// Shorthand to get AppTheme from context
+  AppTheme get appTheme => getAppTheme(this);
+}
 
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
   final AppDataStateSnapshot snapshot = AppDataState.of(context)!;
 
-  BorderRadius platformBorderRadius = const BorderRadius.all(const Radius.circular(8));
+  BorderRadius platformBorderRadius =
+      const BorderRadius.all(const Radius.circular(8));
   MainAxisAlignment dialogsMainAxisAlignment = MainAxisAlignment.start;
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -68,9 +81,12 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kButtonStyle = CommonButtonStyle(
     height: kButtonHeight,
-    textStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
-    filledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
-    disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
+    textStyle: const TextStyle(
+        color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+    filledTextStyle: const TextStyle(
+        color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
+    disabledTextStyle: const TextStyle(
+        color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
     preffixIconWidth: kIconSizeNotTouch,
@@ -137,27 +153,6 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     ),
   );
 
-  final kListDialogStyle = ListDialogStyle(
-    dialogContainerStyle: kDialogContainerStyle,
-    optionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.TextOnly,
-    ),
-    selectedOptionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.Filled,
-    ),
-    dialogHeaderStyle: const DialogHeaderStyle(
-      textStyle: kTextHeadline,
-    ),
-    dialogFooterStyle: DialogFooterStyle(
-      buttonStyle: kButtonStyle.copyWith(
-        widthWrapContent: true,
-        iconColor: kColorWarning,
-        loadingIconWidth: kIconSizeNotTouch,
-        loadingIconHeight: kIconSizeNotTouch,
-      ),
-    ),
-  );
-
   final OutlineInputBorder platformInputBorder = OutlineInputBorder(
     borderSide: const BorderSide(
       width: 1,
@@ -182,6 +177,28 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     borderColor: kColorTextPrimary,
     focusedBorderColor: kColorTextPrimary,
     textAlign: TextAlign.center,
+  );
+
+  final kListDialogStyle = ListDialogStyle(
+    dialogContainerStyle: kDialogContainerStyle,
+    optionStyle: kButtonStyle.copyWith(
+      variant: ButtonVariant.TextOnly,
+    ),
+    selectedOptionStyle: kButtonStyle.copyWith(
+      variant: ButtonVariant.Filled,
+    ),
+    dialogHeaderStyle: const DialogHeaderStyle(
+      textStyle: kTextHeadline,
+    ),
+    dialogFooterStyle: DialogFooterStyle(
+      buttonStyle: kButtonStyle.copyWith(
+        widthWrapContent: true,
+        iconColor: kColorWarning,
+        loadingIconWidth: kIconSizeNotTouch,
+        loadingIconHeight: kIconSizeNotTouch,
+      ),
+    ),
+    filterStyle: kTextFormFieldStyle,
   );
 
   final kEmailFormFieldStyle = kTextFormFieldStyle.copyWith(

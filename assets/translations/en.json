@@ -157,6 +157,7 @@
   "settings.screen.openAI.organization.description": "Optionally, you can specify the organization that will be billed for usage",
   "settings.screen.openAI.selectModel": "Model",
   "settings.screen.openAI.selectModel.description": "The model that will be used to provide AI translations",
+  "settings.screen.openAI.selectModel.filter": "Filter models",
   "settings.screen.openAI.selectModel.selection": "Choose Model",
   "settings.screen.openAI.selectModel.selection.cancel": "Cancel",
   "settings.screen.openAIApiKey": "OpenAI API Key",
