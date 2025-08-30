@@ -45,7 +45,7 @@ dependencies:
 
   url_launcher: ^6.3.2
 
-  openai_dart: ^0.4.4
+  openai_dart: ^0.5.4+1
 
 dev_dependencies:
   msix: ^3.16.8

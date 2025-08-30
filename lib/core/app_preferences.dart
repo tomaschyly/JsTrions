@@ -31,5 +31,5 @@ final Map<String, int> intPrefs = {
 
 /// String values, it is for init, defaults and in memory storage
 final Map<String, String> stringPrefs = {
-  PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL: 'gpt-4o-mini',
+  PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL: 'gpt-5-mini',
 };
