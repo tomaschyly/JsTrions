@@ -1572,14 +1572,12 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
 class _InfoWidget extends StatelessWidget {
   final String text;
   final bool isSuccess;
-  final bool isDanger;
   final void Function(_InfoWidget info) clearInfo;
 
   /// InfoWidget initialization
   _InfoWidget({
     required this.text,
     this.isSuccess = false,
-    this.isDanger = false,
     required this.clearInfo,
   });
 
@@ -1594,9 +1592,9 @@ class _InfoWidget extends StatelessWidget {
       textStyle = kTextSuccess;
     }
 
-    if (isDanger) {
+    /* if (isDanger) {
       textStyle = kTextDanger;
-    }
+    } */
 
     return Column(
       mainAxisSize: MainAxisSize.min,
