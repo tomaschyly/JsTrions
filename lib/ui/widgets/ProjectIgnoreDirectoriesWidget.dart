@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:file_selector/file_selector.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -165,13 +165,11 @@ class ProjectIgnoreDirectoriesWidgetState extends AbstractStatefulWidgetState<Pr
 class _ChipWidget extends StatelessWidget {
   final String directory;
   final void Function(String directory) onTap;
-  final bool canTap;
 
   /// ChipWidget initialization
   _ChipWidget({
     required this.directory,
     required this.onTap,
-    this.canTap = false,
   });
 
   /// Create view layout from widgets
@@ -182,16 +180,14 @@ class _ChipWidget extends StatelessWidget {
     return ChipWidget(
       variant: ChipVariant.LeftPadded,
       text: directory,
-      suffixIcon: canTap
-          ? IconButtonWidget(
-              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
-                color: kColorDanger,
-              ),
-              svgAssetPath: 'images/times.svg',
-              onTap: () => onTap(directory),
-            )
-          : Container(),
+      suffixIcon: IconButtonWidget(
+        style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+          variant: IconButtonVariant.IconOnly,
+          color: kColorDanger,
+        ),
+        svgAssetPath: 'images/times.svg',
+        onTap: () => onTap(directory),
+      ),
     );
   }
 }

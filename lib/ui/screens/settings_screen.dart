@@ -1,20 +1,25 @@
-
+import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/App.dart';
-import 'package:js_trions/core/AppPreferences.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/config.dart';
+import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguageQuery.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
+import 'package:js_trions/model/translations_provider.dart';
+import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/ui/dataWidgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
-import 'package:js_trions/ui/widgets/SettingWidget.dart';
+import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/form.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class SettingsScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/settings";
@@ -52,7 +57,8 @@ class _SettingsScreenState extends AppResponsiveScreenState<SettingsScreen> {
 
 abstract class _AbstractBodyWidget extends AbstractStatefulWidget {}
 
-abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
+abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget>
+    extends AbstractStatefulWidgetState<T> {
   final ScrollController _scrollController = ScrollController();
   late String _language;
 
@@ -89,24 +95,28 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               CommonSpaceV(),
               Container(
                 width: kPhoneStopBreakpoint,
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kCommonHorizontalMargin),
+                child: _TranslationsWidget(),
+              ),
+              Container(
+                width: kPhoneStopBreakpoint,
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kCommonHorizontalMargin),
                 child: _GeneralWidget(
                   language: _language,
                 ),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _TranslationsWidget(),
-              ),
-              Container(
-                width: kPhoneStopBreakpoint,
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kCommonHorizontalMargin),
                 child: _ProjectsWidget(),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
-                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                padding: const EdgeInsets.symmetric(
+                    horizontal: kCommonHorizontalMargin),
                 child: _ProgrammingLanguagesWidget(),
               ),
             ],
@@ -131,7 +141,8 @@ class _BodyDesktopWidget extends _AbstractBodyWidget {
   State<StatefulWidget> createState() => _BodyDesktopWidgetState();
 }
 
-class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidget> {
+class _BodyDesktopWidgetState
+    extends _AbstractBodyWidgetState<_BodyDesktopWidget> {
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
@@ -157,10 +168,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       alignment: Alignment.centerLeft,
                       child: Container(
                         width: kPhoneStopBreakpoint,
-                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _GeneralWidget(
-                          language: _language,
-                        ),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kCommonHorizontalMargin),
+                        child: _TranslationsWidget(),
                       ),
                     ),
                   ),
@@ -169,8 +179,11 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       alignment: Alignment.centerLeft,
                       child: Container(
                         width: kPhoneStopBreakpoint,
-                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _ProjectsWidget(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kCommonHorizontalMargin),
+                        child: _GeneralWidget(
+                          language: _language,
+                        ),
                       ),
                     ),
                   ),
@@ -186,8 +199,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       alignment: Alignment.centerLeft,
                       child: Container(
                         width: kPhoneStopBreakpoint,
-                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _TranslationsWidget(),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kCommonHorizontalMargin),
+                        child: _ProjectsWidget(),
                       ),
                     ),
                   ),
@@ -196,7 +210,8 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       alignment: Alignment.centerLeft,
                       child: Container(
                         width: kPhoneStopBreakpoint,
-                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                        padding: const EdgeInsets.symmetric(
+                            horizontal: kCommonHorizontalMargin),
                         child: _ProgrammingLanguagesWidget(),
                       ),
                     ),
@@ -235,7 +250,8 @@ class _GeneralWidget extends StatelessWidget {
           doubleMargin: true,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          padding:
+              const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -248,7 +264,8 @@ class _GeneralWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
+              Text(tt('settings.screen.reset.description'),
+                  style: fancyText(kText)),
               CommonSpaceVDouble(),
               SelectionFormFieldWidget<String>(
                 key: _languageKey,
@@ -270,16 +287,18 @@ class _GeneralWidget extends StatelessWidget {
                   if (newValue != null) {
                     Translator.instance!.changeLanguage(newValue);
 
-                    prefsSetString(PREFS_LANGUAGE, Translator.instance!.currentLanguage);
+                    prefsSetString(
+                        PREFS_LANGUAGE, Translator.instance!.currentLanguage);
 
-                    Translator.instance!.initTranslations(context).then((value) {
+                    Translator.instance!
+                        .initTranslations(context)
+                        .then((value) {
                       AppState.instance.invalidate();
 
-                      pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
-                    });
-                  } else {
-                    Future.delayed(kThemeAnimationDuration).then((value) {
-                      _languageKey.currentState!.setValue(language);
+                      pushNamedNewStack(context, SettingsScreen.ROUTE,
+                          arguments: <String, String>{
+                            'router-no-animation': '1'
+                          });
                     });
                   }
                 },
@@ -299,7 +318,10 @@ class _GeneralWidget extends StatelessWidget {
                   Future.delayed(kThemeAnimationDuration).then((value) {
                     AppState.instance.invalidate();
 
-                    pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+                    pushNamedNewStack(context, SettingsScreen.ROUTE,
+                        arguments: <String, String>{
+                          'router-no-animation': '1'
+                        });
                   });
                 },
               ),
@@ -339,9 +361,17 @@ class _GeneralWidget extends StatelessWidget {
 }
 
 class _TranslationsWidget extends StatelessWidget {
+  final _translationsProviderKey = GlobalKey<SelectionFormFieldWidgetState>();
+
+  /// TranslationsWidget initialization
+  _TranslationsWidget();
+
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final provider =
+        TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -351,16 +381,60 @@ class _TranslationsWidget extends StatelessWidget {
           doubleMargin: true,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          padding:
+              const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
             children: [
+              SelectionFormFieldWidget<TranslationsProvider>(
+                key: _translationsProviderKey,
+                label: tt('settings.screen.translationProvider'),
+                selectionTitle:
+                    tt('settings.screen.translationProvider.selection'),
+                clearText:
+                    tt('settings.screen.translationProvider.selection.cancel'),
+                initialValue: provider,
+                options: <ListDialogOption<TranslationsProvider>>[
+                  ListDialogOption(
+                    text: tt('common.googleTranslate'),
+                    value: TranslationsProvider.google,
+                  ),
+                  ListDialogOption(
+                    text: tt('common.openai'),
+                    value: TranslationsProvider.openai,
+                  ),
+                ],
+                onChange: (TranslationsProvider? newValue) {
+                  if (newValue != null) {
+                    prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
+                  } else {
+                    _translationsProviderKey.currentState?.setValue(provider);
+                  }
+                },
+              ),
+              CommonSpaceV(),
+              Text(
+                tt('settings.screen.translationProvider.description'),
+                style: fancyText(kText),
+              ),
+              CommonSpaceVDouble(),
+              AnimatedSize(
+                duration: kThemeAnimationDuration,
+                alignment: Alignment.topCenter,
+                child: provider == TranslationsProvider.openai
+                    ? _TranslationsOpenAIWidget()
+                    : const SizedBox(
+                        width: double.infinity,
+                      ),
+              ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
                 prefsKey: PREFS_TRANSLATIONS_NO_HTML,
-                descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
-                descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
+                descriptionOn:
+                    tt('settings.screen.translations.no_html_entities.on'),
+                descriptionOff:
+                    tt('settings.screen.translations.no_html_entities.off'),
               ),
               CommonSpaceVDouble(),
             ],
@@ -368,6 +442,238 @@ class _TranslationsWidget extends StatelessWidget {
         ),
       ],
     );
+  }
+}
+
+class _TranslationsOpenAIWidget extends AbstractStatefulWidget {
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _TranslationsOpenAIWidgetState();
+}
+
+class _TranslationsOpenAIWidgetState
+    extends AbstractStatefulWidgetState<_TranslationsOpenAIWidget> {
+  final _formKey = GlobalKey<FormState>();
+  final _apiKeyController = TextEditingController();
+  final _organizationController = TextEditingController();
+  final _apiKeyFocus = FocusNode();
+  final _organizationFocus = FocusNode();
+  late String _apiKeyDesc1;
+  late String _apiKeyDescLink;
+  bool _obscureApiKey = true;
+  bool _openAIModelsLoading = true;
+  List<ListDialogOption<String>> _openAIModelsAsOptions = [];
+  final _selectModelKey = GlobalKey<SelectionFormFieldWidgetState>();
+
+  /// State initialization
+  @override
+  void initState() {
+    super.initState();
+
+    final String apiKeyDesc = tt('settings.screen.openAIApiKey.description');
+
+    List<String> processing = apiKeyDesc
+        .split(RegExp(r'<a>|</a>'))
+        .where((part) => part.isNotEmpty)
+        .toList();
+
+    _apiKeyDesc1 = processing[0];
+    _apiKeyDescLink = processing[1];
+
+    _apiKeyController.text =
+        prefsString(PREFS_TRANSLATIONS_OPENAI_API_KEY) ?? '';
+    _organizationController.text =
+        prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION) ?? '';
+
+    _updateOpenAIModelsAsOptions();
+  }
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _apiKeyController.dispose();
+    _organizationController.dispose();
+    _apiKeyFocus.dispose();
+    _organizationFocus.dispose();
+
+    super.dispose();
+  }
+
+  /// Build content from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    final appTheme = context.appTheme;
+
+    return Form(
+      key: _formKey,
+      child: Column(
+        mainAxisSize: MainAxisSize.min,
+        crossAxisAlignment: CrossAxisAlignment.start,
+        children: [
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SettingWidget(
+                  label: null,
+                  content: TextFormFieldWidget(
+                    controller: _apiKeyController,
+                    focusNode: _apiKeyFocus,
+                    nextFocus: _organizationFocus,
+                    label: tt('settings.screen.openAIApiKey'),
+                    textInputAction: TextInputAction.next,
+                    obscureText: _obscureApiKey,
+                    validations: [
+                      FormFieldValidation(
+                        validator: validateRequired,
+                        errorText: tt('validation.required'),
+                      ),
+                    ],
+                  ),
+                  description: null,
+                  trailing: Text.rich(
+                    TextSpan(children: [
+                      TextSpan(
+                        text: _apiKeyDesc1,
+                        style: fancyText(kText),
+                      ),
+                      TextSpan(
+                        text: _apiKeyDescLink,
+                        style: fancyText(kTextBold.copyWith(
+                          color: kColorSecondary,
+                          decoration: TextDecoration.underline,
+                          decorationColor: kColorSecondary,
+                        )),
+                        recognizer: TapGestureRecognizer()
+                          ..onTap = () => launchUrlString(kOpenAIGetApKey),
+                      ),
+                    ]),
+                  ),
+                ),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: _obscureApiKey
+                    ? 'images/icons8-eye.svg'
+                    : 'images/icons8-invisible.svg',
+                onTap: () =>
+                    setStateNotDisposed(() => _obscureApiKey = !_obscureApiKey),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: 'images/save.svg',
+                onTap: () => _save(context),
+              ),
+            ],
+          ),
+          Row(
+            mainAxisSize: MainAxisSize.max,
+            mainAxisAlignment: MainAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              Expanded(
+                child: SettingWidget(
+                  label: null,
+                  content: TextFormFieldWidget(
+                    controller: _organizationController,
+                    focusNode: _organizationFocus,
+                    label: tt('settings.screen.openAI.organization'),
+                    onFieldSubmitted: (_) => _save(context),
+                  ),
+                  description:
+                      tt('settings.screen.openAI.organization.description'),
+                ),
+              ),
+              CommonSpaceH(),
+              IconButtonWidget(
+                svgAssetPath: 'images/save.svg',
+                onTap: () => _save(context),
+              ),
+            ],
+          ),
+          if (_openAIModelsLoading) ...[
+            IconButtonWidget(
+              style: appTheme.buttonsStyle.iconButtonStyle.copyWith(
+                variant: IconButtonVariant.IconOnly,
+              ),
+              svgAssetPath: '',
+              isLoading: true,
+            ),
+            CommonSpaceV(),
+            Text(
+              tt('settings.screen.openAI.selectModel.description'),
+              style: fancyText(kText),
+            ),
+            CommonSpaceVDouble(),
+          ] else if (_openAIModelsAsOptions.isNotEmpty) ...[
+            SelectionFormFieldWidget<String>(
+              key: _selectModelKey,
+              label: tt('settings.screen.openAI.selectModel'),
+              selectionTitle:
+                  tt('settings.screen.openAI.selectModel.selection'),
+              clearText:
+                  tt('settings.screen.openAI.selectModel.selection.cancel'),
+              initialValue:
+                  prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL),
+              options: _openAIModelsAsOptions,
+              hasFilter: true,
+              filterText: tt('settings.screen.openAI.selectModel.filter'),
+              onChange: (String? newValue) {
+                if (newValue != null) {
+                  prefsSetString(
+                      PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL, newValue);
+                } else {
+                  _selectModelKey.currentState?.setValue(
+                      prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL));
+                }
+              },
+            ),
+            CommonSpaceV(),
+            Text(
+              tt('settings.screen.openAI.selectModel.description'),
+              style: fancyText(kText),
+            ),
+            CommonSpaceVDouble(),
+          ],
+          PreferencesSwitchWidget(
+            label: tt('settings.screen.translations.fallback'),
+            prefsKey: PREFS_TRANSLATIONS_FALLBACK,
+            descriptionOn: tt('settings.screen.translations.fallback.on'),
+            descriptionOff: tt('settings.screen.translations.fallback.off'),
+          ),
+          CommonSpaceVDouble(),
+        ],
+      ),
+    );
+  }
+
+  /// Update OpenAI models options
+  Future<void> _updateOpenAIModelsAsOptions() async {
+    final options = await getOpenAIModelsAsOptions();
+
+    options.sort((a, b) => a.text.compareTo(b.text));
+
+    setStateNotDisposed(() {
+      _openAIModelsLoading = false;
+      _openAIModelsAsOptions = options;
+    });
+  }
+
+  /// Save OpenAI preferences
+  Future<void> _save(BuildContext context) async {
+    clearFocus(context);
+
+    if (_formKey.currentState!.validate()) {
+      prefsSetString(PREFS_TRANSLATIONS_OPENAI_API_KEY, _apiKeyController.text);
+      prefsSetString(
+          PREFS_TRANSLATIONS_OPENAI_ORGANIZATION, _organizationController.text);
+
+      await initOpenAIClient();
+
+      _updateOpenAIModelsAsOptions();
+    }
   }
 }
 
@@ -384,7 +690,8 @@ class _ProjectsWidget extends StatelessWidget {
           doubleMargin: true,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          padding:
+              const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.min,
             crossAxisAlignment: CrossAxisAlignment.start,
@@ -558,7 +865,8 @@ class _ProgrammingLanguagesWidget extends StatelessWidget {
           doubleMargin: true,
         ),
         Container(
-          padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+          padding:
+              const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,

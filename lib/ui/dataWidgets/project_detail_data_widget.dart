@@ -7,20 +7,25 @@ import 'package:archive/archive_io.dart';
 import 'package:file_selector/file_selector.dart';
 import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:js_trions/core/AppPreferences.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:js_trions/config.dart';
+import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
+import 'package:js_trions/model/translation_key_metadata.dart';
 import 'package:js_trions/service/ProjectService.dart';
-import 'package:js_trions/ui/dialogs/EditProjectTranslationDialog.dart';
+import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
+import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_appliable_core/utils/debouncer.dart';
+import 'package:tch_appliable_core/utils/text.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -56,6 +61,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirNotFound = false;
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
+  Map<String, TranslationKeyMetadata> _metadata = Map();
   Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
   Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
   String _selectedLanguage = '';
@@ -470,11 +476,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                         SliverMainAxisGroup(
                           slivers: [
                             SliverAppBar(
+                              leading: Container(),
                               pinned: true,
                               backgroundColor: Colors.transparent,
                               toolbarHeight: kButtonHeight,
+                              expandedHeight: kButtonHeight,
                               titleSpacing: 0,
-                              title: Container(
+                              flexibleSpace: Container(
+                                height: kButtonHeight,
                                 margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                                 decoration: BoxDecoration(
                                   color: kColorSecondaryDark,
@@ -486,8 +495,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     Expanded(
                                       child: Container(
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
-                                        alignment: Alignment.topLeft,
-                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                                         child: Text(
                                           tt('project_detail.table.key'),
                                           style: fancyText(kTextBold),
@@ -498,8 +507,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     Expanded(
                                       child: Container(
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
-                                        alignment: Alignment.topLeft,
-                                        padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                                         child: Text(
                                           tt('project_detail.table.translation'),
                                           style: fancyText(kTextBold),
@@ -518,7 +527,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               itemBuilder: (context, index) {
                                 final rowIsOdd = (index % 2) == 1;
                                 final key = _processedKeys[index];
-                                final value = _processedLanguagePairs[key]!;
+                                final value = truncateText(
+                                  _processedLanguagePairs[key]!,
+                                  200,
+                                  addDots: true,
+                                );
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
@@ -709,6 +722,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Check if Projects exists, init translations from Project based on parameters
+  /// Check and init existing metadata
   Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages, {bool force = false}) async {
     if (force || (project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
       _projectId = project.id;
@@ -752,7 +766,26 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         });
 
         if (exists) {
+          final Map<String, TranslationKeyMetadata> metadata = Map();
           final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
+
+          final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
+
+          if (await metadataFile.exists()) {
+            try {
+              final json = jsonDecode(await metadataFile.readAsString());
+
+              for (dynamic key in json.keys) {
+                final value = TranslationKeyMetadata.fromJson(key, json[key]);
+
+                if (value != null) {
+                  metadata[key] = value;
+                }
+              }
+            } catch (e, t) {
+              debugPrint('TCH_e $e\n$t');
+            }
+          }
 
           for (String language in project.languages) {
             final file = File(join(translationsAssetsDirectory, '$language.json'));
@@ -779,6 +812,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           }
 
           setStateNotDisposed(() {
+            _metadata = metadata;
             _translationPairsByLanguage = translationPairsByLanguage;
 
             addPostFrameCallback((timeStamp) {
@@ -1188,10 +1222,15 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         key: key,
         languages: languages,
         translations: translations,
+        translationKeyMetadata: _metadata[key],
       ),
     );
 
     if (translation != null) {
+      if (translation.translationKeyMetadata != null) {
+        _metadata[translation.key!] = translation.translationKeyMetadata!;
+      }
+
       for (int i = 0; i < translation.languages.length; i++) {
         final language = translation.languages[i];
 
@@ -1265,13 +1304,33 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Save translations for all languages to Project translations assets directory
+  /// Save also metadata
   Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
     final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
+    final now = Jiffy.now();
     final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
+    final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
+    final Map<String, dynamic> metadata = {
+      r'$JsTrions': {
+        'message': tt('project.metadata.message').parameters({
+          r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
+        }),
+        'description': tt('project.metadata.description'),
+        'website': kAppWebsite,
+        'windows': kDownloadWin,
+        'macos': kDownloadMacOS,
+      },
+      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => entry.key != r'$JsTrions').toMap().map(
+            (key, value) => MapEntry(key, value.toJson()),
+          ),
+    };
+
+    await metadataFile.writeAsString(encoder.convert(metadata));
+
     for (String language in project.languages) {
-      final file = File(join(translationsAssetsDirectory!, '$language.json'));
+      final file = File(join(translationsAssetsDirectory, '$language.json'));
 
       final pairs = _translationPairsByLanguage[language]!;
 
@@ -1513,14 +1572,12 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
 class _InfoWidget extends StatelessWidget {
   final String text;
   final bool isSuccess;
-  final bool isDanger;
   final void Function(_InfoWidget info) clearInfo;
 
   /// InfoWidget initialization
   _InfoWidget({
     required this.text,
     this.isSuccess = false,
-    this.isDanger = false,
     required this.clearInfo,
   });
 
@@ -1535,9 +1592,9 @@ class _InfoWidget extends StatelessWidget {
       textStyle = kTextSuccess;
     }
 
-    if (isDanger) {
+    /* if (isDanger) {
       textStyle = kTextDanger;
-    }
+    } */
 
     return Column(
       mainAxisSize: MainAxisSize.min,

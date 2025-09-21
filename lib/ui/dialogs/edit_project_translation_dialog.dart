@@ -1,11 +1,14 @@
 import 'package:flutter/services.dart';
 import 'package:html_unescape/html_unescape.dart';
-import 'package:js_trions/core/AppPreferences.dart';
-import 'package:js_trions/core/AppTheme.dart';
-import 'package:js_trions/model/GoogleTranslateParameters.dart';
+import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
-import 'package:js_trions/model/dataTasks/GoogleTranslateDataTask.dart';
+import 'package:js_trions/model/translation_key_metadata.dart';
+import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/service/google_translate_service.dart';
+import 'package:js_trions/service/openai_service.dart';
+import 'package:js_trions/ui/dialogs/openai_chat_dialog.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -47,10 +50,13 @@ class EditProjectTranslationDialog extends AbstractStatefulWidget {
 class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<EditProjectTranslationDialog> {
   final _formKey = GlobalKey<FormState>();
   final _keyController = TextEditingController();
+  final _descriptionController = TextEditingController();
+  final _descriptionFocusNode = FocusNode();
   final Map<int, TextEditingController> _fieldsControllers = Map();
   final Map<int, FocusNode> _fieldsFocusNodes = Map();
   int _focusedIndex = -1;
   bool _fullScreen = false;
+  int _loadingIndex = -1;
 
   /// State initialization
   @override
@@ -58,6 +64,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     super.initState();
 
     _keyController.text = widget.translation.key ?? '';
+    _descriptionController.text = widget.translation.translationKeyMetadata?.description ?? '';
+
+    _descriptionFocusNode.addListener(_onDescriptionFocus);
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       _fieldsControllers[i] = TextEditingController()..text = widget.translation.translations[i];
@@ -73,6 +82,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   @override
   void dispose() {
     _keyController.dispose();
+    _descriptionController.dispose();
+    _descriptionFocusNode.dispose();
 
     _fieldsControllers.forEach((key, controller) {
       controller.dispose();
@@ -99,6 +110,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
+    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -181,18 +193,43 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       ],
                     ),
                   CommonSpaceV(),
+                  Row(
+                    mainAxisSize: MainAxisSize.max,
+                    children: [
+                      Expanded(
+                        child: TextFormFieldWidget(
+                          controller: _descriptionController,
+                          focusNode: _descriptionFocusNode,
+                          label: tt('edit_project_translation.field.description'),
+                          lines: _descriptionFocusNode.hasFocus ? 5 : 3,
+                        ),
+                      ),
+                    ],
+                  ),
+                  if (provider == TranslationsProvider.openai) ...[
+                    CommonSpaceVHalf(),
+                    Text(
+                      tt('edit_project_translation.field.hint'),
+                      style: fancyText(kText),
+                    ),
+                  ],
+                  CommonSpaceV(),
                   for (int i = 0; i < widget.translation.languages.length; i++)
                     _TranslationField(
+                      index: i,
                       fullscreen: _fullScreen,
                       isDesktop: isDesktop,
                       isFocused: i == _focusedIndex,
                       language: widget.translation.languages[i],
                       controller: _fieldsControllers[i]!,
                       focusNode: _fieldsFocusNodes[i]!,
-                      onGoogleTranslate: _googleTranslate,
+                      onAITranslate: _aiTranslate,
+                      onChatWithAI: _chatWithAI,
+                      provider: provider,
+                      loadingIndex: _loadingIndex,
                     ),
                   Text(
-                    tt('edit_project_translation.google_translate.hint'),
+                    tt('edit_project_translation.ai_translate.hint'),
                     style: fancyText(kText),
                   ),
                   CommonSpaceVHalf(),
@@ -212,6 +249,11 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         ),
       ),
     );
+  }
+
+  /// Callback for FocusNode of description
+  void _onDescriptionFocus() {
+    setStateNotDisposed(() {});
   }
 
   /// Callback for FocusNode, if focused, find index in map and then set focused index
@@ -234,6 +276,18 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       final List<String> languages = [];
       final List<String> translations = [];
 
+      TranslationKeyMetadata? translationKeyMetadata = widget.translation.translationKeyMetadata;
+
+      if (_descriptionController.text.isNotEmpty && translationKeyMetadata == null) {
+        translationKeyMetadata = TranslationKeyMetadata(
+          key: _keyController.text,
+          description: _descriptionController.text,
+        );
+      } else if (translationKeyMetadata != null) {
+        translationKeyMetadata.key = _keyController.text;
+        translationKeyMetadata.description = _descriptionController.text;
+      }
+
       for (int i = 0; i < widget.translation.languages.length; i++) {
         languages.add(widget.translation.languages[i]);
         translations.add(_fieldsControllers[i]!.text);
@@ -246,26 +300,36 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           key: _keyController.text,
           languages: languages,
           translations: translations,
+          translationKeyMetadata: translationKeyMetadata,
         ),
       );
     }
   }
 
-  /// Use GoogleTranslate to translate from source to all other languages
-  Future<void> _googleTranslate(BuildContext context, String language, String query) async {
+  /// Use AI translations provider to translate from source to all other languages
+  Future<void> _aiTranslate(BuildContext context, int index, String language, String query) async {
     if (language.isEmpty || query.isEmpty) {
       return;
     }
 
+    setStateNotDisposed(() {
+      _loadingIndex = index;
+    });
+
     final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
     final unescape = HtmlUnescape();
+    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final fallback = prefsInt(PREFS_TRANSLATIONS_FALLBACK) == 1;
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       String translationLanguage = widget.translation.languages[i];
       TextEditingController controller = _fieldsControllers[i]!;
 
       if (translationLanguage != language) {
-        if (languageCodeOnly(language) == languageCodeOnly(translationLanguage)) {
+        final sourceLanguage = languageCodeOnly(language);
+        final targetLanguage = languageCodeOnly(translationLanguage);
+
+        if (sourceLanguage == targetLanguage) {
           setStateNotDisposed(() {
             controller.text = query;
           });
@@ -273,26 +337,44 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           continue;
         }
 
-        GoogleTranslateDataTask dataTask = await MainDataProvider.instance!.executeDataTask(GoogleTranslateDataTask(
-          data: GoogleTranslateParameters(
-            queries: [query],
-            sourceLanguage: languageCodeOnly(language),
-            targetLanguage: languageCodeOnly(translationLanguage),
-          ),
-        ));
+        String? result;
+        String? message;
 
-        final theResult = dataTask.result;
+        if (provider == TranslationsProvider.openai) {
+          result = await openAITranslateText(
+            text: query,
+            sourceLanguage: sourceLanguage,
+            targetLanguage: targetLanguage,
+            context: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+          );
 
-        if (theResult != null) {
-          final theText = unescapeHTML ? unescape.convert(theResult.translations.first.translatedText) : theResult.translations.first.translatedText;
+          if (result == null) {
+            message = tt('edit_project_translation.openai.fail');
+          }
+        }
+
+        if (provider == TranslationsProvider.google || (fallback && result == null)) {
+          result = await googleTranslateTranslateText(
+            query: query,
+            sourceLanguage: sourceLanguage,
+            targetLanguage: targetLanguage,
+          );
+
+          if (result == null) {
+            message = tt('edit_project_translation.google_translate.fail');
+          }
+        }
+
+        if (result != null) {
+          final theText = unescapeHTML ? unescape.convert(result) : result;
 
           setStateNotDisposed(() {
             controller.text = theText;
           });
-        } else {
+        } else if (message != null) {
           ScaffoldMessenger.of(context).showSnackBar(SnackBar(
             content: Text(
-              tt('edit_project_translation.google_translate.fail'),
+              message,
               style: fancyText(kTextDanger),
               textAlign: TextAlign.center,
             ),
@@ -302,6 +384,21 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
         }
       }
     }
+
+    setStateNotDisposed(() {
+      _loadingIndex = -1;
+    });
+  }
+
+  /// Chat with AI to brainstorm best text/translation
+  Future<void> _chatWithAI(BuildContext context, int index, String language) async {
+    if (language.isEmpty) {
+      return;
+    }
+
+    final result = await OpenAIChatDialog.show(context);
+    print('TCH_dialog result: $result'); //TODO remove
+    //TODO
   }
 }
 
@@ -309,33 +406,43 @@ class Translation {
   final String? key;
   final List<String> languages;
   final List<String> translations;
+  final TranslationKeyMetadata? translationKeyMetadata;
 
   /// Translation initialization
   Translation({
     required this.key,
     required this.languages,
     required this.translations,
+    this.translationKeyMetadata,
   });
 }
 
 class _TranslationField extends StatelessWidget {
+  final int index;
   final bool fullscreen;
   final bool isDesktop;
   final bool isFocused;
   final String language;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final Future<void> Function(BuildContext context, String language, String query) onGoogleTranslate;
+  final Future<void> Function(BuildContext context, int index, String language, String query) onAITranslate;
+  final Future<void> Function(BuildContext context, int index, String language) onChatWithAI;
+  final TranslationsProvider provider;
+  final int loadingIndex;
 
   /// TranslationField initialization
   _TranslationField({
+    required this.index,
     required this.fullscreen,
     required this.isDesktop,
     required this.isFocused,
     required this.language,
     required this.controller,
     required this.focusNode,
-    required this.onGoogleTranslate,
+    required this.onAITranslate,
+    required this.onChatWithAI,
+    required this.provider,
+    required this.loadingIndex,
   });
 
   /// Create view layout from widgets
@@ -364,12 +471,29 @@ class _TranslationField extends StatelessWidget {
               ),
             ),
             CommonSpaceH(),
-            IconButtonWidget(
-              svgAssetPath: 'images/language.svg',
-              onTap: () => onGoogleTranslate(context, language, controller.text),
-              tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
-                r'$language': language,
-              }),
+            Column(
+              mainAxisSize: MainAxisSize.min,
+              mainAxisAlignment: MainAxisAlignment.center,
+              children: [
+                IconButtonWidget(
+                  svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
+                  onTap: () => onAITranslate(context, index, language, controller.text),
+                  tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
+                    r'$language': language,
+                  }),
+                  isLoading: loadingIndex == index,
+                ),
+                /*if (provider == TranslationsProvider.openai) ...[
+                  CommonSpaceVHalf(),
+                  IconButtonWidget(
+                    svgAssetPath: 'images/icons8-messaging.svg',
+                    onTap: () => onChatWithAI(context, index, language),
+                    tooltip: tt('edit_project_translation.openai_chat.tooltip').parameters({
+                      r'$language': language,
+                    }),
+                  ),
+                ],*/
+              ],
             ),
           ],
         ),

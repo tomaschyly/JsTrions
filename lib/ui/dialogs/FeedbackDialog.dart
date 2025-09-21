@@ -1,7 +1,7 @@
 import 'dart:io';
 
 import 'package:js_trions/config.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/dataTasks/HttpGetDataTask.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';

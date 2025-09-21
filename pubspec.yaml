@@ -5,15 +5,15 @@ homepage: https://tomas-chyly.com/en/project/jstrions/
 repository: https://github.com/tomaschyly/JsTrions
 issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
-publish_to: 'none'
+publish_to: "none"
 
-version: 1.6.0+17
+version: 1.6.0+22
 #Win version needs to change also in Runner.rc & msix
 #Snap needs to update version too in snapcraft.yaml
 
 environment:
-  sdk: ">=2.12.0-0 <3.0.0"
-  flutter: ">=2.0.0"
+  sdk: ">=3.0.0 <4.0.0"
+  flutter: ">=3.0.0"
 
 dependencies:
   flutter:
@@ -25,24 +25,27 @@ dependencies:
   tch_common_widgets: ^0.38.0
   
   supercharged: ^2.1.1
-  package_info_plus: ^8.3.1
+  package_info_plus: ^9.0.0
   window_manager: ^0.5.1
   archive: ^4.0.7
 
   cupertino_icons: ^1.0.8
-  flutter_svg: ^2.2.0
+  flutter_svg: ^2.2.1
 
   intl: ^0.20.2
   html_unescape: ^2.0.0
+  jiffy: ^6.4.3
 
   path: ^1.9.1
   path_provider: ^2.1.5
   sqflite: ^2.4.2
   sembast: ^3.8.5+1
 
-  file_selector: ^1.0.3
+  file_selector: ^1.0.4
 
   url_launcher: ^6.3.2
+
+  openai_dart: ^0.5.5
 
 dev_dependencies:
   msix: ^3.16.8
@@ -82,6 +85,5 @@ msix_config:
   start_menu_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
   tile_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
   store: true
-
 # https://docs.flutter.dev/deployment/linux
 # flutter clean && snapcraft clean && snapcraft

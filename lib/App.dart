@@ -1,12 +1,13 @@
 import 'dart:io';
 
 import 'package:js_trions/config.dart';
-import 'package:js_trions/core/AppPreferences.dart' as AppPreferences;
-import 'package:js_trions/core/AppTheme.dart';
-import 'package:js_trions/core/AppRouter.dart' as AppRouter;
+import 'package:js_trions/core/app_preferences.dart' as AppPreferences;
+import 'package:js_trions/core/app_theme.dart';
+import 'package:js_trions/core/app_router.dart' as AppRouter;
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
-import 'package:js_trions/ui/screens/DashboardScreen.dart';
+import 'package:js_trions/service/openai_service.dart';
+import 'package:js_trions/ui/screens/dashboard_screen.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:sembast/sembast.dart';
@@ -82,6 +83,9 @@ class AppState extends AbstractStatefulWidgetState<App> {
           windowManager.show();
         }
       },
+      onAppInitEnd: (BuildContext context) async {
+        await initOpenAIClient();
+      },
       onGenerateRoute: AppRouter.onGenerateRoute,
       builder: appThemeBuilder,
       theme: ThemeData(
@@ -106,6 +110,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       ),
       preferencesOptions: PreferencesOptions(
         intPrefs: AppPreferences.intPrefs,
+        stringPrefs: AppPreferences.stringPrefs,
       ),
       mainDataProviderOptions: MainDataProviderOptions(
         httpClientOptions: HTTPClientOptions(

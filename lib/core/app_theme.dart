@@ -2,7 +2,7 @@ import 'dart:io';
 
 import 'package:flutter/foundation.dart';
 import 'package:js_trions/App.dart';
-import 'package:js_trions/core/AppPreferences.dart';
+import 'package:js_trions/core/app_preferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -35,7 +35,8 @@ const kColorSilverLighter = const Color(0xFFf2f2f2);
 const kFontFamily = 'Kalam';
 
 const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
-const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
+const kTextBold = const TextStyle(
+    color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
 const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
 const kTextSuccess = const TextStyle(color: kColorSuccess, fontSize: 16);
 const kTextDanger = const TextStyle(color: kColorDanger, fontSize: 16);
@@ -43,15 +44,27 @@ const kTextWarning = const TextStyle(color: kColorWarning, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
-    force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
+    force || prefsInt(PREFS_FANCY_FONT) == 1
+        ? textStyle.copyWith(fontFamily: kFontFamily)
+        : textStyle;
 
 const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
+
+/// Shorthand to get AppTheme from context
+AppTheme getAppTheme(BuildContext context) =>
+    CommonTheme.of<AppTheme>(context)!;
+
+extension AppThemeExtension on BuildContext {
+  /// Shorthand to get AppTheme from context
+  AppTheme get appTheme => getAppTheme(this);
+}
 
 /// Customize CommonTheme for the app
 Widget appThemeBuilder(BuildContext context, Widget child) {
   final AppDataStateSnapshot snapshot = AppDataState.of(context)!;
 
-  BorderRadius platformBorderRadius = const BorderRadius.all(const Radius.circular(8));
+  BorderRadius platformBorderRadius =
+      const BorderRadius.all(const Radius.circular(8));
   MainAxisAlignment dialogsMainAxisAlignment = MainAxisAlignment.start;
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -68,9 +81,12 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kButtonStyle = CommonButtonStyle(
     height: kButtonHeight,
-    textStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
-    filledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
-    disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
+    textStyle: const TextStyle(
+        color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
+    filledTextStyle: const TextStyle(
+        color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
+    disabledTextStyle: const TextStyle(
+        color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
     preffixIconWidth: kIconSizeNotTouch,
@@ -98,6 +114,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     height: kButtonHeight,
     iconWidth: kIconSizeNotTouch,
     iconHeight: kIconSizeNotTouch,
+    loadingIconWidth: kIconSizeNotTouch,
+    loadingIconHeight: kIconSizeNotTouch,
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
   );
@@ -135,6 +153,32 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     ),
   );
 
+  final OutlineInputBorder platformInputBorder = OutlineInputBorder(
+    borderSide: const BorderSide(
+      width: 1,
+    ),
+    borderRadius: platformBorderRadius,
+  );
+
+  final kTextFormFieldStyle = TextFormFieldStyle(
+    inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
+          labelStyle: kTextBold,
+          contentPadding: EdgeInsets.symmetric(
+            horizontal: kCommonHorizontalMarginHalf,
+            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 8 : 8,
+          ),
+          enabledBorder: platformInputBorder,
+          disabledBorder: platformInputBorder,
+          focusedBorder: platformInputBorder,
+          errorBorder: platformInputBorder,
+          focusedErrorBorder: platformInputBorder,
+        ),
+    inputStyle: kText,
+    borderColor: kColorTextPrimary,
+    focusedBorderColor: kColorTextPrimary,
+    textAlign: TextAlign.center,
+  );
+
   final kListDialogStyle = ListDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
     optionStyle: kButtonStyle.copyWith(
@@ -154,32 +198,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
         loadingIconHeight: kIconSizeNotTouch,
       ),
     ),
-  );
-
-  final OutlineInputBorder platformInputBorder = OutlineInputBorder(
-    borderSide: const BorderSide(
-      width: 1,
-    ),
-    borderRadius: platformBorderRadius,
-  );
-
-  final kTextFormFieldStyle = TextFormFieldStyle(
-    inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
-          labelStyle: kTextBold,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: kCommonHorizontalMarginHalf,
-            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 7 : 10,
-          ),
-          enabledBorder: platformInputBorder,
-          disabledBorder: platformInputBorder,
-          focusedBorder: platformInputBorder,
-          errorBorder: platformInputBorder,
-          focusedErrorBorder: platformInputBorder,
-        ),
-    inputStyle: kText,
-    borderColor: kColorTextPrimary,
-    focusedBorderColor: kColorTextPrimary,
-    textAlign: TextAlign.center,
+    filterStyle: kTextFormFieldStyle,
   );
 
   final kEmailFormFieldStyle = kTextFormFieldStyle.copyWith(
