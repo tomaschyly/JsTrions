@@ -96,7 +96,6 @@ Future<String?> openAITranslateText({
                 ),
               ),
           ],
-          temperature: 0,
         ),
       );
 
