@@ -111,6 +111,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
                       title: info.title,
                       text: info.text,
                       isDanger: info.isDanger,
+                      actionSettingsText: info.actionSettingsText,
                     ),
                   ],
                 );
@@ -184,6 +185,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                             title: info.title,
                             text: info.text,
                             isDanger: info.isDanger,
+                            actionSettingsText: info.actionSettingsText,
                           ),
                         );
                       }),

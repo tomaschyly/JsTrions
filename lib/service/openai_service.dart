@@ -61,6 +61,7 @@ void getOpenAIDashboardInfo(List<DashboardInfoPayload> info) {
       title: tt('dashboard.info.openAI.title'),
       text: text,
       isDanger: isDanger,
+      actionSettingsText: tt('dashboard.info.openAI.actionSettingsText'),
     ));
   }
 }

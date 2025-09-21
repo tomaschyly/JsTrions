@@ -11,6 +11,7 @@ void getGoogleTranslateDashboardInfo(List<DashboardInfoPayload> info) {
     info.add(DashboardInfoPayload(
       title: tt('dashboard.info.googleTranslate.title'),
       text: tt('dashboard.info.googleTranslate.text'),
+      actionSettingsText: tt('dashboard.info.googleTranslate.actionSettingsText'),
     ));
   }
 }
