@@ -483,7 +483,7 @@ class _TranslationField extends StatelessWidget {
                   }),
                   isLoading: loadingIndex == index,
                 ),
-                if (provider == TranslationsProvider.openai) ...[
+                /*if (provider == TranslationsProvider.openai) ...[
                   CommonSpaceVHalf(),
                   IconButtonWidget(
                     svgAssetPath: 'images/icons8-messaging.svg',
@@ -492,7 +492,7 @@ class _TranslationField extends StatelessWidget {
                       r'$language': language,
                     }),
                   ),
-                ],
+                ],*/
               ],
             ),
           ],
