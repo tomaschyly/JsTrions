@@ -93,7 +93,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
           );
         }
 
-        sortProgrammingLanguagesAlphabetycally(programmingLanguages.programmingLanguages);
+        sortProgrammingLanguagesAlphabetically(programmingLanguages.programmingLanguages);
 
         _initProject(programmingLanguages.programmingLanguages);
 
