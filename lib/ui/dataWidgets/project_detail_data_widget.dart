@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:js_trions/config.dart';
+import 'package:js_trions/core/constants.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
@@ -62,6 +63,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
   Map<String, TranslationKeyMetadata> _metadata = Map();
+  List<String> _ignoredTranslationKeys = [];
   Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
   Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
   String _selectedLanguage = '';
@@ -767,6 +769,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
         if (exists) {
           final Map<String, TranslationKeyMetadata> metadata = Map();
+          final List<String> ignoredFromMeta = [];
           final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
 
           final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
@@ -776,6 +779,27 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               final json = jsonDecode(await metadataFile.readAsString());
 
               for (dynamic key in json.keys) {
+                if (key == kMetadataIgnoredTranslationKeys) {
+                  final ignoredList = json[key] as List<dynamic>;
+                  for (final item in ignoredList) {
+                    if (item is String && item.isNotEmpty) {
+                      ignoredFromMeta.add(item);
+                    }
+                  }
+                  continue;
+                }
+
+                // ignore metadata key prefixes defined in kMetadataKeys
+                bool isMeta = false;
+                for (final prefix in kMetadataKeys) {
+                  if (key.toString().startsWith(prefix)) {
+                    isMeta = true;
+                    break;
+                  }
+                }
+
+                if (isMeta) continue;
+
                 final value = TranslationKeyMetadata.fromJson(key, json[key]);
 
                 if (value != null) {
@@ -813,6 +837,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
           setStateNotDisposed(() {
             _metadata = metadata;
+            _ignoredTranslationKeys = ignoredFromMeta;
             _translationPairsByLanguage = translationPairsByLanguage;
 
             addPostFrameCallback((timeStamp) {
@@ -1313,7 +1338,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
     final Map<String, dynamic> metadata = {
-      r'$JsTrions': {
+      kMetadataJsTrions: {
         'message': tt('project.metadata.message').parameters({
           r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
         }),
@@ -1322,7 +1347,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'windows': kDownloadWin,
         'macos': kDownloadMacOS,
       },
-      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => entry.key != r'$JsTrions').toMap().map(
+      kMetadataIgnoredTranslationKeys: _ignoredTranslationKeys,
+      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
             (key, value) => MapEntry(key, value.toJson()),
           ),
     };
