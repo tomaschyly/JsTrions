@@ -103,6 +103,7 @@
   "project_detail.actions.source.all": "Všetky",
   "project_detail.actions.source.assets": "Assety",
   "project_detail.actions.source.code": "Kód",
+  "project_detail.actions.source.ignored_keys": "Ignorované Kľúče",
   "project_detail.actions.source.title": "Zobraz Preklady z",
   "project_detail.actions.title": "Akcie",
   "project_detail.add_project": "Pridať Projekt",

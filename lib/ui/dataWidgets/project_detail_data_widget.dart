@@ -302,6 +302,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                               selected: _sourceOfTranslations == SourceOfTranslations.Code,
                                               selectSource: _selectSource,
                                             ),
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.IgnoredKeys,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.IgnoredKeys,
+                                              selectSource: _selectSource,
+                                            ),
                                           ],
                                         ),
                                         CommonSpaceV(),
@@ -412,33 +417,34 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        if (_sourceOfTranslations != SourceOfTranslations.Code)
-                                          ButtonWidget(
-                                            style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                              widthWrapContent: true,
+                                    if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          if (_sourceOfTranslations != SourceOfTranslations.Code)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.add_translation'),
+                                              prefixIconSvgAssetPath: 'images/plus.svg',
+                                              onTap: () => _processTranslationsForKey(context, theProject),
                                             ),
-                                            text: tt('project_detail.add_translation'),
-                                            prefixIconSvgAssetPath: 'images/plus.svg',
-                                            onTap: () => _processTranslationsForKey(context, theProject),
-                                          ),
-                                        if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
-                                        if (_sourceOfTranslations != SourceOfTranslations.Assets)
-                                          ButtonWidget(
-                                            style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                              widthWrapContent: true,
+                                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
+                                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.analyze_code'),
+                                              prefixIconSvgAssetPath: 'images/code.svg',
+                                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                              isLoading: _isAnalyzing,
                                             ),
-                                            text: tt('project_detail.analyze_code'),
-                                            prefixIconSvgAssetPath: 'images/code.svg',
-                                            onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
-                                            isLoading: _isAnalyzing,
-                                          ),
-                                        CommonSpaceH(),
-                                      ],
-                                    ),
+                                          CommonSpaceH(),
+                                        ],
+                                      ),
                                     AnimatedSize(
                                       duration: kThemeAnimationDuration,
                                       alignment: Alignment.topCenter,
@@ -537,74 +543,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
-                                Color? rowColor = rowIsOdd ? kColorPrimary : null;
-                                if (isCodeOnly) {
-                                  rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
-                                }
-
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                                  decoration: BoxDecoration(
-                                    color: rowColor,
-                                    borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          key: key == _newTranslation ? _newTranslationKey : null,
-                                          constraints: BoxConstraints(minHeight: kButtonHeight),
-                                          alignment: Alignment.topLeft,
-                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                          child: Text(
-                                            key,
-                                            style: fancyText(kText),
-                                          ),
-                                        ),
-                                      ),
-                                      CommonSpaceH(),
-                                      Expanded(
-                                        child: Container(
-                                          constraints: BoxConstraints(minHeight: kButtonHeight),
-                                          alignment: Alignment.topLeft,
-                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                          child: Text(
-                                            value,
-                                            style: fancyText(kText),
-                                          ),
-                                        ),
-                                      ),
-                                      CommonSpaceHHalf(),
-                                      IconButtonWidget(
-                                        style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                          variant: IconButtonVariant.IconOnly,
-                                        ),
-                                        svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
-                                        onTap: () => _processTranslationsForKey(context, theProject, key),
-                                        tooltip: tt('project_detail.table.edit.tooltip').parameters({
-                                          r'$key': key,
-                                        }),
-                                      ),
-                                      CommonSpaceHHalf(),
-                                      if (!isCodeOnly)
-                                        IconButtonWidget(
-                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                            variant: IconButtonVariant.IconOnly,
-                                            iconColor: kColorDanger,
-                                          ),
-                                          svgAssetPath: 'images/trash.svg',
-                                          onTap: () => _deleteTranslationsForKey(context, theProject, key),
-                                          tooltip: tt('project_detail.table.delete.tooltip').parameters({
-                                            r'$key': key,
-                                          }),
-                                        )
-                                      else
-                                        const SizedBox(
-                                          width: kButtonHeight,
-                                        ),
-                                    ],
-                                  ),
+                                return KeyListItemWidget(
+                                  keyString: key,
+                                  value: value,
+                                  theProject: theProject,
+                                  rowIsOdd: rowIsOdd,
+                                  isCodeOnly: isCodeOnly,
+                                  onAddOrEdit: () => _processTranslationsForKey(context, theProject, key),
+                                  onDelete: () => _deleteTranslationsForKey(context, theProject, key),
                                 );
                               },
                             ),
@@ -654,27 +600,29 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (_sourceOfTranslations != SourceOfTranslations.Code)
-                            IconButtonWidget(
-                              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                variant: IconButtonVariant.Filled,
-                                iconColor: kColorPrimaryLight,
+                          if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys) ...[
+                            if (_sourceOfTranslations != SourceOfTranslations.Code)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/plus.svg',
+                                onTap: () => _processTranslationsForKey(context, theProject),
                               ),
-                              svgAssetPath: 'images/plus.svg',
-                              onTap: () => _processTranslationsForKey(context, theProject),
-                            ),
-                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
-                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
-                            IconButtonWidget(
-                              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                variant: IconButtonVariant.Filled,
-                                iconColor: kColorPrimaryLight,
+                            if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
+                            if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/code.svg',
+                                onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                isLoading: _isAnalyzing,
                               ),
-                              svgAssetPath: 'images/code.svg',
-                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
-                              isLoading: _isAnalyzing,
-                            ),
-                          CommonSpaceHHalf(),
+                            CommonSpaceHHalf(),
+                          ],
                           IconButtonWidget(
                             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                               variant: IconButtonVariant.Filled,
@@ -1025,8 +973,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     for (String key in _selectedLanguagePairs.keys) {
       final queryFilter = _searchQuery.isEmpty || key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery);
 
-      final sourceFilter =
+      bool sourceFilter =
           !_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+
+      if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.IgnoredKeys) {
+        sourceFilter = _ignoredTranslationKeys.contains(key);
+      }
 
       if (queryFilter && sourceFilter) {
         _processedKeys.add(key);
@@ -1068,6 +1020,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
           break;
         case SourceOfTranslations.All:
+        case SourceOfTranslations.IgnoredKeys:
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
 
           _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
@@ -1549,6 +1502,7 @@ enum SourceOfTranslations {
   Assets,
   Code,
   All,
+  IgnoredKeys,
 }
 
 class _SourceOfTranslationsChipWidget extends StatelessWidget {
@@ -1579,6 +1533,9 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
         break;
       case SourceOfTranslations.Code:
         text = tt('project_detail.actions.source.code');
+        break;
+      case SourceOfTranslations.IgnoredKeys:
+        text = tt('project_detail.actions.source.ignored_keys');
         break;
     }
 
@@ -1650,6 +1607,102 @@ class _InfoWidget extends StatelessWidget {
         ),
         CommonSpaceV(),
       ],
+    );
+  }
+}
+
+class KeyListItemWidget extends StatelessWidget {
+  final String keyString;
+  final String value;
+  final Project theProject;
+  final bool rowIsOdd;
+  final bool isCodeOnly;
+  final VoidCallback onAddOrEdit;
+  final VoidCallback onDelete;
+
+  /// KeyListItemWidget initialization
+  KeyListItemWidget({
+    required this.keyString,
+    required this.value,
+    required this.theProject,
+    required this.rowIsOdd,
+    required this.isCodeOnly,
+    required this.onAddOrEdit,
+    required this.onDelete,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    Color? rowColor = rowIsOdd ? kColorPrimary : null;
+    if (isCodeOnly) {
+      rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
+    }
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      decoration: BoxDecoration(
+        color: rowColor,
+        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: Container(
+              constraints: BoxConstraints(minHeight: kButtonHeight),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+              child: Text(
+                keyString,
+                style: fancyText(kText),
+              ),
+            ),
+          ),
+          CommonSpaceH(),
+          Expanded(
+            child: Container(
+              constraints: BoxConstraints(minHeight: kButtonHeight),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+              child: Text(
+                value,
+                style: fancyText(kText),
+              ),
+            ),
+          ),
+          CommonSpaceHHalf(),
+          IconButtonWidget(
+            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+              variant: IconButtonVariant.IconOnly,
+            ),
+            svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+            onTap: onAddOrEdit,
+            tooltip: tt('project_detail.table.edit.tooltip').parameters({
+              r'$key': keyString,
+            }),
+          ),
+          CommonSpaceHHalf(),
+          if (!isCodeOnly)
+            IconButtonWidget(
+              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                variant: IconButtonVariant.IconOnly,
+                iconColor: kColorDanger,
+              ),
+              svgAssetPath: 'images/trash.svg',
+              onTap: onDelete,
+              tooltip: tt('project_detail.table.delete.tooltip').parameters({
+                r'$key': keyString,
+              }),
+            )
+          else
+            const SizedBox(
+              width: kButtonHeight,
+            ),
+        ],
+      ),
     );
   }
 }

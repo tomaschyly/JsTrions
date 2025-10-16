@@ -103,6 +103,7 @@
   "project_detail.actions.source.all": "All",
   "project_detail.actions.source.assets": "Assets",
   "project_detail.actions.source.code": "Code",
+  "project_detail.actions.source.ignored_keys": "Ignored Keys",
   "project_detail.actions.source.title": "Show Translations from",
   "project_detail.actions.title": "Actions",
   "project_detail.add_project": "Add Project",
