@@ -9,6 +9,7 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:js_trions/config.dart';
+import 'package:js_trions/core/constants.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
@@ -62,6 +63,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
   Map<String, TranslationKeyMetadata> _metadata = Map();
+  List<String> _ignoredTranslationKeys = [];
   Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
   Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
   String _selectedLanguage = '';
@@ -71,8 +73,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final _searchController = TextEditingController();
   final _searchDebouncer = Debouncer(milliseconds: 300);
   String _searchQuery = '';
-  GlobalKey? _newTranslationKey;
-  String? _newTranslation;
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
@@ -84,6 +84,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final List<_InfoWidget> _infoList = [];
   int _keysForCurrent = 0;
   int _wordsForCurrent = 0;
+  int _ignoredKeys = 0;
 
   /// Manually dispose of resources
   @override
@@ -300,6 +301,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                               selected: _sourceOfTranslations == SourceOfTranslations.Code,
                                               selectSource: _selectSource,
                                             ),
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.IgnoredKeys,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.IgnoredKeys,
+                                              selectSource: _selectSource,
+                                            ),
                                           ],
                                         ),
                                         CommonSpaceV(),
@@ -397,6 +403,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     tt('project_detail.translations.stats').parameters(<String, String>{
                                       r'$keys': _keysForCurrent.toString(),
                                       r'$words': _wordsForCurrent.toString(),
+                                      r'$ignored': _ignoredKeys.toString(),
                                     }),
                                     style: fancyText(kText),
                                   ),
@@ -410,33 +417,34 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    Row(
-                                      mainAxisSize: MainAxisSize.max,
-                                      mainAxisAlignment: MainAxisAlignment.end,
-                                      children: [
-                                        if (_sourceOfTranslations != SourceOfTranslations.Code)
-                                          ButtonWidget(
-                                            style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                              widthWrapContent: true,
+                                    if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          if (_sourceOfTranslations != SourceOfTranslations.Code)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.add_translation'),
+                                              prefixIconSvgAssetPath: 'images/plus.svg',
+                                              onTap: () => _processTranslationsForKey(context, theProject),
                                             ),
-                                            text: tt('project_detail.add_translation'),
-                                            prefixIconSvgAssetPath: 'images/plus.svg',
-                                            onTap: () => _processTranslationsForKey(context, theProject),
-                                          ),
-                                        if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
-                                        if (_sourceOfTranslations != SourceOfTranslations.Assets)
-                                          ButtonWidget(
-                                            style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                              widthWrapContent: true,
+                                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
+                                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.analyze_code'),
+                                              prefixIconSvgAssetPath: 'images/code.svg',
+                                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                              isLoading: _isAnalyzing,
                                             ),
-                                            text: tt('project_detail.analyze_code'),
-                                            prefixIconSvgAssetPath: 'images/code.svg',
-                                            onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
-                                            isLoading: _isAnalyzing,
-                                          ),
-                                        CommonSpaceH(),
-                                      ],
-                                    ),
+                                          CommonSpaceH(),
+                                        ],
+                                      ),
                                     AnimatedSize(
                                       duration: kThemeAnimationDuration,
                                       alignment: Alignment.topCenter,
@@ -535,74 +543,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
-                                Color? rowColor = rowIsOdd ? kColorPrimary : null;
-                                if (isCodeOnly) {
-                                  rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
-                                }
-
-                                return Container(
-                                  margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                                  decoration: BoxDecoration(
-                                    color: rowColor,
-                                    borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-                                  ),
-                                  child: Row(
-                                    mainAxisSize: MainAxisSize.max,
-                                    children: [
-                                      Expanded(
-                                        child: Container(
-                                          key: key == _newTranslation ? _newTranslationKey : null,
-                                          constraints: BoxConstraints(minHeight: kButtonHeight),
-                                          alignment: Alignment.topLeft,
-                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                          child: Text(
-                                            key,
-                                            style: fancyText(kText),
-                                          ),
-                                        ),
-                                      ),
-                                      CommonSpaceH(),
-                                      Expanded(
-                                        child: Container(
-                                          constraints: BoxConstraints(minHeight: kButtonHeight),
-                                          alignment: Alignment.topLeft,
-                                          padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                                          child: Text(
-                                            value,
-                                            style: fancyText(kText),
-                                          ),
-                                        ),
-                                      ),
-                                      CommonSpaceHHalf(),
-                                      IconButtonWidget(
-                                        style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                          variant: IconButtonVariant.IconOnly,
-                                        ),
-                                        svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
-                                        onTap: () => _processTranslationsForKey(context, theProject, key),
-                                        tooltip: tt('project_detail.table.edit.tooltip').parameters({
-                                          r'$key': key,
-                                        }),
-                                      ),
-                                      CommonSpaceHHalf(),
-                                      if (!isCodeOnly)
-                                        IconButtonWidget(
-                                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                            variant: IconButtonVariant.IconOnly,
-                                            iconColor: kColorDanger,
-                                          ),
-                                          svgAssetPath: 'images/trash.svg',
-                                          onTap: () => _deleteTranslationsForKey(context, theProject, key),
-                                          tooltip: tt('project_detail.table.delete.tooltip').parameters({
-                                            r'$key': key,
-                                          }),
-                                        )
-                                      else
-                                        const SizedBox(
-                                          width: kButtonHeight,
-                                        ),
-                                    ],
-                                  ),
+                                return _KeyListItemWidget(
+                                  keyString: key,
+                                  value: value,
+                                  theProject: theProject,
+                                  rowIsOdd: rowIsOdd,
+                                  isCodeOnly: isCodeOnly,
+                                  sourceOfTranslations: _sourceOfTranslations,
+                                  onAddOrEdit: () => _processTranslationsForKey(context, theProject, key),
+                                  onDelete: () => _deleteTranslationsForKey(context, theProject, key),
+                                  onIgnore: (ignore) => _toggleIgnoreTranslationKey(context, theProject, key, ignore),
                                 );
                               },
                             ),
@@ -652,27 +602,29 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (_sourceOfTranslations != SourceOfTranslations.Code)
-                            IconButtonWidget(
-                              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                variant: IconButtonVariant.Filled,
-                                iconColor: kColorPrimaryLight,
+                          if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys) ...[
+                            if (_sourceOfTranslations != SourceOfTranslations.Code)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/plus.svg',
+                                onTap: () => _processTranslationsForKey(context, theProject),
                               ),
-                              svgAssetPath: 'images/plus.svg',
-                              onTap: () => _processTranslationsForKey(context, theProject),
-                            ),
-                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
-                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
-                            IconButtonWidget(
-                              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                variant: IconButtonVariant.Filled,
-                                iconColor: kColorPrimaryLight,
+                            if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
+                            if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/code.svg',
+                                onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                isLoading: _isAnalyzing,
                               ),
-                              svgAssetPath: 'images/code.svg',
-                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
-                              isLoading: _isAnalyzing,
-                            ),
-                          CommonSpaceHHalf(),
+                            CommonSpaceHHalf(),
+                          ],
                           IconButtonWidget(
                             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                               variant: IconButtonVariant.Filled,
@@ -767,6 +719,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
         if (exists) {
           final Map<String, TranslationKeyMetadata> metadata = Map();
+          final List<String> ignoredFromMeta = [];
           final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
 
           final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
@@ -776,6 +729,27 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               final json = jsonDecode(await metadataFile.readAsString());
 
               for (dynamic key in json.keys) {
+                if (key == kMetadataIgnoredTranslationKeys) {
+                  final ignoredList = json[key] as List<dynamic>;
+                  for (final item in ignoredList) {
+                    if (item is String && item.isNotEmpty) {
+                      ignoredFromMeta.add(item);
+                    }
+                  }
+                  continue;
+                }
+
+                // ignore metadata key prefixes defined in kMetadataKeys
+                bool isMeta = false;
+                for (final prefix in kMetadataKeys) {
+                  if (key.toString().startsWith(prefix)) {
+                    isMeta = true;
+                    break;
+                  }
+                }
+
+                if (isMeta) continue;
+
                 final value = TranslationKeyMetadata.fromJson(key, json[key]);
 
                 if (value != null) {
@@ -813,6 +787,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
           setStateNotDisposed(() {
             _metadata = metadata;
+            _ignoredTranslationKeys = ignoredFromMeta;
             _translationPairsByLanguage = translationPairsByLanguage;
 
             addPostFrameCallback((timeStamp) {
@@ -929,7 +904,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       final keysInAssets = keysByLanguage[languageTopCount]!;
 
       for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
-        if (!keysInAssets.contains(key)) {
+        if (!keysInAssets.contains(key) && !_ignoredTranslationKeys.contains(key)) {
           final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
 
           if (showCodeOnly) {
@@ -990,6 +965,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     }
 
     _wordsForCurrent = words;
+
+    _ignoredKeys = _ignoredTranslationKeys.length;
   }
 
   /// Process selected language pairs (key, value) based on filters
@@ -1000,8 +977,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     for (String key in _selectedLanguagePairs.keys) {
       final queryFilter = _searchQuery.isEmpty || key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery);
 
-      final sourceFilter =
+      bool sourceFilter =
           !_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+
+      if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.IgnoredKeys) {
+        sourceFilter = _ignoredTranslationKeys.contains(key);
+      } else if (sourceFilter && _ignoredTranslationKeys.contains(key)) {
+        sourceFilter = false;
+      }
 
       if (queryFilter && sourceFilter) {
         _processedKeys.add(key);
@@ -1043,6 +1026,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
           break;
         case SourceOfTranslations.All:
+        case SourceOfTranslations.IgnoredKeys:
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
 
           _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
@@ -1273,6 +1257,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// If users confirms, delete translations for key and save to Project assets
   Future<void> _deleteTranslationsForKey(BuildContext context, Project project, String key) async {
+    _interruptAnalysis();
+
     final confirmed = await ConfirmDialog.show(
       context,
       isDanger: true,
@@ -1313,7 +1299,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
     final Map<String, dynamic> metadata = {
-      r'$JsTrions': {
+      kMetadataJsTrions: {
         'message': tt('project.metadata.message').parameters({
           r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
         }),
@@ -1322,7 +1308,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'windows': kDownloadWin,
         'macos': kDownloadMacOS,
       },
-      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => entry.key != r'$JsTrions').toMap().map(
+      kMetadataIgnoredTranslationKeys: _ignoredTranslationKeys,
+      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
             (key, value) => MapEntry(key, value.toJson()),
           ),
     };
@@ -1481,6 +1468,25 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _showScrollTop.value = false;
     }
   }
+
+  /// Add or remove key from ignored translation keys
+  Future<void> _toggleIgnoreTranslationKey(BuildContext context, Project project, String key, bool ignore) async {
+    _interruptAnalysis();
+
+    if (ignore && !_ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.add(key);
+    } else if (!ignore && _ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.remove(key);
+    }
+
+    setStateNotDisposed(() {
+      _calculateStats();
+
+      _processSelectedLanguagePairs();
+    });
+
+    await _saveTranslationsToAssets(context, project);
+  }
 }
 
 enum ProjectAnalysisOnInit {
@@ -1523,6 +1529,7 @@ enum SourceOfTranslations {
   Assets,
   Code,
   All,
+  IgnoredKeys,
 }
 
 class _SourceOfTranslationsChipWidget extends StatelessWidget {
@@ -1553,6 +1560,9 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
         break;
       case SourceOfTranslations.Code:
         text = tt('project_detail.actions.source.code');
+        break;
+      case SourceOfTranslations.IgnoredKeys:
+        text = tt('project_detail.actions.source.ignored_keys');
         break;
     }
 
@@ -1624,6 +1634,130 @@ class _InfoWidget extends StatelessWidget {
         ),
         CommonSpaceV(),
       ],
+    );
+  }
+}
+
+class _KeyListItemWidget extends StatelessWidget {
+  final String keyString;
+  final String value;
+  final Project theProject;
+  final bool rowIsOdd;
+  final bool isCodeOnly;
+  final SourceOfTranslations sourceOfTranslations;
+  final VoidCallback onAddOrEdit;
+  final VoidCallback onDelete;
+  final ValueChanged<bool> onIgnore;
+
+  /// KeyListItemWidget initialization
+  _KeyListItemWidget({
+    required this.keyString,
+    required this.value,
+    required this.theProject,
+    required this.rowIsOdd,
+    required this.isCodeOnly,
+    required this.sourceOfTranslations,
+    required this.onAddOrEdit,
+    required this.onDelete,
+    required this.onIgnore,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    Color? rowColor = rowIsOdd ? kColorPrimary : null;
+    if (isCodeOnly) {
+      rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
+    }
+
+    final actions = <Widget>[
+      if (sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: isCodeOnly ? kColorSuccess : null,
+          ),
+          svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+          onTap: onAddOrEdit,
+          tooltip: isCodeOnly
+              ? tt('project_detail.table.add_key.tooltip').parameters({
+                  r'$key': keyString,
+                })
+              : tt('project_detail.table.edit.tooltip').parameters({
+                  r'$key': keyString,
+                }),
+        ),
+      if (!isCodeOnly && sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: kColorDanger,
+          ),
+          svgAssetPath: 'images/trash.svg',
+          onTap: onDelete,
+          tooltip: tt('project_detail.table.delete.tooltip').parameters({
+            r'$key': keyString,
+          }),
+        ),
+      if (isCodeOnly || sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
+          ),
+          svgAssetPath: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
+          onTap: () => onIgnore(sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
+          tooltip: sourceOfTranslations != SourceOfTranslations.IgnoredKeys
+              ? tt('project_detail.table.ignore_key.tooltip').parameters({
+                  r'$key': keyString,
+                })
+              : tt('project_detail.table.unignore_key.tooltip').parameters({
+                  r'$key': keyString,
+                }),
+        ),
+    ];
+
+    return Container(
+      margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+      decoration: BoxDecoration(
+        color: rowColor,
+        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+      ),
+      child: Row(
+        mainAxisSize: MainAxisSize.max,
+        children: [
+          Expanded(
+            child: Container(
+              constraints: BoxConstraints(minHeight: kButtonHeight),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+              child: Text(
+                keyString,
+                style: fancyText(kText),
+              ),
+            ),
+          ),
+          CommonSpaceH(),
+          Expanded(
+            child: Container(
+              constraints: BoxConstraints(minHeight: kButtonHeight),
+              alignment: Alignment.topLeft,
+              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+              child: Text(
+                value,
+                style: fancyText(kText),
+              ),
+            ),
+          ),
+          CommonSpaceHHalf(),
+          for (final action in actions) ...[
+            action,
+            CommonSpaceHHalf(),
+          ],
+        ],
+      ),
     );
   }
 }

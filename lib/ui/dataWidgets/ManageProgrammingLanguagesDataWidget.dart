@@ -58,7 +58,7 @@ class _ManageProgrammingLanguagesDataWidgetState extends AbstractDataWidgetState
           return Container();
         }
 
-        sortProgrammingLanguagesAlphabetycally(programmingLanguages.programmingLanguages);
+        sortProgrammingLanguagesAlphabetically(programmingLanguages.programmingLanguages);
 
         return Column(
           mainAxisSize: MainAxisSize.min,
