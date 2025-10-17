@@ -73,8 +73,6 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final _searchController = TextEditingController();
   final _searchDebouncer = Debouncer(milliseconds: 300);
   String _searchQuery = '';
-  GlobalKey? _newTranslationKey;
-  String? _newTranslation;
   SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
@@ -86,6 +84,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final List<_InfoWidget> _infoList = [];
   int _keysForCurrent = 0;
   int _wordsForCurrent = 0;
+  int _ignoredKeys = 0;
 
   /// Manually dispose of resources
   @override
@@ -404,6 +403,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                     tt('project_detail.translations.stats').parameters(<String, String>{
                                       r'$keys': _keysForCurrent.toString(),
                                       r'$words': _wordsForCurrent.toString(),
+                                      r'$ignored': _ignoredKeys.toString(),
                                     }),
                                     style: fancyText(kText),
                                   ),
@@ -543,14 +543,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
-                                return KeyListItemWidget(
+                                return _KeyListItemWidget(
                                   keyString: key,
                                   value: value,
                                   theProject: theProject,
                                   rowIsOdd: rowIsOdd,
                                   isCodeOnly: isCodeOnly,
+                                  sourceOfTranslations: _sourceOfTranslations,
                                   onAddOrEdit: () => _processTranslationsForKey(context, theProject, key),
                                   onDelete: () => _deleteTranslationsForKey(context, theProject, key),
+                                  onIgnore: (ignore) => _toggleIgnoreTranslationKey(context, theProject, key, ignore),
                                 );
                               },
                             ),
@@ -902,7 +904,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       final keysInAssets = keysByLanguage[languageTopCount]!;
 
       for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
-        if (!keysInAssets.contains(key)) {
+        if (!keysInAssets.contains(key) && !_ignoredTranslationKeys.contains(key)) {
           final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
 
           if (showCodeOnly) {
@@ -963,6 +965,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     }
 
     _wordsForCurrent = words;
+
+    _ignoredKeys = _ignoredTranslationKeys.length;
   }
 
   /// Process selected language pairs (key, value) based on filters
@@ -978,6 +982,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.IgnoredKeys) {
         sourceFilter = _ignoredTranslationKeys.contains(key);
+      } else if (sourceFilter && _ignoredTranslationKeys.contains(key)) {
+        sourceFilter = false;
       }
 
       if (queryFilter && sourceFilter) {
@@ -1251,6 +1257,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// If users confirms, delete translations for key and save to Project assets
   Future<void> _deleteTranslationsForKey(BuildContext context, Project project, String key) async {
+    _interruptAnalysis();
+
     final confirmed = await ConfirmDialog.show(
       context,
       isDanger: true,
@@ -1460,6 +1468,25 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _showScrollTop.value = false;
     }
   }
+
+  /// Add or remove key from ignored translation keys
+  Future<void> _toggleIgnoreTranslationKey(BuildContext context, Project project, String key, bool ignore) async {
+    _interruptAnalysis();
+
+    if (ignore && !_ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.add(key);
+    } else if (!ignore && _ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.remove(key);
+    }
+
+    setStateNotDisposed(() {
+      _calculateStats();
+
+      _processSelectedLanguagePairs();
+    });
+
+    await _saveTranslationsToAssets(context, project);
+  }
 }
 
 enum ProjectAnalysisOnInit {
@@ -1611,24 +1638,28 @@ class _InfoWidget extends StatelessWidget {
   }
 }
 
-class KeyListItemWidget extends StatelessWidget {
+class _KeyListItemWidget extends StatelessWidget {
   final String keyString;
   final String value;
   final Project theProject;
   final bool rowIsOdd;
   final bool isCodeOnly;
+  final SourceOfTranslations sourceOfTranslations;
   final VoidCallback onAddOrEdit;
   final VoidCallback onDelete;
+  final ValueChanged<bool> onIgnore;
 
   /// KeyListItemWidget initialization
-  KeyListItemWidget({
+  _KeyListItemWidget({
     required this.keyString,
     required this.value,
     required this.theProject,
     required this.rowIsOdd,
     required this.isCodeOnly,
+    required this.sourceOfTranslations,
     required this.onAddOrEdit,
     required this.onDelete,
+    required this.onIgnore,
   });
 
   /// Create view layout from widgets
@@ -1640,6 +1671,53 @@ class KeyListItemWidget extends StatelessWidget {
     if (isCodeOnly) {
       rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
     }
+
+    final actions = <Widget>[
+      if (sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: isCodeOnly ? kColorSuccess : null,
+          ),
+          svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+          onTap: onAddOrEdit,
+          tooltip: isCodeOnly
+              ? tt('project_detail.table.add_key.tooltip').parameters({
+                  r'$key': keyString,
+                })
+              : tt('project_detail.table.edit.tooltip').parameters({
+                  r'$key': keyString,
+                }),
+        ),
+      if (!isCodeOnly && sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: kColorDanger,
+          ),
+          svgAssetPath: 'images/trash.svg',
+          onTap: onDelete,
+          tooltip: tt('project_detail.table.delete.tooltip').parameters({
+            r'$key': keyString,
+          }),
+        ),
+      if (isCodeOnly || sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
+          ),
+          svgAssetPath: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
+          onTap: () => onIgnore(sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
+          tooltip: sourceOfTranslations != SourceOfTranslations.IgnoredKeys
+              ? tt('project_detail.table.ignore_key.tooltip').parameters({
+                  r'$key': keyString,
+                })
+              : tt('project_detail.table.unignore_key.tooltip').parameters({
+                  r'$key': keyString,
+                }),
+        ),
+    ];
 
     return Container(
       margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
@@ -1674,33 +1752,10 @@ class KeyListItemWidget extends StatelessWidget {
             ),
           ),
           CommonSpaceHHalf(),
-          IconButtonWidget(
-            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-              variant: IconButtonVariant.IconOnly,
-            ),
-            svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
-            onTap: onAddOrEdit,
-            tooltip: tt('project_detail.table.edit.tooltip').parameters({
-              r'$key': keyString,
-            }),
-          ),
-          CommonSpaceHHalf(),
-          if (!isCodeOnly)
-            IconButtonWidget(
-              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
-                iconColor: kColorDanger,
-              ),
-              svgAssetPath: 'images/trash.svg',
-              onTap: onDelete,
-              tooltip: tt('project_detail.table.delete.tooltip').parameters({
-                r'$key': keyString,
-              }),
-            )
-          else
-            const SizedBox(
-              width: kButtonHeight,
-            ),
+          for (final action in actions) ...[
+            action,
+            CommonSpaceHHalf(),
+          ],
         ],
       ),
     );
