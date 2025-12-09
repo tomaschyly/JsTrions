@@ -167,7 +167,7 @@
   "settings.screen.openAI.selectModel.selection": "Choose Model",
   "settings.screen.openAI.selectModel.selection.cancel": "Cancel",
   "settings.screen.openAIApiKey": "OpenAI API Key",
-  "settings.screen.openAIApiKey.description": "Get you API key <a>here</a>!",
+  "settings.screen.openAIApiKey.description": "Get your API key <a>here</a>!",
   "settings.screen.reset": "Clear Data",
   "settings.screen.reset.confirm": "Are you sure that you want to delete all your data? You will not be able to get them back.",
   "settings.screen.reset.description": "Use this to delete all your data at once",
