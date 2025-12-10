@@ -245,7 +245,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             noOnTap: () {
               Navigator.of(context).pop();
             },
-            yesOnTap: () => _process(context),
+            yesOnTap: _loadingIndex >= 0 ? null : () => _process(context),
           ),
         ),
       ),
