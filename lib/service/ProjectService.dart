@@ -1,11 +1,13 @@
 import 'dart:io';
 
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectDataTask.dart';
 import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
 import 'package:js_trions/ui/data_widgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
@@ -27,6 +29,9 @@ Future<void> saveProject(
   bool popOnSuccess = true,
 }) async {
   FocusScope.of(context).unfocus();
+
+  final appTheme = context.appTheme;
+  final isNew = project == null;
 
   if (formKey.currentState!.validate()) {
     final now = DateTime.now().millisecondsSinceEpoch;
@@ -70,6 +75,16 @@ Future<void> saveProject(
     if (popOnSuccess && dataTask.result != null) {
       Navigator.of(context).pop(dataTask.result?.id);
     }
+
+    if (dataTask.result != null) {
+      displayScreenMessage(
+        ScreenMessage(
+          message: isNew ? tt('project.new.success') : tt('project.edit.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
+    }
   }
 }
 
@@ -80,6 +95,7 @@ Future<void> deleteProject(
   bool popOnSuccess = true,
 }) async {
   final snapshot = AppDataState.of(context)!;
+  final appTheme = context.appTheme;
 
   final confirmed = await ConfirmDialog.show(
     context,
@@ -105,6 +121,16 @@ Future<void> deleteProject(
           ResponsiveScreen.ExtraLargeDesktop,
         ].contains(snapshot.responsiveScreen)) {
       Navigator.of(context).pop(dataTask.result?.id);
+    }
+
+    if (dataTask.result != null) {
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.delete.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 }

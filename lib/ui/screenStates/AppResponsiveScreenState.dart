@@ -1,8 +1,10 @@
+import 'package:bot_toast/bot_toast.dart';
 import 'package:flutter_svg/svg.dart';
 import 'package:js_trions/core/app_theme.dart';
+import 'package:js_trions/ui/notifications/notification_toast_widget.dart';
 import 'package:js_trions/ui/screens/AboutScreen.dart';
-import 'package:js_trions/ui/screens/dashboard_screen.dart';
 import 'package:js_trions/ui/screens/ProjectsScreen.dart';
+import 'package:js_trions/ui/screens/dashboard_screen.dart';
 import 'package:js_trions/ui/screens/settings_screen.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -245,4 +247,46 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
 
     return null;
   }
+
+  /// If available show message for this screen
+  @override
+  @protected
+  void screenMessage(BuildContext context, ScreenMessage message) {
+    final appTheme = context.appTheme;
+
+    displayScreenMessage(
+      message,
+      appTheme: appTheme,
+    );
+  }
+}
+
+/// Show message by options
+void displayScreenMessage(
+  ScreenMessage message, {
+  required AppTheme appTheme,
+}) {
+  Future.delayed(kThemeAnimationDuration, () {
+    BotToast.showCustomNotification(
+      toastBuilder: (CancelFunc cancelFunc) {
+        return NotificationToastWidget(
+          appTheme: appTheme,
+          message: message,
+          cancelFunc: cancelFunc,
+        );
+      },
+      duration: message.duration,
+      align: Alignment.topCenter,
+      /*wrapAnimation: (controller, cancel, child) => SlideTransition(
+        position: Tween<Offset>(
+          begin: const Offset(0, 1), // from bottom
+          end: Offset.zero,
+        ).animate(CurvedAnimation(
+          parent: controller,
+          curve: Curves.easeOut,
+        )),
+        child: child,
+      ),*/
+    );
+  });
 }
