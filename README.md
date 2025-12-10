@@ -14,12 +14,12 @@ JsTrions works well with Translator provided by my Flutter package [tch_appliabl
 
 ## App Gallery
 
-![MacOS-Projects.jpg](screenshots/MacOS-Projects.jpg)
+![MacOS-Projects.png](screenshots/MacOS-Projects.png)
 
-![MacOS-Edit-Translation.jpg](screenshots/MacOS-Edit-Translation.jpg)
+![MacOS-Edit-Translation.png](screenshots/MacOS-Edit-Translation.png)
 
-![MacOS-Edit-Project.jpg](screenshots/MacOS-Edit-Project.jpg)
+![MacOS-Edit-Project.png](screenshots/MacOS-Edit-Project.png)
 
-![MacOS-Settings.jpg](screenshots/MacOS-Settings.jpg)
+![MacOS-Settings.png](screenshots/MacOS-Settings.png)
 
-![MacOS-Translations.jpg](screenshots/MacOS-Translations.jpg)
+![MacOS-Translations.png](screenshots/MacOS-Translations.png)
