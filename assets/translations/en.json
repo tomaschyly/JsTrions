@@ -81,7 +81,7 @@
   "feedback.title": "Feedback",
   "info.popup.close": "Continue",
   "info.welcome.headline": "Welcome!",
-  "info.welcome.text": "Thank you for trying JsTrions!\n\nJsTrions allows you to easily manage JSON translations in your project and to analyze project code for translations usage.\n\nJsTrions has been tested to work on production without significant issues. If you find any issues, please report them on the apps repository, issues section.",
+  "info.welcome.text": "Thank you for trying JsTrions!\n\nJsTrions allows you to easily manage JSON translations in your project and to analyze project code for translations usage.\n\nUse Google Translate or OpenAI models for automatic translations.\n\nJsTrions has been tested to work on production without significant issues. If you find any issues, please report them on the apps repository, issues section.",
   "list.empty": "No items",
   "list.item.loading": "Loading...",
   "openai_chat.dialog.enlarge.tooltip": "Enlarge the dialog",

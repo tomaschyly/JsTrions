@@ -81,7 +81,7 @@
   "feedback.title": "Spätná Väzba",
   "info.popup.close": "Pokračovať",
   "info.welcome.headline": "Vitaj!",
-  "info.welcome.text": "Ďakujem, že skúšaš JsTrions!\n\nJsTrions ti umožnuje ľahko spravovať JSON preklady v tvojom projekte a analyzovať kód na využívanie prekladov.\n\nJsTrions bol testovaný, aby fungoval na produkcii bez významných problémov. Ak nájdeš nejaké problémy, náhlás ich v seckii problémov v úložisku appky.",
+  "info.welcome.text": "Ďakujeme, že ste vyskúšali JsTrions!\n\nJsTrions vám umožňuje jednoducho spravovať JSON preklady vo vašom projekte a analyzovať kód projektu z hľadiska použitia prekladov.\n\nPoužite Google Translate alebo OpenAI modely na automatické preklady.\n\nJsTrions bol otestovaný na používanie v produkcii bez výrazných problémov. Ak narazíte na nejaké problémy, nahláste ich prosím v sekcii Issues v repozitári aplikácie.",
   "list.empty": "Žiadne položky",
   "list.item.loading": "Načítam...",
   "openai_chat.dialog.enlarge.tooltip": "Zväčšiť dialóg",
