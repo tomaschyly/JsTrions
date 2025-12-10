@@ -32,6 +32,7 @@ Future<String?> googleTranslateTranslateText({
     ));
 
     final theResult = dataTask.result;
+    debugPrint('TCH_theResult $theResult');
 
     return theResult?.translations.first.translatedText;
   } catch (e, t) {
