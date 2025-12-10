@@ -1088,6 +1088,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Import translations from zip file
   Future<void> _importTranslations(BuildContext context, Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final appTheme = context.appTheme;
+
     try {
       String typeLabel = tt('project.export.type.label');
 
@@ -1114,34 +1116,33 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           }
         }
 
-        setStateNotDisposed(() {
-          _infoList.add(
-            _InfoWidget(
-              text: tt('project.import.success'),
-              clearInfo: _clearInfo,
-              isSuccess: true,
-            ),
-          );
-        });
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.import.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
 
         _initProject(project, programmingLanguages, force: true);
       }
     } catch (e, t) {
       debugPrint('TCH_e $e\n$t');
 
-      setStateNotDisposed(() {
-        _infoList.add(
-          _InfoWidget(
-            text: tt('project.import.failure'),
-            clearInfo: _clearInfo,
-          ),
-        );
-      });
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.import.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 
   /// Export translations into zip file
   Future<void> _exportTranslations(BuildContext context, Project project) async {
+    final appTheme = context.appTheme;
+
     try {
       final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
@@ -1160,27 +1161,24 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         var encoder = ZipFileEncoder();
         encoder.zipDirectory(Directory(translationsAssetsDirectory!), followLinks: false, filename: savePath.path);
 
-        setStateNotDisposed(() {
-          _infoList.add(
-            _InfoWidget(
-              text: tt('project.export.success'),
-              clearInfo: _clearInfo,
-              isSuccess: true,
-            ),
-          );
-        });
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.export.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
       }
     } catch (e, t) {
       debugPrint('TCH_e $e\n$t');
 
-      setStateNotDisposed(() {
-        _infoList.add(
-          _InfoWidget(
-            text: tt('project.export.failure'),
-            clearInfo: _clearInfo,
-          ),
-        );
-      });
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.export.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 

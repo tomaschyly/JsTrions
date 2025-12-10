@@ -1,6 +1,6 @@
 {
   "$JsTrions": {
-    "message": "This metadata was generated using JsTrions at 2025-12-10 16:39:46, do not edit unless you know what to do",
+    "message": "This metadata was generated using JsTrions at 2025-12-10 17:04:54, do not edit unless you know what to do",
     "description": "Easy to use AI assisted translations of your projects. Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them. JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.",
     "website": "https://tomas-chyly.com/en/project/jstrions/",
     "windows": "https://www.microsoft.com/store/apps/9NM153P944CC",

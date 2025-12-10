@@ -1,8 +1,10 @@
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguageDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProgrammingLanguageDataTask.dart';
 import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:sembast/sembast.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -65,6 +67,9 @@ Future<void> saveProgrammingLanguage(
 }) async {
   FocusScope.of(context).unfocus();
 
+  final appTheme = context.appTheme;
+  final isNew = id == null;
+
   if (formKey.currentState!.validate()) {
     final programmingLanguage = ProgrammingLanguage.fromJson(<String, dynamic>{
       ProgrammingLanguage.COL_ID: id,
@@ -84,11 +89,21 @@ Future<void> saveProgrammingLanguage(
       extensionController.text = '';
       keyController.text = '';
     }
+
+    displayScreenMessage(
+      ScreenMessage(
+        message: isNew ? tt('programmingLanguage.new.success') : tt('programmingLanguage.edit.success'),
+        type: ScreenMessageType.success,
+      ),
+      appTheme: appTheme,
+    );
   }
 }
 
 /// Delete existing ProgrammingLanguage and update data
 Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage programmingLanguage) async {
+  final appTheme = context.appTheme;
+
   final anyProject = await anyProjectForProgrammingLanguage(programmingLanguage.id!);
 
   final confirmed = await ConfirmDialog.show(
@@ -105,6 +120,14 @@ Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage
       DeleteProgrammingLanguageDataTask(
         data: programmingLanguage,
       ),
+    );
+
+    displayScreenMessage(
+      ScreenMessage(
+        message: tt('programmingLanguage.delete.success'),
+        type: ScreenMessageType.success,
+      ),
+      appTheme: appTheme,
     );
   }
 }

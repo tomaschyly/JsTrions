@@ -10,7 +10,7 @@ import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dar
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/openai_service.dart';
-import 'package:js_trions/ui/data_widgets/ManageProgrammingLanguagesDataWidget.dart';
+import 'package:js_trions/ui/data_widgets/manage_programming_languages_data_widget.dart';
 import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
@@ -281,6 +281,14 @@ class _GeneralWidget extends StatelessWidget {
                       AppState.instance.invalidate();
 
                       pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+
+                      displayScreenMessage(
+                        ScreenMessage(
+                          message: tt('settings.screen.generic.success'),
+                          type: ScreenMessageType.success,
+                        ),
+                        appTheme: commonTheme,
+                      );
                     });
                   }
                 },
@@ -301,6 +309,14 @@ class _GeneralWidget extends StatelessWidget {
                     AppState.instance.invalidate();
 
                     pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
+
+                    displayScreenMessage(
+                      ScreenMessage(
+                        message: tt('settings.screen.generic.success'),
+                        type: ScreenMessageType.success,
+                      ),
+                      appTheme: commonTheme,
+                    );
                   });
                 },
               ),
@@ -314,6 +330,8 @@ class _GeneralWidget extends StatelessWidget {
 
   /// Clear all app data from DB after user confirms
   Future<void> _clearData(BuildContext context) async {
+    final appTheme = context.appTheme;
+
     final confirmed = await ConfirmDialog.show(
       context,
       isDanger: true,
@@ -335,6 +353,14 @@ class _GeneralWidget extends StatelessWidget {
           data: ProjectQuery.fromJson({}),
         ),
       );
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('settings.screen.reset.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 }
@@ -348,6 +374,8 @@ class _TranslationsWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final appTheme = context.appTheme;
+
     final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
 
     return Column(
@@ -383,6 +411,14 @@ class _TranslationsWidget extends StatelessWidget {
                 onChange: (TranslationsProvider? newValue) {
                   if (newValue != null) {
                     prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
+
+                    displayScreenMessage(
+                      ScreenMessage(
+                        message: tt('settings.screen.translationProvider.success'),
+                        type: ScreenMessageType.success,
+                      ),
+                      appTheme: appTheme,
+                    );
                   } else {
                     _translationsProviderKey.currentState?.setValue(provider);
                   }
@@ -408,6 +444,15 @@ class _TranslationsWidget extends StatelessWidget {
                 prefsKey: PREFS_TRANSLATIONS_NO_HTML,
                 descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
                 descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
+                onChange: (bool value) {
+                  displayScreenMessage(
+                    ScreenMessage(
+                      message: tt('settings.screen.generic.success'),
+                      type: ScreenMessageType.success,
+                    ),
+                    appTheme: appTheme,
+                  );
+                },
               ),
               CommonSpaceVDouble(),
             ],
@@ -599,6 +644,15 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
             prefsKey: PREFS_TRANSLATIONS_FALLBACK,
             descriptionOn: tt('settings.screen.translations.fallback.on'),
             descriptionOff: tt('settings.screen.translations.fallback.off'),
+            onChange: (bool value) {
+              displayScreenMessage(
+                ScreenMessage(
+                  message: tt('settings.screen.generic.success'),
+                  type: ScreenMessageType.success,
+                ),
+                appTheme: appTheme,
+              );
+            },
           ),
           CommonSpaceVDouble(),
         ],
@@ -622,6 +676,8 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
   Future<void> _save(BuildContext context) async {
     clearFocus(context);
 
+    final appTheme = context.appTheme;
+
     if (_formKey.currentState!.validate()) {
       prefsSetString(PREFS_TRANSLATIONS_OPENAI_API_KEY, _apiKeyController.text);
       prefsSetString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION, _organizationController.text);
@@ -629,6 +685,14 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
       await initOpenAIClient();
 
       _updateOpenAIModelsAsOptions();
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('settings.screen.openAI.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 }
@@ -637,6 +701,8 @@ class _ProjectsWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    final appTheme = context.appTheme;
+
     return Column(
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
@@ -675,6 +741,15 @@ class _ProjectsWidget extends StatelessWidget {
                 prefsKey: PREFS_PROJECTS_CODE_ONLY,
                 descriptionOn: tt('settings.screen.code_only.on'),
                 descriptionOff: tt('settings.screen.code_only.off'),
+                onChange: (bool value) {
+                  displayScreenMessage(
+                    ScreenMessage(
+                      message: tt('settings.screen.generic.success'),
+                      type: ScreenMessageType.success,
+                    ),
+                    appTheme: appTheme,
+                  );
+                },
               ),
               CommonSpaceVDouble(),
               SettingWidget(
@@ -701,6 +776,15 @@ class _ProjectsWidget extends StatelessWidget {
                 prefsKey: PREFS_PROJECTS_BEAUTIFY_JSON,
                 descriptionOn: tt('settings.screen.beautify_json.on'),
                 descriptionOff: tt('settings.screen.beautify_json.off'),
+                onChange: (bool value) {
+                  displayScreenMessage(
+                    ScreenMessage(
+                      message: tt('settings.screen.generic.success'),
+                      type: ScreenMessageType.success,
+                    ),
+                    appTheme: appTheme,
+                  );
+                },
               ),
               CommonSpaceVDouble(),
             ],
@@ -754,6 +838,14 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
               prefsSetInt(PREFS_PROJECTS_ANALYSIS, analysisOnInit.index);
 
               AppState.instance.invalidate();
+
+              displayScreenMessage(
+                ScreenMessage(
+                  message: tt('settings.screen.generic.success'),
+                  type: ScreenMessageType.success,
+                ),
+                appTheme: commonTheme,
+              );
             },
     );
   }
@@ -805,6 +897,14 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
               prefsSetInt(PREFS_PROJECTS_SOURCE, source.index);
 
               AppState.instance.invalidate();
+
+              displayScreenMessage(
+                ScreenMessage(
+                  message: tt('settings.screen.generic.success'),
+                  type: ScreenMessageType.success,
+                ),
+                appTheme: commonTheme,
+              );
             },
     );
   }
