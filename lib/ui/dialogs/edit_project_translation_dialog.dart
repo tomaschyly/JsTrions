@@ -352,7 +352,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           );
 
           if (result == null) {
-            message = tt('edit_project_translation.openai.fail');
+            message = tt('edit_project_translation.openai.fail').parameters({
+              r'{language}': targetLanguage,
+            });
           }
         }
 
@@ -364,7 +366,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           );
 
           if (result == null) {
-            message = tt('edit_project_translation.google_translate.fail');
+            message = tt('edit_project_translation.google_translate.fail').parameters({
+              r'{language}': targetLanguage,
+            });
           }
         }
 
@@ -379,6 +383,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             ScreenMessage(
               message: message,
               type: ScreenMessageType.error,
+              duration: const Duration(milliseconds: 5000),
             ),
             appTheme: appTheme,
           );
