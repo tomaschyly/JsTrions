@@ -10,8 +10,8 @@ import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dar
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/model/translations_provider.dart';
 import 'package:js_trions/service/openai_service.dart';
-import 'package:js_trions/ui/dataWidgets/ManageProgrammingLanguagesDataWidget.dart';
-import 'package:js_trions/ui/dataWidgets/project_detail_data_widget.dart';
+import 'package:js_trions/ui/data_widgets/ManageProgrammingLanguagesDataWidget.dart';
+import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';

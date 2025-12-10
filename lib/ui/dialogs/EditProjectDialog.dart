@@ -4,7 +4,7 @@ import 'package:file_selector/file_selector.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/service/ProjectService.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/data_widgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
