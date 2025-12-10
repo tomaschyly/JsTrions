@@ -9,9 +9,9 @@ import 'package:flutter/foundation.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:jiffy/jiffy.dart';
 import 'package:js_trions/config.dart';
-import 'package:js_trions/core/constants.dart';
 import 'package:js_trions/core/app_preferences.dart';
 import 'package:js_trions/core/app_theme.dart';
+import 'package:js_trions/core/constants.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
@@ -1638,7 +1638,7 @@ class _InfoWidget extends StatelessWidget {
   }
 }
 
-class _KeyListItemWidget extends StatelessWidget {
+class _KeyListItemWidget extends AbstractStatefulWidget {
   final String keyString;
   final String value;
   final Project theProject;
@@ -1662,101 +1662,133 @@ class _KeyListItemWidget extends StatelessWidget {
     required this.onIgnore,
   });
 
+  @override
+  State<_KeyListItemWidget> createState() => _KeyListItemWidgetState();
+}
+
+class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWidget> {
+  bool _isHovered = false;
+
   /// Create view layout from widgets
   @override
-  Widget build(BuildContext context) {
+  Widget buildContent(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    Color? rowColor = rowIsOdd ? kColorPrimary : null;
-    if (isCodeOnly) {
-      rowColor = rowIsOdd ? kColorWarning : kColorWarningDark;
+    Color rowColor = widget.rowIsOdd ? kColorPrimary : kColorPrimaryLight;
+    if (widget.isCodeOnly) {
+      rowColor = widget.rowIsOdd ? kColorWarning : kColorWarningDark;
+    }
+
+    if (_isHovered) {
+      rowColor = kColorPrimaryLightHover;
     }
 
     final actions = <Widget>[
-      if (sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+      if (widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
             variant: IconButtonVariant.IconOnly,
-            iconColor: isCodeOnly ? kColorSuccess : null,
+            iconColor: widget.isCodeOnly ? kColorSuccess : null,
           ),
-          svgAssetPath: isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
-          onTap: onAddOrEdit,
-          tooltip: isCodeOnly
+          svgAssetPath: widget.isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+          onTap: widget.onAddOrEdit,
+          tooltip: widget.isCodeOnly
               ? tt('project_detail.table.add_key.tooltip').parameters({
-                  r'$key': keyString,
+                  r'$key': widget.keyString,
                 })
               : tt('project_detail.table.edit.tooltip').parameters({
-                  r'$key': keyString,
+                  r'$key': widget.keyString,
                 }),
         ),
-      if (!isCodeOnly && sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+      if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
             variant: IconButtonVariant.IconOnly,
             iconColor: kColorDanger,
           ),
           svgAssetPath: 'images/trash.svg',
-          onTap: onDelete,
+          onTap: widget.onDelete,
           tooltip: tt('project_detail.table.delete.tooltip').parameters({
-            r'$key': keyString,
+            r'$key': widget.keyString,
           }),
         ),
-      if (isCodeOnly || sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
+      if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
             variant: IconButtonVariant.IconOnly,
-            iconColor: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
+            iconColor: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
           ),
-          svgAssetPath: sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
-          onTap: () => onIgnore(sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
-          tooltip: sourceOfTranslations != SourceOfTranslations.IgnoredKeys
+          svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
+          onTap: () => widget.onIgnore(widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
+          tooltip: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys
               ? tt('project_detail.table.ignore_key.tooltip').parameters({
-                  r'$key': keyString,
+                  r'$key': widget.keyString,
                 })
               : tt('project_detail.table.unignore_key.tooltip').parameters({
-                  r'$key': keyString,
+                  r'$key': widget.keyString,
                 }),
         ),
     ];
 
-    return Container(
-      margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-      decoration: BoxDecoration(
-        color: rowColor,
-        borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-      ),
-      child: Row(
-        mainAxisSize: MainAxisSize.max,
-        children: [
-          Expanded(
-            child: Container(
-              constraints: BoxConstraints(minHeight: kButtonHeight),
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-              child: Text(
-                keyString,
-                style: fancyText(kText),
+    return MouseRegion(
+      onEnter: (_) {
+        setStateNotDisposed(() {
+          _isHovered = true;
+        });
+      },
+      onExit: (_) {
+        setStateNotDisposed(() {
+          _isHovered = false;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+        decoration: BoxDecoration(
+          color: rowColor,
+          borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+          border: _isHovered
+              ? Border.all(
+                  color: kColorTextPrimary,
+                  width: 1,
+                )
+              : Border.all(
+                  color: rowColor,
+                  width: 1,
+                ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: Container(
+                constraints: BoxConstraints(minHeight: kButtonHeight),
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                child: Text(
+                  widget.keyString,
+                  style: fancyText(kText),
+                ),
               ),
             ),
-          ),
-          CommonSpaceH(),
-          Expanded(
-            child: Container(
-              constraints: BoxConstraints(minHeight: kButtonHeight),
-              alignment: Alignment.topLeft,
-              padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-              child: Text(
-                value,
-                style: fancyText(kText),
+            CommonSpaceH(),
+            Expanded(
+              child: Container(
+                constraints: BoxConstraints(minHeight: kButtonHeight),
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                child: Text(
+                  widget.value,
+                  style: fancyText(kText),
+                ),
               ),
             ),
-          ),
-          CommonSpaceHHalf(),
-          for (final action in actions) ...[
-            action,
             CommonSpaceHHalf(),
+            for (final action in actions) ...[
+              action,
+              CommonSpaceHHalf(),
+            ],
           ],
-        ],
+        ),
       ),
     );
   }

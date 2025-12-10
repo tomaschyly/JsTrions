@@ -1,7 +1,7 @@
 import 'package:js_trions/service/InfoService.dart';
 import 'package:js_trions/service/google_translate_service.dart';
 import 'package:js_trions/service/openai_service.dart';
-import 'package:js_trions/ui/dataWidgets/DashboardProjectsDataWidget.dart';
+import 'package:js_trions/ui/data_widgets/dashboard_projects_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/dashboard/dashboard_info_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';

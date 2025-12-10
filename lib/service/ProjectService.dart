@@ -5,7 +5,7 @@ import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectDataTask.dart';
 import 'package:js_trions/model/dataTasks/GetProjectsDataTask.dart';
 import 'package:js_trions/model/dataTasks/SaveProjectDataTask.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
+import 'package:js_trions/ui/data_widgets/ProjectProgrammingLanguagesFieldDataWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectIgnoreDirectoriesWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectLanguagesFieldWidget.dart';
 import 'package:js_trions/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart';
