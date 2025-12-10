@@ -82,9 +82,9 @@ msix_config:
   icons_background_color: transparent
   architecture: x64
   capabilities: "internetClient"
-  logo_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
-  start_menu_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
-  tile_icon_path: "G:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  logo_path: "E:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  start_menu_icon_path: "E:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
+  tile_icon_path: "E:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
   store: true
 # https://docs.flutter.dev/deployment/linux
 # flutter clean && snapcraft clean && snapcraft
