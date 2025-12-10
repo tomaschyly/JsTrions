@@ -43,7 +43,7 @@ class NotificationToastWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          margin: const EdgeInsets.only(left: 12, right: 12, top: 8, bottom: 8),
+          margin: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
           alignment: Alignment.center,
           child: Material(
             color: Colors.transparent,
@@ -56,7 +56,7 @@ class NotificationToastWidget extends StatelessWidget {
                 constraints: const BoxConstraints(minHeight: 48),
                 decoration: BoxDecoration(
                   color: background,
-                  borderRadius: BorderRadius.circular(12),
+                  borderRadius: appTheme.buttonsStyle.buttonStyle.borderRadius,
                 ),
                 alignment: Alignment.center,
                 child: Text(
