@@ -9,6 +9,7 @@ import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/service/google_translate_service.dart';
 import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/dialogs/openai_chat_dialog.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -312,6 +313,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       return;
     }
 
+    final appTheme = context.appTheme;
+
     setStateNotDisposed(() {
       _loadingIndex = index;
     });
@@ -372,13 +375,13 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             controller.text = theText;
           });
         } else if (message != null) {
-          ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-            content: Text(
-              message,
-              style: fancyText(kTextDanger),
-              textAlign: TextAlign.center,
+          displayScreenMessage(
+            ScreenMessage(
+              message: message,
+              type: ScreenMessageType.error,
             ),
-          ));
+            appTheme: appTheme,
+          );
 
           break;
         }

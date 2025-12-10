@@ -19,6 +19,7 @@ import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
 import 'package:js_trions/model/translation_key_metadata.dart';
 import 'package:js_trions/service/ProjectService.dart';
 import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
 import 'package:path/path.dart';
@@ -1087,6 +1088,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Import translations from zip file
   Future<void> _importTranslations(BuildContext context, Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final appTheme = context.appTheme;
+
     try {
       String typeLabel = tt('project.export.type.label');
 
@@ -1113,34 +1116,33 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           }
         }
 
-        setStateNotDisposed(() {
-          _infoList.add(
-            _InfoWidget(
-              text: tt('project.import.success'),
-              clearInfo: _clearInfo,
-              isSuccess: true,
-            ),
-          );
-        });
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.import.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
 
         _initProject(project, programmingLanguages, force: true);
       }
     } catch (e, t) {
       debugPrint('TCH_e $e\n$t');
 
-      setStateNotDisposed(() {
-        _infoList.add(
-          _InfoWidget(
-            text: tt('project.import.failure'),
-            clearInfo: _clearInfo,
-          ),
-        );
-      });
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.import.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 
   /// Export translations into zip file
   Future<void> _exportTranslations(BuildContext context, Project project) async {
+    final appTheme = context.appTheme;
+
     try {
       final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
@@ -1159,33 +1161,32 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         var encoder = ZipFileEncoder();
         encoder.zipDirectory(Directory(translationsAssetsDirectory!), followLinks: false, filename: savePath.path);
 
-        setStateNotDisposed(() {
-          _infoList.add(
-            _InfoWidget(
-              text: tt('project.export.success'),
-              clearInfo: _clearInfo,
-              isSuccess: true,
-            ),
-          );
-        });
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.export.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
       }
     } catch (e, t) {
       debugPrint('TCH_e $e\n$t');
 
-      setStateNotDisposed(() {
-        _infoList.add(
-          _InfoWidget(
-            text: tt('project.export.failure'),
-            clearInfo: _clearInfo,
-          ),
-        );
-      });
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.export.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 
   /// Add/Edit translations for key and save to Project assets
   Future<void> _processTranslationsForKey(BuildContext context, Project project, [String? key]) async {
     _interruptAnalysis();
+
+    final appTheme = context.appTheme;
 
     final isNew = key == null;
     final List<String> languages = [];
@@ -1232,32 +1233,25 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _calculateStats();
 
         _processSelectedLanguagePairs();
-
-        if (isNew) {
-          //TODO display message instead
-          /*_newTranslationKey = GlobalKey();
-          _newTranslation = translation.key;
-
-          addPostFrameCallback((timeStamp) {
-            final theContext = _newTranslationKey?.currentContext;
-
-            if (theContext != null) {
-              Scrollable.ensureVisible(
-                theContext,
-                duration: kThemeAnimationDuration,
-              );
-            }
-          });*/
-        }
       });
 
       await _saveTranslationsToAssets(context, project);
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: isNew ? tt('project.translation.new.success') : tt('project.translation.edit.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 
   /// If users confirms, delete translations for key and save to Project assets
   Future<void> _deleteTranslationsForKey(BuildContext context, Project project, String key) async {
     _interruptAnalysis();
+
+    final appTheme = context.appTheme;
 
     final confirmed = await ConfirmDialog.show(
       context,
@@ -1286,6 +1280,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       });
 
       await _saveTranslationsToAssets(context, project);
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.translation.delete.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
     }
   }
 

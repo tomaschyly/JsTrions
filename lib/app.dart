@@ -1,9 +1,10 @@
 import 'dart:io';
 
+import 'package:bot_toast/bot_toast.dart';
 import 'package:js_trions/config.dart';
 import 'package:js_trions/core/app_preferences.dart' as AppPreferences;
-import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/core/app_router.dart' as AppRouter;
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/images/TomasChyly.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/service/openai_service.dart';
@@ -38,6 +39,8 @@ class AppState extends AbstractStatefulWidgetState<App> {
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
+    final botToastBuilder = BotToastInit();
+
     return CoreApp(
       title: 'JsTrions',
       initializationUi: Builder(
@@ -87,7 +90,14 @@ class AppState extends AbstractStatefulWidgetState<App> {
         await initOpenAIClient();
       },
       onGenerateRoute: AppRouter.onGenerateRoute,
-      builder: appThemeBuilder,
+      builder: (BuildContext context, Widget child) {
+        child = appThemeBuilder(context, child);
+
+        child = botToastBuilder(context, child);
+
+        return child;
+      },
+      navigatorObservers: [BotToastNavigatorObserver()],
       theme: ThemeData(
         primaryColor: kColorPrimary,
         primaryColorLight: kColorPrimaryLight,

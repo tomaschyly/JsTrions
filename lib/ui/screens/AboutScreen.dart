@@ -358,16 +358,18 @@ class _LinksWidget extends StatelessWidget {
 
   /// Send feedback to BE using modal dialog
   Future<void> _sendFeedback(BuildContext context) async {
+    final appTheme = context.appTheme;
+
     final sent = await FeedbackDialog.show(context);
 
     if (sent == true) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          tt('feedback.submit'),
-          style: fancyText(kText),
-          textAlign: TextAlign.center,
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('feedback.submit'),
+          type: ScreenMessageType.success,
         ),
-      ));
+        appTheme: appTheme,
+      );
     }
   }
 }
