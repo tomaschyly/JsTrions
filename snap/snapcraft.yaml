@@ -4,6 +4,8 @@ version: 1.6.0
 summary: Easy to use AI assisted translations of your projects.
 description: 'Easy to use AI assisted translations of your projects.
 
+Use Google Translate or OpenAI models for automatic translations.
+
 Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them.
 
 JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.'
