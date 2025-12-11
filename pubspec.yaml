@@ -87,4 +87,8 @@ msix_config:
   tile_icon_path: "E:/Development/FlutterProjs/JsTrions/windows/runner/resources/icon.png"
   store: true
 # https://docs.flutter.dev/deployment/linux
-# flutter clean && snapcraft clean && snapcraft
+# https://documentation.ubuntu.com/snapcraft/stable/how-to/publishing/publish-a-snap/
+# flutter clean && snapcraft clean && snapcraft pack
+# sudo snap remove js-trions
+# sudo snap install --dangerous ./js-trions_1.6.0_amd64.snap
+# snapcraft upload --release=stable ./js-trions_1.6.0_amd64.snap

@@ -1,6 +1,6 @@
 {
   "$JsTrions": {
-    "message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa 2025-12-10 21:10:31, needitujte, pokiaľ neviete, čo robiť",
+    "message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa 2025-12-11 12:23:03, needitujte, pokiaľ neviete, čo robiť",
     "description": "Jednoduché AI asistované preklady vašich projektov. Použite JsTrions na analýzu kódu projektu na použitie prekladov, potom môžete ľahko vidieť, ktoré preklady chýbajú a pridať ich. JsTrions dobre funguje s prekladačom poskytovaným mojím Flutter balíkom tch_appliable_core, ale je kompatibilný s akýmikoľvek jednoduchými json prekladmi.",
     "website": "https://tomas-chyly.com/en/project/jstrions/",
     "windows": "https://www.microsoft.com/store/apps/9NM153P944CC",
@@ -14,5 +14,9 @@
   "openai_chat.dialog.submit": {
     "key": "openai_chat.dialog.submit",
     "description": "Keep capitalization of each word"
+  },
+  "about.screen.contact": {
+    "key": "about.screen.contact",
+    "description": "All words should start with capital letter"
   }
 }

@@ -1,4 +1,5 @@
 name: js-trions
+title: JsTrions
 version: 1.6.0
 summary: Easy to use AI assisted translations of your projects.
 description: 'Easy to use AI assisted translations of your projects.
@@ -12,8 +13,12 @@ base: core22
 grade: stable
 
 icon: snap/gui/js-trions.png
-issues: https://github.com/tomaschyly/JsTrions/issues
 website: https://tomas-chyly.com/en/project/jstrions/
+issues: https://github.com/tomaschyly/JsTrions/issues
+contact: chyly@tomas-chyly.com
+license: GPL-3.0-or-later
+source-code: https://github.com/tomaschyly/JsTrions
+donation: https://paypal.me/tomaschyly
 
 apps:
   js-trions:
@@ -21,6 +26,8 @@ apps:
     extensions: [gnome]
     plugs:
       - network
+      - home
+      - removable-media
 
 parts:
   js-trions:
