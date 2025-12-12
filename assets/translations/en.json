@@ -102,7 +102,7 @@
   "project.export.type.label": "Archive",
   "project.import.failure": "Translations failed to import",
   "project.import.success": "Translations import was a success",
-  "project.metadata.description": "Easy to use AI assisted translations of your projects. Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them. JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.",
+  "project.metadata.description": "Easy to use AI assisted translations of your projects. Use Google Translate or OpenAI models for automatic translations. Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them. JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.",
   "project.metadata.message": "This metadata was generated using JsTrions at $date, do not edit unless you know what to do",
   "project.new.success": "Project created",
   "project.translation.delete.success": "Translations deleted, project saved",

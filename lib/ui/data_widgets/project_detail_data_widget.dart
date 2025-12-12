@@ -22,6 +22,7 @@ import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
 import 'package:path/path.dart';
 import 'package:path_provider/path_provider.dart';
 import 'package:supercharged/supercharged.dart';
@@ -56,6 +57,7 @@ class ProjectDetailDataWidget extends AbstractDataWidget {
 class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> with TickerProviderStateMixin {
   Project? get project => _project;
 
+  String _appVersion = '';
   final _topKey = GlobalKey();
   ProjectAnalysisOnInit _analysisOnInit = ProjectAnalysisOnInit.Never;
   int? _projectId;
@@ -120,6 +122,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     _sourceOfTranslations = SourceOfTranslations.values[prefsInt(PREFS_PROJECTS_SOURCE)!];
 
     _scrollController.addListener(_shouldShowScrollTop);
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setStateNotDisposed(() {
+          _appVersion = packageInfo.version;
+        }));
   }
 
   /// Create screen content from widgets
@@ -1302,6 +1308,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
     final Map<String, dynamic> metadata = {
       kMetadataJsTrions: {
+        'version': _appVersion,
         'message': tt('project.metadata.message').parameters({
           r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
         }),
@@ -1309,6 +1316,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'website': kAppWebsite,
         'windows': kDownloadWin,
         'macos': kDownloadMacOS,
+        'ubuntu': kDownloadUbuntu,
       },
       kMetadataIgnoredTranslationKeys: _ignoredTranslationKeys,
       ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
