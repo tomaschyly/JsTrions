@@ -9,6 +9,7 @@ import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataTasks/DeleteProgrammingLanguagesDataTask.dart';
 import 'package:js_trions/model/dataTasks/DeleteProjectsDataTask.dart';
 import 'package:js_trions/model/translations_provider.dart';
+import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/data_widgets/manage_programming_languages_data_widget.dart';
 import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
@@ -350,6 +351,7 @@ class _GeneralWidget extends StatelessWidget {
   }
 
   /// Clear all app data from DB after user confirms
+
   Future<void> _clearData(BuildContext context) async {
     final appTheme = context.appTheme;
 
@@ -368,6 +370,9 @@ class _GeneralWidget extends StatelessWidget {
           data: ProgrammingLanguageQuery.fromJson({}),
         ),
       );
+
+      // Refill default programming languages after clearing user data
+      await fillDBWithDefaultProgrammingLanguages();
 
       await MainDataProvider.instance!.executeDataTask(
         DeleteProjectsDataTask(
