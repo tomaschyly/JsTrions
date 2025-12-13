@@ -9,49 +9,69 @@ import 'package:sembast/sembast.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-/// On first app start fill store with programming languages
-Future<void> updateDBForProgrammingLanguage(Database db, int oldVersion, int newVersion) async {
+final defaultProgrammingLanguages =
+    ProgrammingLanguages.fromJson(<String, dynamic>{
+  'list': [
+    {
+      ProgrammingLanguage.COL_NAME: 'Dart',
+      ProgrammingLanguage.COL_EXTENSION: 'dart',
+      ProgrammingLanguage.COL_KEY:
+          r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
+    },
+    {
+      ProgrammingLanguage.COL_NAME: 'Kotlin',
+      ProgrammingLanguage.COL_EXTENSION: 'kt',
+      ProgrammingLanguage.COL_KEY:
+          r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
+    },
+    {
+      ProgrammingLanguage.COL_NAME: 'Swift',
+      ProgrammingLanguage.COL_EXTENSION: 'swift',
+      ProgrammingLanguage.COL_KEY:
+          r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
+    },
+    {
+      ProgrammingLanguage.COL_NAME: 'C#',
+      ProgrammingLanguage.COL_EXTENSION: 'cs',
+      ProgrammingLanguage.COL_KEY:
+          r'''(?<=T.Tk \(\')(.*?)(?=\'\))|(?<=T.Tk \(\")(.*?)(?=\"\))''',
+    },
+    {
+      ProgrammingLanguage.COL_NAME: 'Javascript JSX',
+      ProgrammingLanguage.COL_EXTENSION: 'jsx',
+      ProgrammingLanguage.COL_KEY: r'''(?<=t \(\')(.*?)(?=\', language\))''',
+    },
+    {
+      ProgrammingLanguage.COL_NAME: 'Typescript JSX',
+      ProgrammingLanguage.COL_EXTENSION: 'tsx',
+      ProgrammingLanguage.COL_KEY: r'''(?<=tt \(\')(.*?)(?=\', language\))''',
+    },
+  ],
+});
+
+/// On first app start fill store with default programming languages
+Future<void> updateDBForProgrammingLanguage(
+    Database db, int oldVersion, int newVersion) async {
   final theStore = intMapStoreFactory.store(ProgrammingLanguage.STORE);
 
   if (oldVersion == 0) {
-    final programmingLanguages = ProgrammingLanguages.fromJson(<String, dynamic>{
-      'list': [
-        {
-          ProgrammingLanguage.COL_NAME: 'Dart',
-          ProgrammingLanguage.COL_EXTENSION: 'dart',
-          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
-        },
-        {
-          ProgrammingLanguage.COL_NAME: 'Kotlin',
-          ProgrammingLanguage.COL_EXTENSION: 'kt',
-          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
-        },
-        {
-          ProgrammingLanguage.COL_NAME: 'Swift',
-          ProgrammingLanguage.COL_EXTENSION: 'swift',
-          ProgrammingLanguage.COL_KEY: r'''(?<=tt\(\')(.*?)(?=\'\))|(?<=tt\(\")(.*?)(?=\"\))''',
-        },
-        {
-          ProgrammingLanguage.COL_NAME: 'C#',
-          ProgrammingLanguage.COL_EXTENSION: 'cs',
-          ProgrammingLanguage.COL_KEY: r'''(?<=T.Tk \(\')(.*?)(?=\'\))|(?<=T.Tk \(\")(.*?)(?=\"\))''',
-        },
-        {
-          ProgrammingLanguage.COL_NAME: 'Javascript JSX',
-          ProgrammingLanguage.COL_EXTENSION: 'jsx',
-          ProgrammingLanguage.COL_KEY: r'''(?<=t \(\')(.*?)(?=\', language\))''',
-        },
-        {
-          ProgrammingLanguage.COL_NAME: 'Typescript JSX',
-          ProgrammingLanguage.COL_EXTENSION: 'tsx',
-          ProgrammingLanguage.COL_KEY: r'''(?<=tt \(\')(.*?)(?=\', language\))''',
-        },
-      ],
-    });
-
-    for (ProgrammingLanguage programmingLanguage in programmingLanguages.programmingLanguages) {
+    for (ProgrammingLanguage programmingLanguage
+        in defaultProgrammingLanguages.programmingLanguages) {
       await theStore.add(db, programmingLanguage.toJson());
     }
+  }
+}
+
+/// Fill db with default programming languages
+Future<void> fillDBWithDefaultProgrammingLanguages() async {
+  for (ProgrammingLanguage programmingLanguage
+      in defaultProgrammingLanguages.programmingLanguages) {
+    await MainDataProvider.instance!
+        .executeDataTask<SaveProgrammingLanguageDataTask>(
+      SaveProgrammingLanguageDataTask(
+        data: programmingLanguage,
+      ),
+    );
   }
 }
 
@@ -78,7 +98,8 @@ Future<void> saveProgrammingLanguage(
       ProgrammingLanguage.COL_KEY: keyController.text,
     });
 
-    await MainDataProvider.instance!.executeDataTask<SaveProgrammingLanguageDataTask>(
+    await MainDataProvider.instance!
+        .executeDataTask<SaveProgrammingLanguageDataTask>(
       SaveProgrammingLanguageDataTask(
         data: programmingLanguage,
       ),
@@ -92,7 +113,9 @@ Future<void> saveProgrammingLanguage(
 
     displayScreenMessage(
       ScreenMessage(
-        message: isNew ? tt('programmingLanguage.new.success') : tt('programmingLanguage.edit.success'),
+        message: isNew
+            ? tt('programmingLanguage.new.success')
+            : tt('programmingLanguage.edit.success'),
         type: ScreenMessageType.success,
       ),
       appTheme: appTheme,
@@ -101,22 +124,28 @@ Future<void> saveProgrammingLanguage(
 }
 
 /// Delete existing ProgrammingLanguage and update data
-Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage programmingLanguage) async {
+Future<void> deleteProgrammingLanguage(
+    BuildContext context, ProgrammingLanguage programmingLanguage) async {
   final appTheme = context.appTheme;
 
-  final anyProject = await anyProjectForProgrammingLanguage(programmingLanguage.id!);
+  final anyProject =
+      await anyProjectForProgrammingLanguage(programmingLanguage.id!);
 
   final confirmed = await ConfirmDialog.show(
     context,
     isDanger: true,
     title: tt('dialog.confirm.title'),
-    text: anyProject != null ? tt('delete_programming_language.text').replaceAll(r'$projectName', anyProject.name) : null,
+    text: anyProject != null
+        ? tt('delete_programming_language.text')
+            .replaceAll(r'$projectName', anyProject.name)
+        : null,
     noText: tt('dialog.no'),
     yesText: tt('dialog.yes'),
   );
 
   if (confirmed == true) {
-    await MainDataProvider.instance!.executeDataTask<DeleteProgrammingLanguageDataTask>(
+    await MainDataProvider.instance!
+        .executeDataTask<DeleteProgrammingLanguageDataTask>(
       DeleteProgrammingLanguageDataTask(
         data: programmingLanguage,
       ),
@@ -133,6 +162,7 @@ Future<void> deleteProgrammingLanguage(BuildContext context, ProgrammingLanguage
 }
 
 /// Sort list of ProgrammingLanguages alphabetically
-void sortProgrammingLanguagesAlphabetically(List<ProgrammingLanguage> programmingLanguages) {
+void sortProgrammingLanguagesAlphabetically(
+    List<ProgrammingLanguage> programmingLanguages) {
   programmingLanguages.sort((a, b) => a.name.compareTo(b.name));
 }

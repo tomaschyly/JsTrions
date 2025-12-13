@@ -48,7 +48,8 @@ class EditProjectTranslationDialog extends AbstractStatefulWidget {
   State<StatefulWidget> createState() => _EditProjectTranslationDialogState();
 }
 
-class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<EditProjectTranslationDialog> {
+class _EditProjectTranslationDialogState
+    extends AbstractStatefulWidgetState<EditProjectTranslationDialog> {
   final _formKey = GlobalKey<FormState>();
   final _keyController = TextEditingController();
   final _descriptionController = TextEditingController();
@@ -65,18 +66,21 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     super.initState();
 
     _keyController.text = widget.translation.key ?? '';
-    _descriptionController.text = widget.translation.translationKeyMetadata?.description ?? '';
+    _descriptionController.text =
+        widget.translation.translationKeyMetadata?.description ?? '';
 
     _descriptionFocusNode.addListener(_onDescriptionFocus);
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
-      _fieldsControllers[i] = TextEditingController()..text = widget.translation.translations[i];
+      _fieldsControllers[i] = TextEditingController()
+        ..text = widget.translation.translations[i];
 
       _fieldsFocusNodes[i] = FocusNode();
       _fieldsFocusNodes[i]!.addListener(_onFocus);
     }
 
-    _fullScreen = prefsInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED) == 1;
+    _fullScreen =
+        prefsInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED) == 1;
   }
 
   /// Manually dispose of resources
@@ -111,14 +115,16 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
-    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final provider =
+        TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
 
     return Scaffold(
       backgroundColor: Colors.transparent,
       body: Container(
         alignment: Alignment.center,
         child: DialogContainer(
-          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle.copyWith(
+          style: commonTheme.dialogsStyle.listDialogStyle.dialogContainerStyle
+              .copyWith(
             dialogWidth: _fullScreen ? double.infinity : 992,
             stretchContent: _fullScreen,
           ),
@@ -130,7 +136,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
                   DialogHeader(
-                    style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
+                    style: commonTheme
+                        .dialogsStyle.listDialogStyle.dialogHeaderStyle,
                     title: tt('edit_project_translation.title'),
                     trailing: IconButtonWidget(
                       style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
@@ -138,13 +145,19 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         iconWidth: kButtonHeight,
                         iconHeight: kButtonHeight,
                       ),
-                      svgAssetPath: _fullScreen ? 'images/icons8-shrink.svg' : 'images/icons8-enlarge.svg',
+                      svgAssetPath: _fullScreen
+                          ? 'images/icons8-shrink.svg'
+                          : 'images/icons8-enlarge.svg',
                       onTap: () => setStateNotDisposed(() {
                         _fullScreen = !_fullScreen;
 
-                        prefsSetInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED, _fullScreen ? 1 : 0);
+                        prefsSetInt(
+                            PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED,
+                            _fullScreen ? 1 : 0);
                       }),
-                      tooltip: _fullScreen ? tt('edit_project_translation.shrink.tooltip') : tt('edit_project_translation.enlarge.tooltip'),
+                      tooltip: _fullScreen
+                          ? tt('edit_project_translation.shrink.tooltip')
+                          : tt('edit_project_translation.enlarge.tooltip'),
                     ),
                   ),
                   CommonSpaceVHalf(),
@@ -160,18 +173,22 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         ),
                         CommonSpaceHHalf(),
                         IconButtonWidget(
-                          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                          style:
+                              commonTheme.buttonsStyle.iconButtonStyle.copyWith(
                             variant: IconButtonVariant.IconOnly,
                           ),
                           svgAssetPath: 'images/clipboard.svg',
                           onTap: () {
                             Clipboard.setData(ClipboardData(text: theKey));
                           },
-                          tooltip: tt('edit_project_translation.copy_key.tooltip').parameters({
+                          tooltip:
+                              tt('edit_project_translation.copy_key.tooltip')
+                                  .parameters({
                             r'$key': theKey,
                           }),
                         ),
-                        Container(width: kButtonHeight + kCommonHorizontalMargin),
+                        Container(
+                            width: kButtonHeight + kCommonHorizontalMargin),
                       ],
                     )
                   else
@@ -190,7 +207,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                             ],
                           ),
                         ),
-                        Container(width: kButtonHeight + kCommonHorizontalMargin),
+                        Container(
+                            width: kButtonHeight + kCommonHorizontalMargin),
                       ],
                     ),
                   CommonSpaceV(),
@@ -201,10 +219,12 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         child: TextFormFieldWidget(
                           controller: _descriptionController,
                           focusNode: _descriptionFocusNode,
-                          label: tt('edit_project_translation.field.description'),
+                          label:
+                              tt('edit_project_translation.field.description'),
                           lines: _descriptionFocusNode.hasFocus ? 5 : 3,
                         ),
                       ),
+                      Container(width: kButtonHeight + kCommonHorizontalMargin),
                     ],
                   ),
                   if (provider == TranslationsProvider.openai) ...[
@@ -277,9 +297,11 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       final List<String> languages = [];
       final List<String> translations = [];
 
-      TranslationKeyMetadata? translationKeyMetadata = widget.translation.translationKeyMetadata;
+      TranslationKeyMetadata? translationKeyMetadata =
+          widget.translation.translationKeyMetadata;
 
-      if (_descriptionController.text.isNotEmpty && translationKeyMetadata == null) {
+      if (_descriptionController.text.isNotEmpty &&
+          translationKeyMetadata == null) {
         translationKeyMetadata = TranslationKeyMetadata(
           key: _keyController.text,
           description: _descriptionController.text,
@@ -308,7 +330,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   }
 
   /// Use AI translations provider to translate from source to all other languages
-  Future<void> _aiTranslate(BuildContext context, int index, String language, String query) async {
+  Future<void> _aiTranslate(
+      BuildContext context, int index, String language, String query) async {
     if (language.isEmpty || query.isEmpty) {
       return;
     }
@@ -321,7 +344,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
 
     final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
     final unescape = HtmlUnescape();
-    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final provider =
+        TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
     final fallback = prefsInt(PREFS_TRANSLATIONS_FALLBACK) == 1;
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
@@ -348,7 +372,9 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
             text: query,
             sourceLanguage: sourceLanguage,
             targetLanguage: targetLanguage,
-            context: _descriptionController.text.isNotEmpty ? _descriptionController.text : null,
+            context: _descriptionController.text.isNotEmpty
+                ? _descriptionController.text
+                : null,
           );
 
           if (result == null) {
@@ -358,7 +384,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           }
         }
 
-        if (provider == TranslationsProvider.google || (fallback && result == null)) {
+        if (provider == TranslationsProvider.google ||
+            (fallback && result == null)) {
           result = await googleTranslateTranslateText(
             query: query,
             sourceLanguage: sourceLanguage,
@@ -366,7 +393,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
           );
 
           if (result == null) {
-            message = tt('edit_project_translation.google_translate.fail').parameters({
+            message = tt('edit_project_translation.google_translate.fail')
+                .parameters({
               r'{language}': targetLanguage,
             });
           }
@@ -399,7 +427,8 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
   }
 
   /// Chat with AI to brainstorm best text/translation
-  Future<void> _chatWithAI(BuildContext context, int index, String language) async {
+  Future<void> _chatWithAI(
+      BuildContext context, int index, String language) async {
     if (language.isEmpty) {
       return;
     }
@@ -433,8 +462,11 @@ class _TranslationField extends StatelessWidget {
   final String language;
   final TextEditingController controller;
   final FocusNode focusNode;
-  final Future<void> Function(BuildContext context, int index, String language, String query) onAITranslate;
-  final Future<void> Function(BuildContext context, int index, String language) onChatWithAI;
+  final Future<void> Function(
+          BuildContext context, int index, String language, String query)
+      onAITranslate;
+  final Future<void> Function(BuildContext context, int index, String language)
+      onChatWithAI;
   final TranslationsProvider provider;
   final int loadingIndex;
 
@@ -484,9 +516,14 @@ class _TranslationField extends StatelessWidget {
               mainAxisAlignment: MainAxisAlignment.center,
               children: [
                 IconButtonWidget(
-                  svgAssetPath: provider == TranslationsProvider.openai ? 'images/icons8-chatgpt.svg' : 'images/icons8-ai.svg',
-                  onTap: () => onAITranslate(context, index, language, controller.text),
-                  tooltip: tt('edit_project_translation.google_translate.tooltip').parameters({
+                  svgAssetPath: provider == TranslationsProvider.openai
+                      ? 'images/icons8-chatgpt.svg'
+                      : 'images/icons8-ai.svg',
+                  onTap: () =>
+                      onAITranslate(context, index, language, controller.text),
+                  tooltip:
+                      tt('edit_project_translation.google_translate.tooltip')
+                          .parameters({
                     r'$language': language,
                   }),
                   isLoading: loadingIndex == index,
