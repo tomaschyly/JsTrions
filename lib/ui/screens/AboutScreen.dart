@@ -1,6 +1,7 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/config.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/ui/dialogs/FeedbackDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
@@ -8,6 +9,7 @@ import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
+import 'package:url_launcher/url_launcher_string.dart';
 
 class AboutScreen extends AbstractResponsiveScreen {
   static const String ROUTE = "/about";
@@ -289,12 +291,12 @@ class _LinksWidget extends StatelessWidget {
         children: [
           ButtonWidget(
             text: tt('about.screen.website'),
-            onTap: () => launch('https://tomas-chyly.com/en/'),
+            onTap: () => launchUrlString(kAppWebsite),
           ),
           CommonSpaceV(),
           ButtonWidget(
             text: tt('about.screen.repository'),
-            onTap: () => launch('https://github.com/tomaschyly/JsTrions'),
+            onTap: () => launchUrlString('https://github.com/tomaschyly/JsTrions'),
           ),
           CommonSpaceV(),
           ButtonWidget(
@@ -304,7 +306,7 @@ class _LinksWidget extends StatelessWidget {
           CommonSpaceV(),
           ButtonWidget(
             text: tt('about.screen.privacy'),
-            onTap: () => launch('https://tomas-chyly.com/en/jstrions-privacy-policy/'),
+            onTap: () => launchUrlString('https://tomas-chyly.com/en/jstrions-privacy-policy/'),
           ),
           CommonSpaceV(),
           Row(
@@ -313,17 +315,17 @@ class _LinksWidget extends StatelessWidget {
             children: [
               IconButtonWidget(
                 svgAssetPath: 'images/linkedin.svg',
-                onTap: () => launch('https://www.linkedin.com/in/tomas-chyly/'),
+                onTap: () => launchUrlString('https://www.linkedin.com/in/tomas-chyly/'),
               ),
               CommonSpaceHHalf(),
               IconButtonWidget(
                 svgAssetPath: 'images/twitter.svg',
-                onTap: () => launch('https://twitter.com/TomasChyly'),
+                onTap: () => launchUrlString('https://twitter.com/TomasChyly'),
               ),
               CommonSpaceHHalf(),
               IconButtonWidget(
                 svgAssetPath: 'images/github.svg',
-                onTap: () => launch('https://github.com/tomaschyly'),
+                onTap: () => launchUrlString('https://github.com/tomaschyly'),
               ),
             ],
           ),
@@ -334,17 +336,17 @@ class _LinksWidget extends StatelessWidget {
             children: [
               IconButtonWidget(
                 iconWidget: SvgPicture.asset('images/dartlang.svg'),
-                onTap: () => launch('https://pub.dev/publishers/tomas-chyly.com/packages'),
+                onTap: () => launchUrlString('https://pub.dev/publishers/tomas-chyly.com/packages'),
               ),
               CommonSpaceHHalf(),
               IconButtonWidget(
                 svgAssetPath: 'images/npm.svg',
-                onTap: () => launch('https://www.npmjs.com/~tomaschyly'),
+                onTap: () => launchUrlString('https://www.npmjs.com/~tomaschyly'),
               ),
               CommonSpaceHHalf(),
               IconButtonWidget(
                 svgAssetPath: 'images/stack_overflow.svg',
-                onTap: () => launch('https://stackoverflow.com/users/1979892/tom%C3%A1%C5%A1-chyl%C3%BD'),
+                onTap: () => launchUrlString('https://stackoverflow.com/users/1979892/tom%C3%A1%C5%A1-chyl%C3%BD'),
               ),
             ],
           ),
@@ -356,16 +358,18 @@ class _LinksWidget extends StatelessWidget {
 
   /// Send feedback to BE using modal dialog
   Future<void> _sendFeedback(BuildContext context) async {
+    final appTheme = context.appTheme;
+
     final sent = await FeedbackDialog.show(context);
 
     if (sent == true) {
-      ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-        content: Text(
-          tt('feedback.submit'),
-          style: fancyText(kText),
-          textAlign: TextAlign.center,
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('feedback.submit'),
+          type: ScreenMessageType.success,
         ),
-      ));
+        appTheme: appTheme,
+      );
     }
   }
 }
@@ -447,7 +451,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
               ),
               TextSpan(
                 text: _copyright2,
-                style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                style: fancyText(kTextBold.copyWith(
+                  color: kColorSecondary,
+                  decoration: TextDecoration.underline,
+                  decorationColor: kColorSecondary,
+                )),
                 recognizer: TapGestureRecognizer()..onTap = () => launch('https://tomas-chyly.com/en/'),
               ),
               TextSpan(
@@ -470,7 +478,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
                 ),
                 TextSpan(
                   text: _fontAwesome2,
-                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  style: fancyText(kTextBold.copyWith(
+                    color: kColorSecondary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: kColorSecondary,
+                  )),
                   recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/'),
                 ),
                 TextSpan(
@@ -479,7 +491,11 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
                 ),
                 TextSpan(
                   text: _fontAwesome4,
-                  style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline)),
+                  style: fancyText(kTextBold.copyWith(
+                    color: kColorSecondary,
+                    decoration: TextDecoration.underline,
+                    decorationColor: kColorSecondary,
+                  )),
                   recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/license/free'),
                 ),
                 TextSpan(

@@ -1,7 +1,7 @@
 import 'dart:math';
 
 import 'package:flutter_svg/svg.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 

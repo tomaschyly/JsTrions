@@ -1,0 +1,1805 @@
+import 'dart:async';
+import 'dart:collection';
+import 'dart:convert';
+import 'dart:io';
+
+import 'package:archive/archive_io.dart';
+import 'package:file_selector/file_selector.dart';
+import 'package:flutter/foundation.dart';
+import 'package:flutter_svg/flutter_svg.dart';
+import 'package:jiffy/jiffy.dart';
+import 'package:js_trions/config.dart';
+import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/core/app_theme.dart';
+import 'package:js_trions/core/constants.dart';
+import 'package:js_trions/model/ProgrammingLanguage.dart';
+import 'package:js_trions/model/Project.dart';
+import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
+import 'package:js_trions/model/dataRequests/GetProjectDataRequest.dart';
+import 'package:js_trions/model/translation_key_metadata.dart';
+import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/ui/dialogs/edit_project_translation_dialog.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
+import 'package:js_trions/ui/widgets/ChipWidget.dart';
+import 'package:js_trions/ui/widgets/ToggleContainerWidget.dart';
+import 'package:package_info_plus/package_info_plus.dart';
+import 'package:path/path.dart';
+import 'package:path_provider/path_provider.dart';
+import 'package:supercharged/supercharged.dart';
+import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/debouncer.dart';
+import 'package:tch_appliable_core/utils/text.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
+import 'package:tch_common_widgets/tch_common_widgets.dart';
+
+class ProjectDetailDataWidget extends AbstractDataWidget {
+  final int projectId;
+  final ValueChanged<Project?>? onProjectChanged;
+
+  /// ProjectDetailDataWidget initialization
+  ProjectDetailDataWidget({
+    Key? key,
+    required this.projectId,
+    this.onProjectChanged,
+  }) : super(
+          key: key,
+          dataRequests: [
+            GetProjectDataRequest(projectId: projectId),
+            GetProgrammingLanguagesDataRequest(),
+          ],
+        );
+
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => ProjectDetailDataWidgetState();
+}
+
+class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetailDataWidget> with TickerProviderStateMixin {
+  Project? get project => _project;
+
+  String _appVersion = '';
+  final _topKey = GlobalKey();
+  ProjectAnalysisOnInit _analysisOnInit = ProjectAnalysisOnInit.Never;
+  int? _projectId;
+  Project? _project;
+  bool _projectDirNotFound = false;
+  bool _projectDirMacOSRequestAccess = false;
+  bool _translationAssetsDirNotFound = false;
+  Map<String, TranslationKeyMetadata> _metadata = Map();
+  List<String> _ignoredTranslationKeys = [];
+  Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
+  Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
+  String _selectedLanguage = '';
+  SplayTreeMap<String, String> _selectedLanguagePairs = SplayTreeMap();
+  List<String> _processedKeys = [];
+  SplayTreeMap<String, String> _processedLanguagePairs = SplayTreeMap();
+  final _searchController = TextEditingController();
+  final _searchDebouncer = Debouncer(milliseconds: 300);
+  String _searchQuery = '';
+  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
+  bool _isAnalyzing = false;
+  bool _stopAnalysis = false;
+  final ValueNotifier<String> _analysisProgress = ValueNotifier('');
+  final _displayOnlyCodeOnlyKeysKey = GlobalKey<SwitchToggleWidgetState>();
+  bool _displayOnlyCodeOnlyKeys = false;
+  final ScrollController _scrollController = ScrollController();
+  final ValueNotifier<bool> _showScrollTop = ValueNotifier(false);
+  final List<_InfoWidget> _infoList = [];
+  int _keysForCurrent = 0;
+  int _wordsForCurrent = 0;
+  int _ignoredKeys = 0;
+
+  /// Manually dispose of resources
+  @override
+  void dispose() {
+    _searchController.dispose();
+
+    _searchDebouncer.dispose();
+
+    _scrollController.dispose();
+
+    super.dispose();
+  }
+
+  /// Widget parameters changed
+  @override
+  void didUpdateWidget(covariant ProjectDetailDataWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    if (oldWidget.projectId != widget.projectId) {
+      _resetForProject();
+    }
+  }
+
+  /// Run initializations of screen on first build only
+  @override
+  firstBuildOnly(BuildContext context) {
+    super.firstBuildOnly(context);
+
+    _searchController.addListener(_searchTranslations);
+
+    _analysisOnInit = ProjectAnalysisOnInit.values[prefsInt(PREFS_PROJECTS_ANALYSIS)!];
+    _sourceOfTranslations = SourceOfTranslations.values[prefsInt(PREFS_PROJECTS_SOURCE)!];
+
+    _scrollController.addListener(_shouldShowScrollTop);
+
+    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setStateNotDisposed(() {
+          _appVersion = packageInfo.version;
+        }));
+  }
+
+  /// Create screen content from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    final snapshot = AppDataState.of(context)!;
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final isDesktop = [
+      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.LargeDesktop,
+      ResponsiveScreen.ExtraLargeDesktop,
+    ].contains(snapshot.responsiveScreen);
+
+    return ValueListenableBuilder(
+      valueListenable: dataSource!.results,
+      builder: (BuildContext context, List<DataRequest> dataRequests, Widget? child) {
+        final projectDataRequest = dataRequests.first as GetProjectDataRequest;
+        final programmingLanguagesDataRequest = dataRequests[1] as GetProgrammingLanguagesDataRequest;
+
+        final theProject = projectDataRequest.result;
+        final programmingLanguages = programmingLanguagesDataRequest.result;
+
+        if (theProject == null || programmingLanguages == null) {
+          return Container();
+        }
+
+        _initProject(theProject, programmingLanguages.programmingLanguages);
+
+        Widget content;
+
+        if (_projectDirNotFound) {
+          content = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Text(
+              tt('project_detail.directory_not_found').parameters(<String, String>{
+                r'$directory': theProject.directory,
+              }),
+              style: fancyText(kTextDanger),
+            ),
+          );
+        } else if (_projectDirMacOSRequestAccess) {
+          content = Container(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Column(
+              mainAxisSize: MainAxisSize.min,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  tt('project_detail.macos_request_access.description'),
+                  style: fancyText(kTextDanger),
+                ),
+                CommonSpaceV(),
+                ButtonWidget(
+                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                    variant: ButtonVariant.Filled,
+                    widthWrapContent: true,
+                  ),
+                  text: tt('project_detail.macos_request_access'),
+                  onTap: () => _confirmFilesAccess(theProject),
+                ),
+              ],
+            ),
+          );
+        } else if (_translationAssetsDirNotFound) {
+          content = Padding(
+            padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Text(
+              tt('project_detail.translation_assets_directory_not_found').parameters(<String, String>{
+                r'$directory': '${theProject.directory}${theProject.translationAssets}',
+              }),
+              style: fancyText(kTextDanger),
+            ),
+          );
+        } else {
+          content = Column(
+            mainAxisSize: MainAxisSize.min,
+            crossAxisAlignment: CrossAxisAlignment.start,
+            children: [
+              if (_translationPairsByLanguage.isNotEmpty) ...[
+                Container(
+                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                  child: Wrap(
+                    spacing: kCommonHorizontalMarginHalf,
+                    runSpacing: kCommonVerticalMarginHalf,
+                    children: _translationPairsByLanguage.keys
+                        .map((language) => _LanguageChipWidget(
+                              language: language,
+                              selected: _selectedLanguage == language,
+                              selectLanguage: _selectLanguage,
+                            ))
+                        .toList(),
+                  ),
+                ),
+                CommonSpaceV(),
+                Row(
+                  mainAxisSize: MainAxisSize.max,
+                  children: [
+                    CommonSpaceH(),
+                    Expanded(
+                      child: Stack(
+                        alignment: Alignment.center,
+                        children: [
+                          TextFormFieldWidget(
+                            style: commonTheme.formStyle.textFormFieldStyle.copyWith(
+                              fullWidthMobileOnly: false,
+                            ),
+                            controller: _searchController,
+                            label: tt('project_detail.field.search'),
+                          ),
+                          Positioned(
+                            right: 0,
+                            child: AnimatedOpacity(
+                              duration: kThemeAnimationDuration,
+                              opacity: _searchController.text.isNotEmpty ? 1 : 0,
+                              child: IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.IconOnly,
+                                ),
+                                svgAssetPath: 'images/times-circle.svg',
+                                onTap: _searchController.text.isNotEmpty ? _clearSearch : null,
+                              ),
+                            ),
+                          ),
+                        ],
+                        clipBehavior: Clip.none,
+                      ),
+                    ),
+                    CommonSpaceH(),
+                  ],
+                ),
+                CommonSpaceV(),
+                Expanded(
+                  child: Scrollbar(
+                    controller: _scrollController,
+                    child: CustomScrollView(
+                      controller: _scrollController,
+                      slivers: [
+                        SliverToBoxAdapter(
+                          child: Column(
+                            mainAxisSize: MainAxisSize.max,
+                            crossAxisAlignment: CrossAxisAlignment.start,
+                            children: [
+                              Container(
+                                width: 1,
+                                height: 1,
+                                key: _topKey,
+                              ),
+                              Padding(
+                                padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                                child: ToggleContainerWidget(
+                                  title: tt('project_detail.actions.title'),
+                                  content: Padding(
+                                    padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                                    child: Column(
+                                      mainAxisSize: MainAxisSize.min,
+                                      crossAxisAlignment: CrossAxisAlignment.start,
+                                      children: [
+                                        Text(
+                                          tt('project_detail.actions.source.title'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                        CommonSpaceVHalf(),
+                                        Wrap(
+                                          spacing: kCommonHorizontalMarginHalf,
+                                          runSpacing: kCommonVerticalMarginHalf,
+                                          children: [
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.All,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.All,
+                                              selectSource: _selectSource,
+                                            ),
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.Assets,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.Assets,
+                                              selectSource: _selectSource,
+                                            ),
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.Code,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.Code,
+                                              selectSource: _selectSource,
+                                            ),
+                                            _SourceOfTranslationsChipWidget(
+                                              source: SourceOfTranslations.IgnoredKeys,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.IgnoredKeys,
+                                              selectSource: _selectSource,
+                                            ),
+                                          ],
+                                        ),
+                                        CommonSpaceV(),
+                                        Text(
+                                          tt('project_detail.actions.code_only_keys'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                        CommonSpaceVHalf(),
+                                        SwitchToggleWidget(
+                                          key: _displayOnlyCodeOnlyKeysKey,
+                                          initialValue: _displayOnlyCodeOnlyKeys,
+                                          onChange: (bool newValue) {
+                                            setStateNotDisposed(() {
+                                              _displayOnlyCodeOnlyKeys = newValue;
+
+                                              _processSelectedLanguagePairs();
+                                            });
+                                          },
+                                        ),
+                                        CommonSpaceV(),
+                                        Text(
+                                          tt('project_detail.actions.import_export.title'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                        CommonSpaceVHalf(),
+                                        Row(
+                                          mainAxisSize: MainAxisSize.min,
+                                          children: [
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.import_translations'),
+                                              prefixIconSvgAssetPath: 'images/file-import.svg',
+                                              onTap: () => _importTranslations(context, theProject, programmingLanguages.programmingLanguages),
+                                            ),
+                                            CommonSpaceHHalf(),
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.export_translations'),
+                                              prefixIconSvgAssetPath: 'images/file-export.svg',
+                                              onTap: () => _exportTranslations(context, theProject),
+                                            ),
+                                          ],
+                                        ),
+                                        CommonSpaceVHalf(),
+                                      ],
+                                    ),
+                                  ),
+                                ),
+                              ),
+                              CommonSpaceV(),
+                              AnimatedSize(
+                                duration: kThemeAnimationDuration,
+                                alignment: Alignment.topCenter,
+                                child: Container(
+                                  width: double.infinity,
+                                  padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                                  child: Column(
+                                    mainAxisSize: MainAxisSize.min,
+                                    crossAxisAlignment: CrossAxisAlignment.start,
+                                    children: [
+                                      ..._infoList,
+                                      if (_infoList.length > 1) ...[
+                                        ButtonWidget(
+                                          style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                            widthWrapContent: true,
+                                          ),
+                                          text: tt('project_detail.info_list.clear_all'),
+                                          onTap: () {
+                                            setStateNotDisposed(() {
+                                              _infoList.clear();
+                                            });
+                                          },
+                                        ),
+                                        CommonSpaceV(),
+                                      ],
+                                    ],
+                                  ),
+                                ),
+                              ),
+                              Row(
+                                mainAxisSize: MainAxisSize.max,
+                                mainAxisAlignment: MainAxisAlignment.start,
+                                crossAxisAlignment: CrossAxisAlignment.center,
+                                children: [
+                                  Text(
+                                    tt('project_detail.translations.label'),
+                                    style: fancyText(kTextHeadline),
+                                  ),
+                                  CommonSpaceHHalf(),
+                                  Text(
+                                    tt('project_detail.translations.stats').parameters(<String, String>{
+                                      r'$keys': _keysForCurrent.toString(),
+                                      r'$words': _wordsForCurrent.toString(),
+                                      r'$ignored': _ignoredKeys.toString(),
+                                    }),
+                                    style: fancyText(kText),
+                                  ),
+                                ],
+                              ),
+                              CommonSpaceV(),
+                              AnimatedSize(
+                                duration: kThemeAnimationDuration,
+                                alignment: Alignment.topCenter,
+                                child: Column(
+                                  mainAxisSize: MainAxisSize.min,
+                                  crossAxisAlignment: CrossAxisAlignment.end,
+                                  children: [
+                                    if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+                                      Row(
+                                        mainAxisSize: MainAxisSize.max,
+                                        mainAxisAlignment: MainAxisAlignment.end,
+                                        children: [
+                                          if (_sourceOfTranslations != SourceOfTranslations.Code)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.add_translation'),
+                                              prefixIconSvgAssetPath: 'images/plus.svg',
+                                              onTap: () => _processTranslationsForKey(context, theProject),
+                                            ),
+                                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
+                                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                                            ButtonWidget(
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                                                widthWrapContent: true,
+                                              ),
+                                              text: tt('project_detail.analyze_code'),
+                                              prefixIconSvgAssetPath: 'images/code.svg',
+                                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                              isLoading: _isAnalyzing,
+                                            ),
+                                          CommonSpaceH(),
+                                        ],
+                                      ),
+                                    AnimatedSize(
+                                      duration: kThemeAnimationDuration,
+                                      alignment: Alignment.topCenter,
+                                      child: _isAnalyzing
+                                          ? Column(
+                                              mainAxisSize: MainAxisSize.min,
+                                              crossAxisAlignment: CrossAxisAlignment.end,
+                                              children: [
+                                                CommonSpaceVHalf(),
+                                                Row(
+                                                  mainAxisSize: MainAxisSize.max,
+                                                  mainAxisAlignment: MainAxisAlignment.end,
+                                                  children: [
+                                                    ValueListenableBuilder(
+                                                      valueListenable: _analysisProgress,
+                                                      builder: (BuildContext context, String value, Widget? child) {
+                                                        return Text(
+                                                          value,
+                                                          style: fancyText(kText),
+                                                        );
+                                                      },
+                                                    ),
+                                                    CommonSpaceH(),
+                                                  ],
+                                                ),
+                                              ],
+                                            )
+                                          : Container(height: 0),
+                                    ),
+                                  ],
+                                ),
+                              ),
+                              CommonSpaceV(),
+                            ],
+                          ),
+                        ),
+                        SliverMainAxisGroup(
+                          slivers: [
+                            SliverAppBar(
+                              leading: Container(),
+                              pinned: true,
+                              backgroundColor: Colors.transparent,
+                              toolbarHeight: kButtonHeight,
+                              expandedHeight: kButtonHeight,
+                              titleSpacing: 0,
+                              flexibleSpace: Container(
+                                height: kButtonHeight,
+                                margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+                                decoration: BoxDecoration(
+                                  color: kColorSecondaryDark,
+                                  borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+                                ),
+                                child: Row(
+                                  mainAxisSize: MainAxisSize.max,
+                                  children: [
+                                    Expanded(
+                                      child: Container(
+                                        constraints: BoxConstraints(minHeight: kButtonHeight),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                                        child: Text(
+                                          tt('project_detail.table.key'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                      ),
+                                    ),
+                                    CommonSpaceH(),
+                                    Expanded(
+                                      child: Container(
+                                        constraints: BoxConstraints(minHeight: kButtonHeight),
+                                        alignment: Alignment.centerLeft,
+                                        padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                                        child: Text(
+                                          tt('project_detail.table.translation'),
+                                          style: fancyText(kTextBold),
+                                        ),
+                                      ),
+                                    ),
+                                    SizedBox(
+                                      width: kButtonHeight + kCommonHorizontalMargin + kButtonHeight,
+                                    ),
+                                  ],
+                                ),
+                              ),
+                            ),
+                            SliverList.builder(
+                              itemCount: _processedKeys.length,
+                              itemBuilder: (context, index) {
+                                final rowIsOdd = (index % 2) == 1;
+                                final key = _processedKeys[index];
+                                final value = truncateText(
+                                  _processedLanguagePairs[key]!,
+                                  200,
+                                  addDots: true,
+                                );
+
+                                final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+
+                                return _KeyListItemWidget(
+                                  keyString: key,
+                                  value: value,
+                                  theProject: theProject,
+                                  rowIsOdd: rowIsOdd,
+                                  isCodeOnly: isCodeOnly,
+                                  sourceOfTranslations: _sourceOfTranslations,
+                                  onAddOrEdit: () => _processTranslationsForKey(context, theProject, key),
+                                  onDelete: () => _deleteTranslationsForKey(context, theProject, key),
+                                  onIgnore: (ignore) => _toggleIgnoreTranslationKey(context, theProject, key, ignore),
+                                );
+                              },
+                            ),
+                          ],
+                        ),
+                        SliverToBoxAdapter(
+                          child: Container(
+                            height: kButtonHeight + (!isDesktop ? (2 * kCommonVerticalMargin) : kCommonVerticalMargin),
+                          ),
+                        ),
+                      ],
+                    ),
+                  ),
+                ),
+              ],
+            ],
+          );
+        }
+
+        return Stack(
+          children: [
+            Column(
+              mainAxisSize: MainAxisSize.max,
+              crossAxisAlignment: CrossAxisAlignment.start,
+              children: [
+                Text(
+                  theProject.name,
+                  style: fancyText(kTextHeadline),
+                ),
+                CommonSpaceV(),
+                Expanded(
+                  child: content,
+                ),
+              ],
+            ),
+            ValueListenableBuilder(
+              valueListenable: _showScrollTop,
+              builder: (BuildContext context, bool value, Widget? child) {
+                return Positioned(
+                  right: 0,
+                  bottom: !isDesktop ? kCommonVerticalMargin : 0,
+                  child: AnimatedOpacity(
+                    opacity: value ? 1 : 0,
+                    duration: kThemeAnimationDuration,
+                    child: IgnorePointer(
+                      ignoring: !value,
+                      child: Row(
+                        mainAxisSize: MainAxisSize.min,
+                        children: [
+                          if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys) ...[
+                            if (_sourceOfTranslations != SourceOfTranslations.Code)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/plus.svg',
+                                onTap: () => _processTranslationsForKey(context, theProject),
+                              ),
+                            if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
+                            if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                              IconButtonWidget(
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.Filled,
+                                  iconColor: kColorPrimaryLight,
+                                ),
+                                svgAssetPath: 'images/code.svg',
+                                onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                isLoading: _isAnalyzing,
+                              ),
+                            CommonSpaceHHalf(),
+                          ],
+                          IconButtonWidget(
+                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                              variant: IconButtonVariant.Filled,
+                              iconColor: kColorPrimaryLight,
+                            ),
+                            svgAssetPath: 'images/arrow-up.svg',
+                            onTap: () {
+                              final theContext = _topKey.currentContext;
+
+                              if (theContext != null) {
+                                Scrollable.ensureVisible(
+                                  theContext,
+                                  alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+                                  duration: kThemeAnimationDuration,
+                                );
+                              }
+                            },
+                          ),
+                        ],
+                      ),
+                    ),
+                  ),
+                );
+              },
+            ),
+          ],
+        );
+      },
+    );
+  }
+
+  /// New projectId provided, reset and load new Project
+  void _resetForProject() {
+    setStateNotDisposed(() {
+      _selectedLanguage = '';
+      _selectedLanguagePairs = SplayTreeMap();
+      _processedKeys = [];
+      _processedLanguagePairs = SplayTreeMap();
+      _codePairsByLanguage = Map();
+      _infoList.clear();
+    });
+
+    updateDataRequests([
+      GetProjectDataRequest(projectId: widget.projectId),
+      GetProgrammingLanguagesDataRequest(),
+    ]);
+  }
+
+  /// Check if Projects exists, init translations from Project based on parameters
+  /// Check and init existing metadata
+  Future<void> _initProject(Project project, List<ProgrammingLanguage> programmingLanguages, {bool force = false}) async {
+    if (force || (project.id != _projectId) || (_project != null && _project!.updated != project.updated)) {
+      _projectId = project.id;
+      _project = project;
+
+      addPostFrameCallback((timeStamp) {
+        widget.onProjectChanged?.call(_project);
+      });
+
+      final directory = Directory(project.directory);
+
+      bool exists = await directory.exists();
+      bool macOsFileAccess = true;
+
+      if (!kIsWeb && Platform.isMacOS) {
+        try {
+          await for (var _ in directory.list()) {}
+
+          macOsFileAccess = true;
+        } catch (e, t) {
+          debugPrint('TCH_e $e\n$t');
+
+          macOsFileAccess = false;
+        }
+      }
+
+      setStateNotDisposed(() {
+        _projectDirNotFound = !exists;
+        _projectDirMacOSRequestAccess = !macOsFileAccess;
+        _translationAssetsDirNotFound = false;
+        _translationPairsByLanguage = Map();
+      });
+
+      if (exists && macOsFileAccess) {
+        final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
+
+        exists = translationsAssetsDirectory != null;
+
+        setStateNotDisposed(() {
+          _translationAssetsDirNotFound = !exists;
+        });
+
+        if (exists) {
+          final Map<String, TranslationKeyMetadata> metadata = Map();
+          final List<String> ignoredFromMeta = [];
+          final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
+
+          final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
+
+          if (await metadataFile.exists()) {
+            try {
+              final json = jsonDecode(await metadataFile.readAsString());
+
+              for (dynamic key in json.keys) {
+                if (key == kMetadataIgnoredTranslationKeys) {
+                  final ignoredList = json[key] as List<dynamic>;
+                  for (final item in ignoredList) {
+                    if (item is String && item.isNotEmpty) {
+                      ignoredFromMeta.add(item);
+                    }
+                  }
+                  continue;
+                }
+
+                // ignore metadata key prefixes defined in kMetadataKeys
+                bool isMeta = false;
+                for (final prefix in kMetadataKeys) {
+                  if (key.toString().startsWith(prefix)) {
+                    isMeta = true;
+                    break;
+                  }
+                }
+
+                if (isMeta) continue;
+
+                final value = TranslationKeyMetadata.fromJson(key, json[key]);
+
+                if (value != null) {
+                  metadata[key] = value;
+                }
+              }
+            } catch (e, t) {
+              debugPrint('TCH_e $e\n$t');
+            }
+          }
+
+          for (String language in project.languages) {
+            final file = File(join(translationsAssetsDirectory, '$language.json'));
+
+            if (!(await file.exists())) {
+              await file.writeAsString('{}');
+            }
+
+            final json = jsonDecode(await file.readAsString());
+
+            try {
+              if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
+                final jsonObject = Map<String, dynamic>.from(json);
+
+                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(jsonObject[project.formatObjectInside]);
+              } else {
+                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
+              }
+            } catch (e, t) {
+              debugPrint('TCH_e $e\n$t');
+
+              translationPairsByLanguage[language] = SplayTreeMap<String, String>();
+            }
+          }
+
+          setStateNotDisposed(() {
+            _metadata = metadata;
+            _ignoredTranslationKeys = ignoredFromMeta;
+            _translationPairsByLanguage = translationPairsByLanguage;
+
+            addPostFrameCallback((timeStamp) {
+              _selectLanguage(_translationPairsByLanguage.keys.first);
+
+              if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
+                _processProjectCode(project, programmingLanguages);
+              } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly &&
+                  (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
+                _processProjectCode(project, programmingLanguages);
+              } else {
+                _analyzeTranslations();
+              }
+            });
+          });
+        }
+      }
+
+      updateLastSeenOfProject(project);
+    }
+  }
+
+  /// Analyze translations for equality, if some has missing translations notify
+  void _analyzeTranslations() {
+    final countByLanguage = Map<String, int>();
+    final keysByLanguage = Map<String, List<String>>();
+
+    for (String language in _translationPairsByLanguage.keys) {
+      final pairsForLanguage = _translationPairsByLanguage[language]!;
+
+      countByLanguage[language] = pairsForLanguage.keys.length;
+      keysByLanguage[language] = pairsForLanguage.keys.toList()..sort();
+    }
+
+    final List<_InfoWidget> infoList = [];
+    bool languagesNotEqualCount = false;
+
+    String languageTopCount = '';
+    String? languageLowerCount;
+    int topCount = -1;
+    int lowerCount = 0;
+
+    for (String language in countByLanguage.keys) {
+      final count = countByLanguage[language]!;
+
+      if (topCount == -1) {
+        languageTopCount = language;
+        topCount = count;
+      } else if (count > topCount) {
+        languageTopCount = language;
+        topCount = count;
+      }
+    }
+
+    for (String language in countByLanguage.keys) {
+      final count = countByLanguage[language]!;
+
+      if (count < topCount) {
+        languageLowerCount = language;
+        lowerCount = count;
+        languagesNotEqualCount = true;
+        break;
+      }
+    }
+
+    if (languagesNotEqualCount) {
+      infoList.add(
+        _InfoWidget(
+          text: tt('project_detail.info.languages_not_equal_count').parameters(<String, String>{
+            r'$topLanguageCode': languageTopCount,
+            r'$topLanguageCount': topCount.toString(),
+            r'$lowerLanguageCode': languageLowerCount!,
+            r'$lowerLanguageCount': lowerCount.toString(),
+          }),
+          clearInfo: _clearInfo,
+        ),
+      );
+    }
+
+    if (!languagesNotEqualCount) {
+      bool languagesNotEqualKeys = false;
+
+      for (String language in keysByLanguage.keys) {
+        final keys = keysByLanguage[language]!;
+
+        for (String otherLanguage in keysByLanguage.keys) {
+          if (otherLanguage != language) {
+            final otherKeys = keysByLanguage[otherLanguage]!;
+
+            languagesNotEqualKeys = listEquals(keys, otherKeys);
+
+            if (!languagesNotEqualKeys) {
+              infoList.add(
+                _InfoWidget(
+                  text: tt('project_detail.info.languages_not_equal_keys').parameters(<String, String>{
+                    r'$language': language,
+                    r'$otherLanguage': otherLanguage,
+                  }),
+                  clearInfo: _clearInfo,
+                ),
+              );
+              break;
+            }
+          }
+        }
+
+        if (!languagesNotEqualKeys) {
+          break;
+        }
+      }
+    }
+
+    if (_codePairsByLanguage.isNotEmpty) {
+      final keysInAssets = keysByLanguage[languageTopCount]!;
+
+      for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
+        if (!keysInAssets.contains(key) && !_ignoredTranslationKeys.contains(key)) {
+          final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
+
+          if (showCodeOnly) {
+            _displayOnlyCodeOnlyKeysKey.currentState?.changeValue(true);
+
+            setStateNotDisposed(() {
+              _displayOnlyCodeOnlyKeys = true;
+
+              _processSelectedLanguagePairs();
+            });
+          }
+
+          infoList.add(
+            _InfoWidget(
+              text: tt('project_detail.info.code_key_not_translated'),
+              clearInfo: _clearInfo,
+            ),
+          );
+          break;
+        }
+      }
+    }
+
+    if (infoList.isEmpty) {
+      infoList.add(
+        _InfoWidget(
+          text: tt('project_detail.info.success'),
+          isSuccess: true,
+          clearInfo: _clearInfo,
+        ),
+      );
+    }
+
+    setStateNotDisposed(() {
+      // _infoList.clear();
+
+      _infoList.addAll(infoList);
+    });
+  }
+
+  /// Clear chosen info from list
+  void _clearInfo(_InfoWidget info) {
+    setStateNotDisposed(() {
+      _infoList.remove(info);
+    });
+  }
+
+  /// Calculate statistics for current language
+  void _calculateStats() {
+    _keysForCurrent = _selectedLanguagePairs.keys.length;
+
+    int words = 0;
+
+    for (String key in _selectedLanguagePairs.keys) {
+      String text = _selectedLanguagePairs[key]!;
+
+      words += text.split(' ').length;
+    }
+
+    _wordsForCurrent = words;
+
+    _ignoredKeys = _ignoredTranslationKeys.length;
+  }
+
+  /// Process selected language pairs (key, value) based on filters
+  void _processSelectedLanguagePairs() {
+    _processedKeys = <String>[];
+    _processedLanguagePairs = SplayTreeMap();
+
+    for (String key in _selectedLanguagePairs.keys) {
+      final queryFilter = _searchQuery.isEmpty || key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery);
+
+      bool sourceFilter =
+          !_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+
+      if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.IgnoredKeys) {
+        sourceFilter = _ignoredTranslationKeys.contains(key);
+      } else if (sourceFilter && _ignoredTranslationKeys.contains(key)) {
+        sourceFilter = false;
+      }
+
+      if (queryFilter && sourceFilter) {
+        _processedKeys.add(key);
+        _processedLanguagePairs[key] = _selectedLanguagePairs[key]!;
+      }
+    }
+  }
+
+  /// Confirm access to Project files by picking the directory
+  Future<void> _confirmFilesAccess(Project project) async {
+    try {
+      final directoryPath = await getDirectoryPath(
+        initialDirectory: project.directory,
+        confirmButtonText: tt('project_detail.macos_request_access'),
+      );
+
+      if (directoryPath == project.directory) {
+        setStateNotDisposed(() {
+          _projectId = null;
+        });
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+    }
+  }
+
+  /// Select Language & init it
+  void _selectLanguage(String language) {
+    setStateNotDisposed(() {
+      _selectedLanguage = language;
+
+      _selectedLanguagePairs = SplayTreeMap();
+
+      switch (_sourceOfTranslations) {
+        case SourceOfTranslations.Assets:
+          _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
+          break;
+        case SourceOfTranslations.Code:
+          _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
+          break;
+        case SourceOfTranslations.All:
+        case SourceOfTranslations.IgnoredKeys:
+          _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
+
+          _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
+          break;
+      }
+
+      _calculateStats();
+
+      _processSelectedLanguagePairs();
+
+      addPostFrameCallback((timeStamp) {
+        final theContext = _topKey.currentContext;
+
+        if (theContext != null) {
+          Scrollable.ensureVisible(
+            theContext,
+            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
+          );
+        }
+      });
+    });
+  }
+
+  /// Select SourceOfTranslations & update table
+  void _selectSource(SourceOfTranslations source) {
+    setStateNotDisposed(() {
+      _sourceOfTranslations = source;
+
+      addPostFrameCallback((timeStamp) {
+        _selectLanguage(_selectedLanguage);
+      });
+    });
+  }
+
+  /// Filter visible translations by query
+  void _searchTranslations() {
+    _searchDebouncer.run(() {
+      setStateNotDisposed(() {
+        _searchQuery = _searchController.text.toLowerCase();
+
+        _processSelectedLanguagePairs();
+      });
+    });
+  }
+
+  /// Clear search query
+  void _clearSearch() {
+    _searchDebouncer.dispose();
+
+    _searchController.text = '';
+
+    setStateNotDisposed(() {
+      _searchQuery = _searchController.text.toLowerCase();
+
+      _processSelectedLanguagePairs();
+    });
+  }
+
+  /// Import translations from zip file
+  Future<void> _importTranslations(BuildContext context, Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final appTheme = context.appTheme;
+
+    try {
+      String typeLabel = tt('project.export.type.label');
+
+      XFile? file = await openFile(
+        initialDirectory: (await getDownloadsDirectory())?.path,
+        acceptedTypeGroups: [
+          XTypeGroup(label: typeLabel, extensions: ['zip'])
+        ],
+      );
+
+      if (file != null) {
+        final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
+
+        var decoder = ZipDecoder();
+        Archive archive = decoder.decodeBytes(await file.readAsBytes());
+
+        List<String> languages = project.languages.map((language) => '$language.json').toList();
+
+        for (ArchiveFile file in archive) {
+          if (languages.contains(file.name)) {
+            File targetFile = File(join(translationsAssetsDirectory!, file.name));
+
+            await targetFile.writeAsBytes(file.content as List<int>);
+          }
+        }
+
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.import.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
+
+        _initProject(project, programmingLanguages, force: true);
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.import.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
+    }
+  }
+
+  /// Export translations into zip file
+  Future<void> _exportTranslations(BuildContext context, Project project) async {
+    final appTheme = context.appTheme;
+
+    try {
+      final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
+
+      String saveName = tt('project.export.name');
+      String typeLabel = tt('project.export.type.label');
+
+      FileSaveLocation? savePath = await getSaveLocation(
+        suggestedName: '$saveName.zip',
+        acceptedTypeGroups: [
+          XTypeGroup(label: typeLabel, extensions: ['zip'])
+        ],
+        initialDirectory: (await getDownloadsDirectory())?.path,
+      );
+
+      if (savePath != null) {
+        var encoder = ZipFileEncoder();
+        encoder.zipDirectory(Directory(translationsAssetsDirectory!), followLinks: false, filename: savePath.path);
+
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('project.export.success'),
+            type: ScreenMessageType.success,
+          ),
+          appTheme: appTheme,
+        );
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.export.failure'),
+          type: ScreenMessageType.error,
+        ),
+        appTheme: appTheme,
+      );
+    }
+  }
+
+  /// Add/Edit translations for key and save to Project assets
+  Future<void> _processTranslationsForKey(BuildContext context, Project project, [String? key]) async {
+    _interruptAnalysis();
+
+    final appTheme = context.appTheme;
+
+    final isNew = key == null;
+    final List<String> languages = [];
+    final List<String> translations = [];
+
+    for (String language in project.languages) {
+      languages.add(language);
+
+      final pairs = _translationPairsByLanguage[language]!;
+
+      translations.add(pairs[key] ?? '');
+    }
+
+    final translation = await EditProjectTranslationDialog.show(
+      context,
+      project: project,
+      translation: Translation(
+        key: key,
+        languages: languages,
+        translations: translations,
+        translationKeyMetadata: _metadata[key],
+      ),
+    );
+
+    if (translation != null) {
+      if (translation.translationKeyMetadata != null) {
+        _metadata[translation.key!] = translation.translationKeyMetadata!;
+      }
+
+      for (int i = 0; i < translation.languages.length; i++) {
+        final language = translation.languages[i];
+
+        final pairs = _translationPairsByLanguage[language]!;
+
+        pairs[translation.key!] = translation.translations[i];
+
+        final codePairs = _codePairsByLanguage[language];
+        if (codePairs != null) {
+          codePairs[translation.key!] = translation.translations[i];
+        }
+      }
+
+      setStateNotDisposed(() {
+        _calculateStats();
+
+        _processSelectedLanguagePairs();
+      });
+
+      await _saveTranslationsToAssets(context, project);
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: isNew ? tt('project.translation.new.success') : tt('project.translation.edit.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
+    }
+  }
+
+  /// If users confirms, delete translations for key and save to Project assets
+  Future<void> _deleteTranslationsForKey(BuildContext context, Project project, String key) async {
+    _interruptAnalysis();
+
+    final appTheme = context.appTheme;
+
+    final confirmed = await ConfirmDialog.show(
+      context,
+      isDanger: true,
+      title: tt('dialog.confirm.title'),
+      noText: tt('dialog.no'),
+      yesText: tt('dialog.yes'),
+    );
+
+    if (confirmed == true) {
+      for (String language in project.languages) {
+        final pairs = _translationPairsByLanguage[language]!;
+
+        pairs.remove(key);
+
+        final codePairs = _codePairsByLanguage[language];
+        if (codePairs != null) {
+          codePairs.remove(key);
+        }
+      }
+
+      setStateNotDisposed(() {
+        _calculateStats();
+
+        _processSelectedLanguagePairs();
+      });
+
+      await _saveTranslationsToAssets(context, project);
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.translation.delete.success'),
+          type: ScreenMessageType.success,
+        ),
+        appTheme: appTheme,
+      );
+    }
+  }
+
+  /// Save translations for all languages to Project translations assets directory
+  /// Save also metadata
+  Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
+    final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
+
+    final now = Jiffy.now();
+    final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
+
+    final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
+    final Map<String, dynamic> metadata = {
+      kMetadataJsTrions: {
+        'version': _appVersion,
+        'message': tt('project.metadata.message').parameters({
+          r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
+        }),
+        'description': tt('project.metadata.description'),
+        'website': kAppWebsite,
+        'windows': kDownloadWin,
+        'macos': kDownloadMacOS,
+        'ubuntu': kDownloadUbuntu,
+      },
+      kMetadataIgnoredTranslationKeys: _ignoredTranslationKeys,
+      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
+            (key, value) => MapEntry(key, value.toJson()),
+          ),
+    };
+
+    await metadataFile.writeAsString(encoder.convert(metadata));
+
+    for (String language in project.languages) {
+      final file = File(join(translationsAssetsDirectory, '$language.json'));
+
+      final pairs = _translationPairsByLanguage[language]!;
+
+      if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
+        final jsonObject = <String, dynamic>{
+          '${project.formatObjectInside}': pairs,
+        };
+
+        await file.writeAsString(encoder.convert(jsonObject));
+      } else {
+        await file.writeAsString(encoder.convert(pairs));
+      }
+    }
+  }
+
+  /// Go through whole Project code depending on Programming Languages and find keys usage, pair with existing translations
+  Future<void> _processProjectCode(Project project, List<ProgrammingLanguage> programmingLanguages) async {
+    final projectId = widget.projectId;
+    final start = DateTime.now();
+
+    _stopAnalysis = false;
+    setStateNotDisposed(() {
+      _isAnalyzing = true;
+    });
+    _analysisProgress.value = tt('project_detail.analysis.start');
+
+    List<String> directoriesToIgnore = project.directories.map((String directory) => '${project.directory}$directory').toList();
+
+    Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map<String, SplayTreeMap<String, String>>.from(_translationPairsByLanguage);
+    Map<String, SplayTreeMap<String, String>> codePairsByLanguage = Map();
+
+    final Map<String, ProgrammingLanguage> acceptedExtensions = Map();
+
+    for (ProgrammingLanguage programmingLanguage in programmingLanguages) {
+      if (project.programmingLanguages.contains(programmingLanguage.id)) {
+        acceptedExtensions['.${programmingLanguage.extension}'] = programmingLanguage;
+      }
+    }
+
+    final List<String> foundKeys = [];
+
+    final directory = Directory(project.directory);
+    int filesAnalyzed = 0;
+
+    await for (var file in directory.list(recursive: true, followLinks: false)) {
+      if (_stopAnalysis || projectId != widget.projectId) {
+        return;
+      }
+
+      if (file is File) {
+        bool skip = false;
+
+        for (String ignore in directoriesToIgnore) {
+          if (file.path.contains(ignore)) {
+            skip = true;
+            break;
+          }
+        }
+
+        if (skip) {
+          continue;
+        }
+
+        final fileExtension = extension(file.path);
+
+        final programmingLanguageForExtension = acceptedExtensions[fileExtension];
+
+        if (programmingLanguageForExtension != null) {
+          final regExp =
+              RegExp(project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key);
+
+          final fileContents = await file.readAsString();
+
+          regExp.allMatches(fileContents).forEach((match) {
+            for (int i = 0; i < match.groupCount; i++) {
+              final group = match.group(i);
+
+              if (group != null) {
+                foundKeys.add(group);
+              }
+            }
+          });
+
+          filesAnalyzed++;
+          _analysisProgress.value = tt('project_detail.analysis.files_analyzed').parameters(<String, String>{
+            r'$filesAnalyzed': filesAnalyzed.toString(),
+          });
+        }
+      }
+    }
+
+    for (String language in project.languages) {
+      final pairs = translationPairsByLanguage[language]!;
+      final codePairs = SplayTreeMap<String, String>();
+
+      for (String key in foundKeys) {
+        codePairs[key] = pairs[key] ?? '';
+      }
+
+      codePairsByLanguage[language] = codePairs;
+    }
+
+    if (_stopAnalysis || projectId != widget.projectId) {
+      return;
+    }
+
+    final diff = DateTime.now().difference(start);
+    final minAnalysisAnimationDuration = 800;
+
+    setStateNotDisposed(() {
+      _codePairsByLanguage = codePairsByLanguage;
+      if (diff.inMilliseconds >= minAnalysisAnimationDuration) {
+        _isAnalyzing = false;
+      }
+
+      addPostFrameCallback((timeStamp) {
+        _selectLanguage(_selectedLanguage);
+
+        _analyzeTranslations();
+      });
+    });
+
+    if (diff.inMilliseconds < minAnalysisAnimationDuration) {
+      Future.delayed(Duration(milliseconds: minAnalysisAnimationDuration - diff.inMilliseconds), () {
+        setStateNotDisposed(() {
+          _isAnalyzing = false;
+        });
+      });
+    }
+  }
+
+  /// Stop any in progress Project code analysis
+  void _interruptAnalysis() {
+    _stopAnalysis = true;
+
+    Future.delayed(kThemeAnimationDuration, () {
+      setStateNotDisposed(() {
+        _isAnalyzing = false;
+      });
+    });
+  }
+
+  /// Toggle scrollTop visibility based on scrolled position.
+  void _shouldShowScrollTop() {
+    if (_scrollController.position.pixels > kCommonVerticalMargin && !_showScrollTop.value) {
+      _showScrollTop.value = true;
+    } else if (_scrollController.position.pixels <= kCommonVerticalMargin && _showScrollTop.value) {
+      _showScrollTop.value = false;
+    }
+  }
+
+  /// Add or remove key from ignored translation keys
+  Future<void> _toggleIgnoreTranslationKey(BuildContext context, Project project, String key, bool ignore) async {
+    _interruptAnalysis();
+
+    if (ignore && !_ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.add(key);
+    } else if (!ignore && _ignoredTranslationKeys.contains(key)) {
+      _ignoredTranslationKeys.remove(key);
+    }
+
+    setStateNotDisposed(() {
+      _calculateStats();
+
+      _processSelectedLanguagePairs();
+    });
+
+    await _saveTranslationsToAssets(context, project);
+  }
+}
+
+enum ProjectAnalysisOnInit {
+  Always,
+  Never,
+  CodeVisibleOnly,
+}
+
+class _LanguageChipWidget extends StatelessWidget {
+  final String language;
+  final bool selected;
+  final void Function(String language) selectLanguage;
+
+  /// LanguageChipWidget initialization
+  _LanguageChipWidget({
+    required this.language,
+    this.selected = false,
+    required this.selectLanguage,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    return ChipWidget(
+      text: language,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+      ),
+      onTap: selected ? null : () => selectLanguage(language),
+    );
+  }
+}
+
+enum SourceOfTranslations {
+  Assets,
+  Code,
+  All,
+  IgnoredKeys,
+}
+
+class _SourceOfTranslationsChipWidget extends StatelessWidget {
+  final SourceOfTranslations source;
+  final bool selected;
+  final void Function(SourceOfTranslations source) selectSource;
+
+  /// SourceOfTranslationsChipWidget initialization
+  _SourceOfTranslationsChipWidget({
+    required this.source,
+    this.selected = false,
+    required this.selectSource,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    String text = '';
+
+    switch (source) {
+      case SourceOfTranslations.All:
+        text = tt('project_detail.actions.source.all');
+        break;
+      case SourceOfTranslations.Assets:
+        text = tt('project_detail.actions.source.assets');
+        break;
+      case SourceOfTranslations.Code:
+        text = tt('project_detail.actions.source.code');
+        break;
+      case SourceOfTranslations.IgnoredKeys:
+        text = tt('project_detail.actions.source.ignored_keys');
+        break;
+    }
+
+    return ChipWidget(
+      text: text,
+      suffixIcon: SvgPicture.asset(
+        selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
+        width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
+        height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
+        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+      ),
+      onTap: selected ? null : () => selectSource(source),
+    );
+  }
+}
+
+class _InfoWidget extends StatelessWidget {
+  final String text;
+  final bool isSuccess;
+  final void Function(_InfoWidget info) clearInfo;
+
+  /// InfoWidget initialization
+  _InfoWidget({
+    required this.text,
+    this.isSuccess = false,
+    required this.clearInfo,
+  });
+
+  /// Create view layout from widgets
+  @override
+  Widget build(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    TextStyle textStyle = kTextWarning;
+
+    if (isSuccess) {
+      textStyle = kTextSuccess;
+    }
+
+    /* if (isDanger) {
+      textStyle = kTextDanger;
+    } */
+
+    return Column(
+      mainAxisSize: MainAxisSize.min,
+      crossAxisAlignment: CrossAxisAlignment.start,
+      children: [
+        Row(
+          mainAxisSize: MainAxisSize.max,
+          mainAxisAlignment: MainAxisAlignment.start,
+          crossAxisAlignment: CrossAxisAlignment.center,
+          children: [
+            Flexible(
+              child: Text(
+                text,
+                style: fancyText(textStyle),
+              ),
+            ),
+            CommonSpaceHHalf(),
+            IconButtonWidget(
+              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                variant: IconButtonVariant.IconOnly,
+                color: kColorDanger,
+              ),
+              svgAssetPath: 'images/times.svg',
+              onTap: () => clearInfo(this),
+            ),
+          ],
+        ),
+        CommonSpaceV(),
+      ],
+    );
+  }
+}
+
+class _KeyListItemWidget extends AbstractStatefulWidget {
+  final String keyString;
+  final String value;
+  final Project theProject;
+  final bool rowIsOdd;
+  final bool isCodeOnly;
+  final SourceOfTranslations sourceOfTranslations;
+  final VoidCallback onAddOrEdit;
+  final VoidCallback onDelete;
+  final ValueChanged<bool> onIgnore;
+
+  /// KeyListItemWidget initialization
+  _KeyListItemWidget({
+    required this.keyString,
+    required this.value,
+    required this.theProject,
+    required this.rowIsOdd,
+    required this.isCodeOnly,
+    required this.sourceOfTranslations,
+    required this.onAddOrEdit,
+    required this.onDelete,
+    required this.onIgnore,
+  });
+
+  @override
+  State<_KeyListItemWidget> createState() => _KeyListItemWidgetState();
+}
+
+class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWidget> {
+  bool _isHovered = false;
+
+  /// Create view layout from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    Color rowColor = widget.rowIsOdd ? kColorPrimary : kColorPrimaryLight;
+    if (widget.isCodeOnly) {
+      rowColor = widget.rowIsOdd ? kColorWarning : kColorWarningDark;
+    }
+
+    if (_isHovered) {
+      rowColor = kColorPrimaryLightHover;
+    }
+
+    final actions = <Widget>[
+      if (widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: widget.isCodeOnly ? kColorSuccess : null,
+          ),
+          svgAssetPath: widget.isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
+          onTap: widget.onAddOrEdit,
+          tooltip: widget.isCodeOnly
+              ? tt('project_detail.table.add_key.tooltip').parameters({
+                  r'$key': widget.keyString,
+                })
+              : tt('project_detail.table.edit.tooltip').parameters({
+                  r'$key': widget.keyString,
+                }),
+        ),
+      if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: kColorDanger,
+          ),
+          svgAssetPath: 'images/trash.svg',
+          onTap: widget.onDelete,
+          tooltip: tt('project_detail.table.delete.tooltip').parameters({
+            r'$key': widget.keyString,
+          }),
+        ),
+      if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
+        IconButtonWidget(
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+            variant: IconButtonVariant.IconOnly,
+            iconColor: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
+          ),
+          svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
+          onTap: () => widget.onIgnore(widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
+          tooltip: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys
+              ? tt('project_detail.table.ignore_key.tooltip').parameters({
+                  r'$key': widget.keyString,
+                })
+              : tt('project_detail.table.unignore_key.tooltip').parameters({
+                  r'$key': widget.keyString,
+                }),
+        ),
+    ];
+
+    return MouseRegion(
+      onEnter: (_) {
+        setStateNotDisposed(() {
+          _isHovered = true;
+        });
+      },
+      onExit: (_) {
+        setStateNotDisposed(() {
+          _isHovered = false;
+        });
+      },
+      child: Container(
+        margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+        decoration: BoxDecoration(
+          color: rowColor,
+          borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
+          border: _isHovered
+              ? Border.all(
+                  color: kColorTextPrimary,
+                  width: 1,
+                )
+              : Border.all(
+                  color: rowColor,
+                  width: 1,
+                ),
+        ),
+        child: Row(
+          mainAxisSize: MainAxisSize.max,
+          children: [
+            Expanded(
+              child: Container(
+                constraints: BoxConstraints(minHeight: kButtonHeight),
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                child: Text(
+                  widget.keyString,
+                  style: fancyText(kText),
+                ),
+              ),
+            ),
+            CommonSpaceH(),
+            Expanded(
+              child: Container(
+                constraints: BoxConstraints(minHeight: kButtonHeight),
+                alignment: Alignment.topLeft,
+                padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
+                child: Text(
+                  widget.value,
+                  style: fancyText(kText),
+                ),
+              ),
+            ),
+            CommonSpaceHHalf(),
+            for (final action in actions) ...[
+              action,
+              CommonSpaceHHalf(),
+            ],
+          ],
+        ),
+      ),
+    );
+  }
+}

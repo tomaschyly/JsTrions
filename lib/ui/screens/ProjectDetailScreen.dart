@@ -1,8 +1,8 @@
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:supercharged/supercharged.dart';
@@ -218,7 +218,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   firstBuildOnly(BuildContext context) {
     super.firstBuildOnly(context);
 
-    WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+    addPostFrameCallback((timeStamp) {
       popNotDisposed(context, mounted);
     });
   }

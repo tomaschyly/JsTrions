@@ -1,8 +1,9 @@
 import 'dart:io';
 
 import 'package:js_trions/config.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/dataTasks/HttpGetDataTask.dart';
+import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -194,6 +195,8 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
   Future<void> _sendFeedback(BuildContext context) async {
     FocusScope.of(context).unfocus();
 
+    final appTheme = context.appTheme;
+
     if (!_gdpr) {
       setStateNotDisposed(() {
         _gdprError = true;
@@ -226,7 +229,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
         setStateNotDisposed(() {
           _isSending = false;
 
-          WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+          WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
             popNotDisposed(context, mounted, true);
           });
         });
@@ -235,13 +238,13 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
           _isSending = false;
         });
 
-        ScaffoldMessenger.of(context).showSnackBar(SnackBar(
-          content: Text(
-            tt('feedback.submit.fail'),
-            style: fancyText(kTextDanger),
-            textAlign: TextAlign.center,
+        displayScreenMessage(
+          ScreenMessage(
+            message: tt('feedback.submit.fail'),
+            type: ScreenMessageType.error,
           ),
-        ));
+          appTheme: appTheme,
+        );
       }
     }
   }

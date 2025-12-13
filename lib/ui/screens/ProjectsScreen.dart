@@ -1,13 +1,13 @@
 import 'dart:async';
 
 import 'package:flutter_svg/flutter_svg.dart';
-import 'package:js_trions/core/AppTheme.dart';
+import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/ProjectQuery.dart';
 import 'package:js_trions/model/dataRequests/GetProjectsDataRequest.dart';
 import 'package:js_trions/model/dataTasks/GetProjectDataTask.dart';
-import 'package:js_trions/model/providers/ProjectProvider.dart';
-import 'package:js_trions/ui/dataWidgets/ProjectDetailDataWidget.dart';
+import 'package:js_trions/service/ProjectService.dart';
+import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/dialogs/EditProjectDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
@@ -103,13 +103,13 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
     final snapshot = AppDataState.of(context)!;
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    _project = project;
-
     final isDesktop = [
       ResponsiveScreen.ExtraLargeDesktop,
       ResponsiveScreen.LargeDesktop,
       ResponsiveScreen.SmallDesktop,
     ].contains(snapshot.responsiveScreen);
+
+    _project = project;
 
     setStateNotDisposed(() {
       options.appBarOptions = <AppBarOption>[
@@ -139,39 +139,59 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
               EditProjectDialog.show(context, project: _project);
             },
             icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
-            button: isDesktop
-                ? ButtonWidget(
-                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.TextOnly,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                      widthWrapContent: true,
-                    ),
-                    text: tt('project_detail.edit_project'),
-                    prefixIconSvgAssetPath: 'images/edit.svg',
-                    onTap: () {
-                      EditProjectDialog.show(context, project: _project);
-                    },
-                  )
-                : null,
+            button: Builder(builder: (context) {
+              final snapshot = AppDataState.of(context)!;
+
+              final isDesktop = [
+                ResponsiveScreen.ExtraLargeDesktop,
+                ResponsiveScreen.LargeDesktop,
+                ResponsiveScreen.SmallDesktop,
+              ].contains(snapshot.responsiveScreen);
+
+              return isDesktop
+                  ? ButtonWidget(
+                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                        variant: ButtonVariant.TextOnly,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                        widthWrapContent: true,
+                      ),
+                      text: tt('project_detail.edit_project'),
+                      prefixIconSvgAssetPath: 'images/edit.svg',
+                      onTap: () {
+                        EditProjectDialog.show(context, project: _project);
+                      },
+                    )
+                  : Container();
+            }),
           ),
           AppBarOption(
             onTap: (BuildContext context) => deleteProject(context, project: project),
             icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
-            button: isDesktop
-                ? ButtonWidget(
-                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.TextOnly,
-                      contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                      widthWrapContent: true,
-                      iconColor: kColorDanger,
-                    ),
-                    text: tt('project_detail.delete_project'),
-                    prefixIconSvgAssetPath: 'images/trash.svg',
-                    onTap: () {
-                      deleteProject(context, project: project);
-                    },
-                  )
-                : null,
+            button: Builder(builder: (BuildContext context) {
+              final snapshot = AppDataState.of(context)!;
+
+              final isDesktop = [
+                ResponsiveScreen.ExtraLargeDesktop,
+                ResponsiveScreen.LargeDesktop,
+                ResponsiveScreen.SmallDesktop,
+              ].contains(snapshot.responsiveScreen);
+
+              return isDesktop
+                  ? ButtonWidget(
+                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
+                        variant: ButtonVariant.TextOnly,
+                        contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                        widthWrapContent: true,
+                        iconColor: kColorDanger,
+                      ),
+                      text: tt('project_detail.delete_project'),
+                      prefixIconSvgAssetPath: 'images/trash.svg',
+                      onTap: () {
+                        deleteProject(context, project: project);
+                      },
+                    )
+                  : Container();
+            }),
           ),
         ],
       ];
@@ -218,7 +238,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+    final commonTheme = context.commonTheme;
 
     return Container(
       width: double.infinity,
@@ -347,7 +367,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
   /// Create view layout from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+    final commonTheme = context.commonTheme;
 
     final theProject = _selectedProject;
 
@@ -479,7 +499,7 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
 
         sortProjectsAlphabetycally(theProjects);
 
-        WidgetsBinding.instance!.addPostFrameCallback((timeStamp) {
+        WidgetsBinding.instance.addPostFrameCallback((timeStamp) {
           if (widget.selectedProject != null) {
             if (theProjects == null) {
               widget.selectProject(null);

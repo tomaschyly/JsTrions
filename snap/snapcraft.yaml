@@ -1,29 +1,38 @@
 name: js-trions
-version: 1.3.0
-summary: Easily manage JSON translations in your project.
-description: 'Easily manage JSON translations in your project. Should support any framework, programming language.
-  
-  Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them.
-  
-  You can also use automatic translations from one language to other languages.
-  
-  App works fully offline, so it is not dependant on some online service.
-  
-  JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.'
+title: JsTrions
+version: 1.6.0
+summary: Easy to use AI assisted translations of your projects.
+description: 'Easy to use AI assisted translations of your projects.
 
-confinement: devmode # needs to be script because of flutter
-base: core18
+Use Google Translate or OpenAI models for automatic translations.
+
+Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them.
+
+JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.'
+
+confinement: strict
+base: core22
 grade: stable
-issues: https://github.com/tomaschyly/JsTrions/issues
+
+icon: snap/gui/js-trions.png
 website: https://tomas-chyly.com/en/project/jstrions/
+issues: https://github.com/tomaschyly/JsTrions/issues
+contact: chyly@tomas-chyly.com
+license: GPL-3.0-or-later
+source-code: https://github.com/tomaschyly/JsTrions
+donation: https://paypal.me/tomaschyly
 
 apps:
-  js-trions-app:
-    command: js-trions-app
-    extensions: [flutter-master]
+  js-trions:
+    command: js_trions
+    extensions: [gnome]
+    plugs:
+      - network
+      - home
+      - removable-media
 
 parts:
-  js-trions-app:
+  js-trions:
     source: .
     plugin: flutter
     flutter-target: lib/main.dart
