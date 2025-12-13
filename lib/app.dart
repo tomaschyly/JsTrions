@@ -79,7 +79,8 @@ class AppState extends AbstractStatefulWidgetState<App> {
         if (Platform.isWindows || Platform.isLinux) {
           await windowManager.ensureInitialized();
 
-          if (!(await windowManager.isMaximized()) && !(await windowManager.isFullScreen())) {
+          if (!(await windowManager.isMaximized()) &&
+              !(await windowManager.isFullScreen())) {
             windowManager.center();
           }
 
@@ -116,7 +117,8 @@ class AppState extends AbstractStatefulWidgetState<App> {
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
-        getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.PREFS_LANGUAGE),
+        getInitialLanguage: (BuildContext context) async =>
+            prefsString(AppPreferences.PREFS_LANGUAGE),
       ),
       preferencesOptions: PreferencesOptions(
         intPrefs: AppPreferences.intPrefs,
