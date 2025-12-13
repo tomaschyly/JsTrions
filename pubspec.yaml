@@ -7,7 +7,8 @@ issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
 publish_to: "none"
 
-version: 1.6.0+26
+version: 1.6.1+27
+
 #Win version needs to change also in Runner.rc & msix
 #Snap needs to update version too in snapcraft.yaml
 
@@ -23,7 +24,7 @@ dependencies:
 
   tch_appliable_core: ^0.35.0
   tch_common_widgets: ^0.38.0
-  
+
   supercharged: ^2.1.1
   package_info_plus: ^9.0.0
   window_manager: ^0.5.1
@@ -78,7 +79,7 @@ msix_config:
   publisher_display_name: Tomas Chyly
   publisher: CN=B0FFABE7-CCEC-4059-A43F-BC992CC5B5D2
   identity_name: 37940TomasChyly.JsTrions
-  msix_version: 1.6.0.0
+  msix_version: 1.6.1.0
   icons_background_color: transparent
   architecture: x64
   capabilities: "internetClient"
@@ -90,5 +91,5 @@ msix_config:
 # https://documentation.ubuntu.com/snapcraft/stable/how-to/publishing/publish-a-snap/
 # flutter clean && snapcraft clean && snapcraft pack
 # sudo snap remove js-trions
-# sudo snap install --dangerous ./js-trions_1.6.0_amd64.snap
-# snapcraft upload --release=stable ./js-trions_1.6.0_amd64.snap
+# sudo snap install --dangerous ./js-trions_1.6.1_amd64.snap
+# snapcraft upload --release=stable ./js-trions_1.6.1_amd64.snap
