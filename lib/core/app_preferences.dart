@@ -60,4 +60,13 @@ Future<void> clearAllAppPrefs() async {
   await prefsRemoveString(PREFS_TRANSLATIONS_OPENAI_API_KEY);
   await prefsRemoveString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION);
   await prefsRemoveString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL);
+
+  // reset to defaults using in-memory default maps
+  for (final entry in intPrefs.entries) {
+    await prefsSetInt(entry.key, entry.value);
+  }
+
+  for (final entry in stringPrefs.entries) {
+    await prefsSetString(entry.key, entry.value);
+  }
 }
