@@ -23,10 +23,17 @@ class GoogleTranslateResponse extends DataModel {
   }
 
   /// Convert the object into JSON map
+  @override
   Map<String, dynamic> toJson() {
     return <String, dynamic>{
       'translations': translations,
     };
+  }
+
+  /// Convert the object into string description
+  @override
+  String toString() {
+    return 'GoogleTranslateResponse${toJson()}';
   }
 }
 
@@ -46,4 +53,10 @@ class GoogleTranslateTranslation extends DataModel {
   /// Convert the object into JSON map
   @override
   Map<String, dynamic> toJson() => json;
+
+  /// Convert the object into string description
+  @override
+  String toString() {
+    return 'GoogleTranslateTranslation${toJson()}';
+  }
 }
