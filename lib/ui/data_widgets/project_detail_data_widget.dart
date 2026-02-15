@@ -65,10 +65,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   bool _projectDirNotFound = false;
   bool _projectDirMacOSRequestAccess = false;
   bool _translationAssetsDirNotFound = false;
-  Map<String, TranslationKeyMetadata> _metadata = Map();
+  Map<String, TranslationKeyMetadata> _metadata = {};
   List<String> _ignoredTranslationKeys = [];
-  Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = Map();
-  Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = Map();
+  Map<String, SplayTreeMap<String, String>> _translationPairsByLanguage = {};
+  Map<String, SplayTreeMap<String, String>> _codePairsByLanguage = {};
   String _selectedLanguage = '';
   SplayTreeMap<String, String> _selectedLanguagePairs = SplayTreeMap();
   List<String> _processedKeys = [];
@@ -670,7 +670,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _selectedLanguagePairs = SplayTreeMap();
       _processedKeys = [];
       _processedLanguagePairs = SplayTreeMap();
-      _codePairsByLanguage = Map();
+      _codePairsByLanguage = <String, SplayTreeMap<String, String>>{};
       _infoList.clear();
     });
 
@@ -712,7 +712,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _projectDirNotFound = !exists;
         _projectDirMacOSRequestAccess = !macOsFileAccess;
         _translationAssetsDirNotFound = false;
-        _translationPairsByLanguage = Map();
+        _translationPairsByLanguage = <String, SplayTreeMap<String, String>>{};
       });
 
       if (exists && macOsFileAccess) {
@@ -725,72 +725,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         });
 
         if (exists) {
-          final Map<String, TranslationKeyMetadata> metadata = Map();
-          final List<String> ignoredFromMeta = [];
-          final Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map();
-
           final metadataFile = File(join(translationsAssetsDirectory, 'metadata.json'));
+          final metadataMap = await _loadMetadataAndIgnoredKeys(metadataFile);
 
-          if (await metadataFile.exists()) {
-            try {
-              final json = jsonDecode(await metadataFile.readAsString());
+          final metadata = metadataMap.key;
+          final ignoredFromMeta = metadataMap.value;
 
-              for (dynamic key in json.keys) {
-                if (key == kMetadataIgnoredTranslationKeys) {
-                  final ignoredList = json[key] as List<dynamic>;
-                  for (final item in ignoredList) {
-                    if (item is String && item.isNotEmpty) {
-                      ignoredFromMeta.add(item);
-                    }
-                  }
-                  continue;
-                }
-
-                // ignore metadata key prefixes defined in kMetadataKeys
-                bool isMeta = false;
-                for (final prefix in kMetadataKeys) {
-                  if (key.toString().startsWith(prefix)) {
-                    isMeta = true;
-                    break;
-                  }
-                }
-
-                if (isMeta) continue;
-
-                final value = TranslationKeyMetadata.fromJson(key, json[key]);
-
-                if (value != null) {
-                  metadata[key] = value;
-                }
-              }
-            } catch (e, t) {
-              debugPrint('TCH_e $e\n$t');
-            }
-          }
-
-          for (String language in project.languages) {
-            final file = File(join(translationsAssetsDirectory, '$language.json'));
-
-            if (!(await file.exists())) {
-              await file.writeAsString('{}');
-            }
-
-            final json = jsonDecode(await file.readAsString());
-
-            try {
-              if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
-                final jsonObject = Map<String, dynamic>.from(json);
-
-                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(jsonObject[project.formatObjectInside]);
-              } else {
-                translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
-              }
-            } catch (e, t) {
-              debugPrint('TCH_e $e\n$t');
-
-              translationPairsByLanguage[language] = SplayTreeMap<String, String>();
-            }
-          }
+          final translationPairsByLanguage = await _loadTranslationPairsByLanguage(
+            project,
+            translationsAssetsDirectory,
+          );
 
           setStateNotDisposed(() {
             _metadata = metadata;
@@ -817,10 +761,91 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     }
   }
 
+  Future<MapEntry<Map<String, TranslationKeyMetadata>, List<String>>> _loadMetadataAndIgnoredKeys(
+    File metadataFile,
+  ) async {
+    final Map<String, TranslationKeyMetadata> metadata = {};
+    final List<String> ignoredFromMeta = [];
+
+    if (await metadataFile.exists()) {
+      try {
+        final json = jsonDecode(await metadataFile.readAsString());
+
+        for (dynamic key in json.keys) {
+          if (key == kMetadataIgnoredTranslationKeys) {
+            final ignoredList = json[key] as List<dynamic>;
+            for (final item in ignoredList) {
+              if (item is String && item.isNotEmpty) {
+                ignoredFromMeta.add(item);
+              }
+            }
+            continue;
+          }
+
+          // ignore metadata key prefixes defined in kMetadataKeys
+          bool isMeta = false;
+          for (final prefix in kMetadataKeys) {
+            if (key.toString().startsWith(prefix)) {
+              isMeta = true;
+              break;
+            }
+          }
+
+          if (isMeta) continue;
+
+          final value = TranslationKeyMetadata.fromJson(key, json[key]);
+
+          if (value != null) {
+            metadata[key] = value;
+          }
+        }
+      } catch (e, t) {
+        debugPrint('TCH_e $e\n$t');
+      }
+    }
+
+    return MapEntry(metadata, ignoredFromMeta);
+  }
+
+  /// Load existing translations data from the translations directory
+  /// Map contains maps by language sorted by keys
+  Future<Map<String, SplayTreeMap<String, String>>> _loadTranslationPairsByLanguage(
+    Project project,
+    String translationsAssetsDirectory,
+  ) async {
+    final translationPairsByLanguage = <String, SplayTreeMap<String, String>>{};
+
+    for (String language in project.languages) {
+      final file = File(join(translationsAssetsDirectory, '$language.json'));
+
+      if (!(await file.exists())) {
+        await file.writeAsString('{}');
+      }
+
+      final json = jsonDecode(await file.readAsString());
+
+      try {
+        if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
+          final jsonObject = Map<String, dynamic>.from(json);
+
+          translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(jsonObject[project.formatObjectInside]);
+        } else {
+          translationPairsByLanguage[language] = SplayTreeMap<String, String>.from(json);
+        }
+      } catch (e, t) {
+        debugPrint('TCH_e $e\n$t');
+
+        translationPairsByLanguage[language] = SplayTreeMap<String, String>();
+      }
+    }
+
+    return translationPairsByLanguage;
+  }
+
   /// Analyze translations for equality, if some has missing translations notify
   void _analyzeTranslations() {
-    final countByLanguage = Map<String, int>();
-    final keysByLanguage = Map<String, List<String>>();
+    final countByLanguage = <String, int>{};
+    final keysByLanguage = <String, List<String>>{};
 
     for (String language in _translationPairsByLanguage.keys) {
       final pairsForLanguage = _translationPairsByLanguage[language]!;
@@ -1357,9 +1382,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     List<String> directoriesToIgnore = project.directories.map((String directory) => '${project.directory}$directory').toList();
 
     Map<String, SplayTreeMap<String, String>> translationPairsByLanguage = Map<String, SplayTreeMap<String, String>>.from(_translationPairsByLanguage);
-    Map<String, SplayTreeMap<String, String>> codePairsByLanguage = Map();
+    Map<String, SplayTreeMap<String, String>> codePairsByLanguage = {};
 
-    final Map<String, ProgrammingLanguage> acceptedExtensions = Map();
+    final Map<String, ProgrammingLanguage> acceptedExtensions = {};
 
     for (ProgrammingLanguage programmingLanguage in programmingLanguages) {
       if (project.programmingLanguages.contains(programmingLanguage.id)) {
