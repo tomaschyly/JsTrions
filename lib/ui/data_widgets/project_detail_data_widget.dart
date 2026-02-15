@@ -1339,6 +1339,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     Project project, {
     required String? saveKey,
     String? deleteKey,
+    bool handleIgnoreKey = false,
   }) async {
     final appTheme = context.appTheme;
 
@@ -1358,19 +1359,19 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       saveIgnoredTranslationKeys = metadataMap.value;
       saveMetadata = metadataMap.key;
 
-      if (saveKey != null && !saveIgnoredTranslationKeys.contains(saveKey)) {
+      if (handleIgnoreKey && saveKey != null && !saveIgnoredTranslationKeys.contains(saveKey)) {
         saveIgnoredTranslationKeys.add(saveKey);
       }
 
-      if (saveKey != null && _metadata.containsKey(saveKey)) {
+      if (!handleIgnoreKey && saveKey != null && _metadata.containsKey(saveKey)) {
         saveMetadata[saveKey] = _metadata[saveKey]!;
       }
 
-      if (deleteKey != null && saveIgnoredTranslationKeys.contains(deleteKey)) {
+      if (handleIgnoreKey && deleteKey != null && saveIgnoredTranslationKeys.contains(deleteKey)) {
         saveIgnoredTranslationKeys.remove(deleteKey);
       }
 
-      if (deleteKey != null && saveMetadata.containsKey(deleteKey)) {
+      if (!handleIgnoreKey && deleteKey != null && saveMetadata.containsKey(deleteKey)) {
         saveMetadata.remove(deleteKey);
       }
     } catch (e, t) {
@@ -1413,13 +1414,15 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         translationsAssetsDirectory,
       );
 
-      for (String language in project.languages) {
-        if (saveKey != null && _translationPairsByLanguage[language]!.containsKey(saveKey)) {
-          saveTranslationPairsByLanguage[language]![saveKey] = _translationPairsByLanguage[language]![saveKey]!;
-        }
+      if (!handleIgnoreKey) {
+        for (String language in project.languages) {
+          if (saveKey != null && _translationPairsByLanguage[language]!.containsKey(saveKey)) {
+            saveTranslationPairsByLanguage[language]![saveKey] = _translationPairsByLanguage[language]![saveKey]!;
+          }
 
-        if (deleteKey != null && saveTranslationPairsByLanguage[language]!.containsKey(deleteKey)) {
-          saveTranslationPairsByLanguage[language]!.remove(deleteKey);
+          if (deleteKey != null && saveTranslationPairsByLanguage[language]!.containsKey(deleteKey)) {
+            saveTranslationPairsByLanguage[language]!.remove(deleteKey);
+          }
         }
       }
     } catch (e, t) {
@@ -1619,6 +1622,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       project,
       saveKey: saveKey,
       deleteKey: deleteKey,
+      handleIgnoreKey: true,
     );
   }
 }

@@ -1,16 +1,14 @@
 {
   "$JsTrions": {
     "version": "1.6.1",
-    "message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa 2026-02-15 12:25:45, needitujte, pokiaľ neviete, čo robiť",
+    "message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa 2026-02-15 12:35:47, needitujte, pokiaľ neviete, čo robiť",
     "description": "Jednoduché AI-asistované preklady vašich projektov. Použite Google Translate alebo modely OpenAI na automatické preklady. Použite JsTrions na analýzu kódu projektu, aby ste zistili, kde sa preklady používajú; potom ľahko uvidíte, ktoré preklady chýbajú, a pridáte ich. JsTrions dobre spolupracuje s Translatorom poskytovaným mojím Flutter balíkom tch_appliable_core, ale je kompatibilný s akýmikoľvek jednoduchými JSON prekladmi.",
     "website": "https://tomas-chyly.com/en/project/jstrions/",
     "windows": "https://www.microsoft.com/store/apps/9NM153P944CC",
     "macos": "https://apps.apple.com/us/app/jstrions-ai-translations/id1573640111",
     "ubuntu": "https://snapcraft.io/js-trions"
   },
-  "$IgnoredTranslationKeys": [
-    "project.translation.save.error"
-  ],
+  "$IgnoredTranslationKeys": [],
   "feedback.submit": {
     "key": "feedback.submit",
     "description": "Speak personally, as friend"
