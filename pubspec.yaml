@@ -7,7 +7,7 @@ issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
 publish_to: "none"
 
-version: 1.6.1+28
+version: 1.6.2+28
 
 #Win version needs to change also in Runner.rc & msix_config
 #Snap needs to update version too in snapcraft.yaml
