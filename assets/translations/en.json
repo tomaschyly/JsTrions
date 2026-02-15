@@ -108,6 +108,7 @@
   "project.translation.delete.success": "Translations deleted, project saved",
   "project.translation.edit.success": "Translations updated, project saved",
   "project.translation.new.success": "New translations added, project saved",
+  "project.translation.save.error": "Data processing for save failed and were not saved. Check if your project is ready for saving.",
   "project_detail.actions.code_only_keys": "Show Translations only found in Code",
   "project_detail.actions.import_export.title": "Import/Export from/to zip file",
   "project_detail.actions.source.all": "All",

@@ -761,6 +761,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     }
   }
 
+  /// Loads metadata and ignored keys from the metadata file
   Future<MapEntry<Map<String, TranslationKeyMetadata>, List<String>>> _loadMetadataAndIgnoredKeys(
     File metadataFile,
   ) async {
@@ -1266,7 +1267,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _processSelectedLanguagePairs();
       });
 
-      await _saveTranslationsToAssets(context, project);
+      await _saveTranslationsToAssets(
+        context,
+        project,
+        saveKey: translation.key!,
+      );
 
       displayScreenMessage(
         ScreenMessage(
@@ -1310,7 +1315,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _processSelectedLanguagePairs();
       });
 
-      await _saveTranslationsToAssets(context, project);
+      await _saveTranslationsToAssets(
+        context,
+        project,
+        saveKey: null,
+        deleteKey: key,
+      );
 
       displayScreenMessage(
         ScreenMessage(
@@ -1324,13 +1334,59 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Save translations for all languages to Project translations assets directory
   /// Save also metadata
-  Future<void> _saveTranslationsToAssets(BuildContext context, Project project) async {
+  Future<void> _saveTranslationsToAssets(
+    BuildContext context,
+    Project project, {
+    required String? saveKey,
+    String? deleteKey,
+  }) async {
+    final appTheme = context.appTheme;
+
     final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
     final now = Jiffy.now();
     final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
     final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
+
+    List<String> saveIgnoredTranslationKeys = [];
+    Map<String, TranslationKeyMetadata> saveMetadata = {};
+
+    try {
+      final metadataMap = await _loadMetadataAndIgnoredKeys(metadataFile);
+
+      saveIgnoredTranslationKeys = metadataMap.value;
+      saveMetadata = metadataMap.key;
+
+      if (saveKey != null && !saveIgnoredTranslationKeys.contains(saveKey)) {
+        saveIgnoredTranslationKeys.add(saveKey);
+      }
+
+      if (saveKey != null && _metadata.containsKey(saveKey)) {
+        saveMetadata[saveKey] = _metadata[saveKey]!;
+      }
+
+      if (deleteKey != null && saveIgnoredTranslationKeys.contains(deleteKey)) {
+        saveIgnoredTranslationKeys.remove(deleteKey);
+      }
+
+      if (deleteKey != null && saveMetadata.containsKey(deleteKey)) {
+        saveMetadata.remove(deleteKey);
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.translation.save.error'),
+          type: ScreenMessageType.error,
+          duration: const Duration(milliseconds: 6000),
+        ),
+        appTheme: appTheme,
+      );
+      return;
+    }
+
     final Map<String, dynamic> metadata = {
       kMetadataJsTrions: {
         'version': _appVersion,
@@ -1343,18 +1399,49 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'macos': kDownloadMacOS,
         'ubuntu': kDownloadUbuntu,
       },
-      kMetadataIgnoredTranslationKeys: _ignoredTranslationKeys,
-      ..._metadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
+      kMetadataIgnoredTranslationKeys: saveIgnoredTranslationKeys,
+      ...saveMetadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
             (key, value) => MapEntry(key, value.toJson()),
           ),
     };
+
+    Map<String, SplayTreeMap<String, String>> saveTranslationPairsByLanguage = {};
+
+    try {
+      saveTranslationPairsByLanguage = await _loadTranslationPairsByLanguage(
+        project,
+        translationsAssetsDirectory,
+      );
+
+      for (String language in project.languages) {
+        if (saveKey != null && _translationPairsByLanguage[language]!.containsKey(saveKey)) {
+          saveTranslationPairsByLanguage[language]![saveKey] = _translationPairsByLanguage[language]![saveKey]!;
+        }
+
+        if (deleteKey != null && saveTranslationPairsByLanguage[language]!.containsKey(deleteKey)) {
+          saveTranslationPairsByLanguage[language]!.remove(deleteKey);
+        }
+      }
+    } catch (e, t) {
+      debugPrint('TCH_e $e\n$t');
+
+      displayScreenMessage(
+        ScreenMessage(
+          message: tt('project.translation.save.error'),
+          type: ScreenMessageType.error,
+          duration: const Duration(milliseconds: 6000),
+        ),
+        appTheme: appTheme,
+      );
+      return;
+    }
 
     await metadataFile.writeAsString(encoder.convert(metadata));
 
     for (String language in project.languages) {
       final file = File(join(translationsAssetsDirectory, '$language.json'));
 
-      final pairs = _translationPairsByLanguage[language]!;
+      final pairs = saveTranslationPairsByLanguage[language]!;
 
       if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
         final jsonObject = <String, dynamic>{
@@ -1508,10 +1595,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   Future<void> _toggleIgnoreTranslationKey(BuildContext context, Project project, String key, bool ignore) async {
     _interruptAnalysis();
 
+    String? saveKey;
+    String? deleteKey;
+
     if (ignore && !_ignoredTranslationKeys.contains(key)) {
       _ignoredTranslationKeys.add(key);
+
+      saveKey = key;
     } else if (!ignore && _ignoredTranslationKeys.contains(key)) {
       _ignoredTranslationKeys.remove(key);
+
+      deleteKey = key;
     }
 
     setStateNotDisposed(() {
@@ -1520,7 +1614,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _processSelectedLanguagePairs();
     });
 
-    await _saveTranslationsToAssets(context, project);
+    await _saveTranslationsToAssets(
+      context,
+      project,
+      saveKey: saveKey,
+      deleteKey: deleteKey,
+    );
   }
 }
 

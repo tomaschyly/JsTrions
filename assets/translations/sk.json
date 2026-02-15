@@ -108,6 +108,7 @@
   "project.translation.delete.success": "Preklady odstránené, projekt uložený",
   "project.translation.edit.success": "Preklady aktualizované, projekt uložený",
   "project.translation.new.success": "Pridané nové preklady, projekt uložený",
+  "project.translation.save.error": "Spracovanie údajov na uloženie zlyhalo a neboli uložené. Skontrolujte, či je váš projekt pripravený na uloženie.",
   "project_detail.actions.code_only_keys": "Zobraz Preklady nájdené iba v Kóde",
   "project_detail.actions.import_export.title": "Importovať/Exportovať do/z zip súboru",
   "project_detail.actions.source.all": "Všetky",
