@@ -6,6 +6,7 @@ import 'package:js_trions/core/app_preferences.dart' as AppPreferences;
 import 'package:js_trions/core/app_router.dart' as AppRouter;
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/images/TomasChyly.dart';
+import 'package:js_trions/service/desktop_service.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/screens/dashboard_screen.dart';
@@ -15,7 +16,6 @@ import 'package:sembast/sembast.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
-import 'package:window_manager/window_manager.dart';
 
 class App extends AbstractStatefulWidget {
   /// Create state for widget
@@ -76,16 +76,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initialScreenRoute: DashboardScreen.ROUTE,
       initialScreenRouteArguments: <String, String>{'router-no-animation': '1'},
       onAppInitStart: (BuildContext context) async {
-        if (Platform.isWindows || Platform.isLinux) {
-          await windowManager.ensureInitialized();
-
-          if (!(await windowManager.isMaximized()) &&
-              !(await windowManager.isFullScreen())) {
-            windowManager.center();
-          }
-
-          windowManager.show();
-        }
+        await initDesktop();
       },
       onAppInitEnd: (BuildContext context) async {
         await initOpenAIClient();
@@ -105,6 +96,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
         primaryColorDark: kColorPrimaryDark,
         appBarTheme: AppBarTheme(
           backgroundColor: kColorPrimary,
+          surfaceTintColor: Colors.transparent,
         ),
         splashColor: kColorSecondary,
         shadowColor: kColorShadow,
