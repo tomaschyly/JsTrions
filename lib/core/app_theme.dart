@@ -6,11 +6,12 @@ import 'package:js_trions/core/app_preferences.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
-const double kLeftPanelWidth = kDrawerWidth;
+const double kDrawerWidthOverride = 200;
+const double kLeftPanelWidth = 260;
 
-const kColorPrimary = const Color(0xFF1a1a1a);
-const kColorPrimaryLight = const Color(0xFF404040);
-const kColorPrimaryDark = const Color(0xFF000000);
+const kColorPrimary = Color(0xFF1a1a1a);
+const kColorPrimaryLight = Color(0xFF404040);
+const kColorPrimaryDark = Color(0xFF000000);
 const kColorSecondary = kColorGold;
 const kColorSecondaryLight = kColorGoldLight;
 const kColorSecondaryDark = kColorGoldDarker;
@@ -18,31 +19,31 @@ const kColorSecondaryDark = kColorGoldDarker;
 const kColorTextPrimary = kColorSilver;
 const kColorTextSecondary = Colors.black;
 
-const kColorSuccess = const Color(0xFF43a047);
+const kColorSuccess = Color(0xFF43a047);
 const kColorDanger = kColorRed;
-const kColorWarning = const Color(0xFFfb8c00);
-const kColorWarningDark = const Color(0xFFc25e00);
+const kColorWarning = Color(0xFFfb8c00);
+const kColorWarningDark = Color(0xFFc25e00);
 
-const kColorGold = const Color(0xFFffd700);
-const kColorGoldLight = const Color(0xFFffff52);
-const kColorGoldDarker = const Color(0xFFc7a600);
-const kColorRed = const Color(0xFFe60000);
-const kColorShadow = const Color(0x60000000);
-const kColorSilver = const Color(0xFFdddddd);
-const kColorSilverDarker = const Color(0xFFcccccc);
-const kColorSilverLighter = const Color(0xFFf2f2f2);
+const kColorGold = Color(0xFFffd700);
+const kColorGoldLight = Color(0xFFffff52);
+const kColorGoldDarker = Color(0xFFc7a600);
+const kColorRed = Color(0xFFe60000);
+const kColorShadow = Color(0x60000000);
+const kColorSilver = Color(0xFFdddddd);
+const kColorSilverDarker = Color(0xFFcccccc);
+const kColorSilverLighter = Color(0xFFf2f2f2);
 
 /// Hover colors (lighter variants for dark theme)
-const kColorPrimaryLightHover = const Color(0xFF606060); // lighter than kColorPrimaryLight (0xFF404040)
+const kColorPrimaryLightHover = Color(0xFF606060); // lighter than kColorPrimaryLight (0xFF404040)
 
 const kFontFamily = 'Kalam';
 
-const kText = const TextStyle(color: kColorTextPrimary, fontSize: 16);
-const kTextBold = const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
-const kTextHeadline = const TextStyle(color: kColorTextPrimary, fontSize: 20);
-const kTextSuccess = const TextStyle(color: kColorSuccess, fontSize: 16);
-const kTextDanger = const TextStyle(color: kColorDanger, fontSize: 16);
-const kTextWarning = const TextStyle(color: kColorWarning, fontSize: 16);
+const kText = TextStyle(color: kColorTextPrimary, fontSize: 16);
+const kTextBold = TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
+const kTextHeadline = TextStyle(color: kColorTextPrimary, fontSize: 20);
+const kTextSuccess = TextStyle(color: kColorSuccess, fontSize: 16);
+const kTextDanger = TextStyle(color: kColorDanger, fontSize: 16);
+const kTextWarning = TextStyle(color: kColorWarning, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
@@ -62,7 +63,7 @@ extension AppThemeExtension on BuildContext {
 Widget appThemeBuilder(BuildContext context, Widget child) {
   final AppDataStateSnapshot snapshot = AppDataState.of(context)!;
 
-  BorderRadius platformBorderRadius = const BorderRadius.all(const Radius.circular(8));
+  BorderRadius platformBorderRadius = const BorderRadius.all(Radius.circular(8));
   MainAxisAlignment dialogsMainAxisAlignment = MainAxisAlignment.start;
 
   if (!kIsWeb && (Platform.isWindows || Platform.isLinux)) {
@@ -229,7 +230,6 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   return AppTheme(
-    child: child,
     fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
     buttonsStyle: ButtonsStyle(
       buttonStyle: kButtonStyle,
@@ -255,6 +255,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
         borderRadius: platformBorderRadius,
       ),
     ),
+    child: child,
   );
 }
 
@@ -267,28 +268,23 @@ class AppTheme extends CommonTheme {
   /// AppTheme initialization
   AppTheme({
     required Widget child,
-    String? fontFamily,
-    required ButtonsStyle buttonsStyle,
+    super.fontFamily,
+    required super.buttonsStyle,
     required this.buttonDangerStyle,
     required this.listItemButtonStyle,
     required this.appBarIconButtonStyle,
-    required DialogsStyle dialogsStyle,
-    required FormStyle formStyle,
+    required super.dialogsStyle,
+    required super.formStyle,
     required this.emailFormFieldStyle,
-    required TooltipStyle tooltipStyle,
+    required super.tooltipStyle,
   }) : super(
           child: CommonTheme(
-            child: child,
             fontFamily: fontFamily,
             buttonsStyle: buttonsStyle,
             dialogsStyle: dialogsStyle,
             formStyle: formStyle,
             tooltipStyle: tooltipStyle,
+            child: child,
           ),
-          fontFamily: fontFamily,
-          buttonsStyle: buttonsStyle,
-          dialogsStyle: dialogsStyle,
-          formStyle: formStyle,
-          tooltipStyle: tooltipStyle,
         );
 }

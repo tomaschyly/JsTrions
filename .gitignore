@@ -49,3 +49,6 @@ lib/config.dart
 
 # Snap related
 *.snap
+
+# Claude related
+.claude/settings.local.json

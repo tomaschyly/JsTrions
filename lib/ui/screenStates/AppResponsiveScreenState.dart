@@ -187,7 +187,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
 
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final drawerList = Container(
-        width: options.drawerIsPermanentlyVisible ? kDrawerWidth : null,
+        width: options.drawerIsPermanentlyVisible ? kDrawerWidthOverride : null,
         color: kColorPrimary,
         child: ListView(padding: EdgeInsets.zero, children: [
           Container(height: MediaQuery.of(context).padding.top),
