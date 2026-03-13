@@ -16,12 +16,12 @@ Future<void> initOpenAIClient() async {
   final organization = prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION);
 
   if (apiKey != null && apiKey.isNotEmpty) {
-    _openAIClient = OpenAIClient(
-      apiKey: apiKey,
+    _openAIClient = OpenAIClient.withApiKey(
+      apiKey,
       organization: organization,
     );
 
-    final models = await _openAIClient!.listModels();
+    final models = await _openAIClient!.models.list();
 
     openAIModalIds = models.data.map((e) => e.id).toList();
   } else {
@@ -29,13 +29,13 @@ Future<void> initOpenAIClient() async {
   }
 }
 
-/// Create list of ListDialogOption<String> for available OpenAI models
+/// Create list of [ListDialogOption] for available OpenAI models
 Future<List<ListDialogOption<String>>> getOpenAIModelsAsOptions() async {
   if (_openAIClient == null) {
     return [];
   }
 
-  final models = await _openAIClient!.listModels();
+  final models = await _openAIClient!.models.list();
 
   return models.data.map((e) => ListDialogOption<String>(text: '${e.id} - ${e.ownedBy}', value: e.id)).toList();
 }
@@ -80,21 +80,17 @@ Future<String?> openAITranslateText({
     try {
       String userQuery = 'Translate text from $sourceLanguage to $targetLanguage: $text';
 
-      final res = await _openAIClient!.createChatCompletion(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(theModelId!),
+      final res = await _openAIClient!.chat.completions.create(
+        ChatCompletionCreateRequest(
+          model: theModelId!,
           messages: [
-            ChatCompletionMessage.system(
-              content: 'You are a helpful assistant that translates text for users. Respond only with translated text, do not add anything extra.',
+            ChatMessage.system(
+              'You are a helpful assistant that translates text for users. Respond only with translated text, do not add anything extra.',
             ),
-            ChatCompletionMessage.user(
-              content: ChatCompletionUserMessageContent.string(userQuery),
-            ),
+            ChatMessage.user(userQuery),
             if (context != null && context.isNotEmpty)
-              ChatCompletionMessage.user(
-                content: ChatCompletionUserMessageContent.string(
-                  'Context for this translations is: $context',
-                ),
+              ChatMessage.user(
+                'Context for this translations is: $context',
               ),
           ],
         ),
