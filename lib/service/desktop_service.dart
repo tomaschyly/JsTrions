@@ -1,6 +1,6 @@
 import 'dart:io';
-import 'dart:ui';
 
+import 'package:flutter/material.dart';
 import 'package:screen_retriever/screen_retriever.dart';
 import 'package:window_manager/window_manager.dart';
 
@@ -33,6 +33,8 @@ Future<void> initDesktop() async {
         }
       }
     }
+
+    await windowManager.setBrightness(Brightness.dark);
 
     windowManager.show();
   }
