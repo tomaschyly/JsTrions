@@ -1,3 +1,5 @@
+const String kAppTitle = 'JsTrions';
+
 /// Special metadata key used in translations metadata files.
 const String kMetadataJsTrions = r'$JsTrions';
 
