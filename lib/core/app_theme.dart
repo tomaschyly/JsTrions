@@ -103,6 +103,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     fullWidthMobileOnly: false,
     variant: ButtonVariant.TextOnly,
     alignment: Alignment.centerLeft,
+    textOverflow: TextOverflow.ellipsis,
   );
 
   final kIconButtonStyle = IconButtonStyle(

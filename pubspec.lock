@@ -745,10 +745,10 @@ packages:
     dependency: "direct main"
     description:
       name: tch_common_widgets
-      sha256: "9b0ec75b486caff0888c4b64bf6eddb551da02d4373224d029c66b99ecbf92e1"
+      sha256: "92415c87d6cb462772fa6cc77aeecd0627fa1e654783ea167bfd90f01e66b333"
       url: "https://pub.dev"
     source: hosted
-    version: "0.38.1"
+    version: "0.38.2"
   term_glyph:
     dependency: transitive
     description:
