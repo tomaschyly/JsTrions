@@ -12,16 +12,16 @@ List<String> openAIModalIds = [];
 
 /// Initialize OpenAI client
 Future<void> initOpenAIClient() async {
-  final apiKey = prefsString(PREFS_TRANSLATIONS_OPENAI_API_KEY);
-  final organization = prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION);
+  final apiKey = prefsString(kPrefsTranslationsOpenaiApiKey);
+  final organization = prefsString(kPrefsTranslationsOpenaiOrganization);
 
   if (apiKey != null && apiKey.isNotEmpty) {
-    _openAIClient = OpenAIClient(
-      apiKey: apiKey,
+    _openAIClient = OpenAIClient.withApiKey(
+      apiKey,
       organization: organization,
     );
 
-    final models = await _openAIClient!.listModels();
+    final models = await _openAIClient!.models.list();
 
     openAIModalIds = models.data.map((e) => e.id).toList();
   } else {
@@ -29,21 +29,21 @@ Future<void> initOpenAIClient() async {
   }
 }
 
-/// Create list of ListDialogOption<String> for available OpenAI models
+/// Create list of [ListDialogOption] for available OpenAI models
 Future<List<ListDialogOption<String>>> getOpenAIModelsAsOptions() async {
   if (_openAIClient == null) {
     return [];
   }
 
-  final models = await _openAIClient!.listModels();
+  final models = await _openAIClient!.models.list();
 
   return models.data.map((e) => ListDialogOption<String>(text: '${e.id} - ${e.ownedBy}', value: e.id)).toList();
 }
 
 /// Provide info for Dashboard, if enabled
 void getOpenAIDashboardInfo(List<DashboardInfoPayload> info) {
-  if (TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!] == TranslationsProvider.openai) {
-    final theModelId = prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL) ?? tt('common.model.invalid');
+  if (TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!] == TranslationsProvider.openai) {
+    final theModelId = prefsString(kPrefsTranslationsOpenaiSelectedModel) ?? tt('common.model.invalid');
     bool isDanger = false;
 
     String text = tt('dashboard.info.openAI.text').parameters({
@@ -74,27 +74,23 @@ Future<String?> openAITranslateText({
   String? context,
   String? modelId,
 }) async {
-  final theModelId = modelId ?? prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL);
+  final theModelId = modelId ?? prefsString(kPrefsTranslationsOpenaiSelectedModel);
 
   if (isOpenAIClientInitialized && openAIModalIds.contains(theModelId)) {
     try {
       String userQuery = 'Translate text from $sourceLanguage to $targetLanguage: $text';
 
-      final res = await _openAIClient!.createChatCompletion(
-        request: CreateChatCompletionRequest(
-          model: ChatCompletionModel.modelId(theModelId!),
+      final res = await _openAIClient!.chat.completions.create(
+        ChatCompletionCreateRequest(
+          model: theModelId!,
           messages: [
-            ChatCompletionMessage.system(
-              content: 'You are a helpful assistant that translates text for users. Respond only with translated text, do not add anything extra.',
+            ChatMessage.system(
+              'You are a helpful assistant that translates text for users. Respond only with translated text, do not add anything extra.',
             ),
-            ChatCompletionMessage.user(
-              content: ChatCompletionUserMessageContent.string(userQuery),
-            ),
+            ChatMessage.user(userQuery),
             if (context != null && context.isNotEmpty)
-              ChatCompletionMessage.user(
-                content: ChatCompletionUserMessageContent.string(
-                  'Context for this translations is: $context',
-                ),
+              ChatMessage.user(
+                'Context for this translations is: $context',
               ),
           ],
         ),

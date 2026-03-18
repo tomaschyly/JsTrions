@@ -7,7 +7,7 @@ issue_tracker: https://github.com/tomaschyly/JsTrions/issues
 
 publish_to: "none"
 
-version: 1.6.3+29
+version: 1.6.4+29
 
 #Win version needs to change also in Runner.rc & msix_config
 #Snap needs to update version too in snapcraft.yaml
@@ -23,36 +23,36 @@ dependencies:
     sdk: flutter
 
   tch_appliable_core: ^0.35.0
-  tch_common_widgets: ^0.38.0
+  tch_common_widgets: ^0.38.2
 
   supercharged: ^2.1.1
   package_info_plus: ^9.0.0
   screen_retriever: ^0.2.0
   window_manager: ^0.5.1
-  archive: ^4.0.7
+  archive: ^4.0.9
 
   cupertino_icons: ^1.0.8
-  flutter_svg: ^2.2.1
+  flutter_svg: ^2.2.4
 
   intl: ^0.20.2
   html_unescape: ^2.0.0
-  jiffy: ^6.4.3
+  jiffy: ^6.4.4
   bot_toast: ^4.1.3
 
   path: ^1.9.1
   path_provider: ^2.1.5
   sqflite: ^2.4.2
-  sembast: ^3.8.5+1
+  sembast: ^3.8.6
 
-  file_selector: ^1.0.4
+  file_selector: ^1.1.0
 
   url_launcher: ^6.3.2
 
-  openai_dart: ^0.5.5
+  openai_dart: ^1.4.0
 
 dev_dependencies:
   flutter_lints: ^6.0.0
-  msix: ^3.16.12
+  msix: ^3.16.13
 
 #dependency_overrides:
 #  intl: ^0.18.1
@@ -81,7 +81,7 @@ msix_config:
   publisher_display_name: Tomas Chyly
   publisher: CN=B0FFABE7-CCEC-4059-A43F-BC992CC5B5D2
   identity_name: 37940TomasChyly.JsTrions
-  msix_version: 1.6.3.0
+  msix_version: 1.6.4.0
   icons_background_color: transparent
   architecture: x64
   capabilities: "internetClient"

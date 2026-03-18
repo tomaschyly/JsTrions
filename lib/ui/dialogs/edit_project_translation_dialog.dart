@@ -77,7 +77,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       _fieldsFocusNodes[i]!.addListener(_onFocus);
     }
 
-    _fullScreen = prefsInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED) == 1;
+    _fullScreen = prefsInt(kPrefsProjectsEditTranslationDialogEnlarged) == 1;
   }
 
   /// Manually dispose of resources
@@ -112,7 +112,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
-    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final provider = TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!];
 
     return Scaffold(
       backgroundColor: Colors.transparent,
@@ -143,7 +143,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                       onTap: () => setStateNotDisposed(() {
                         _fullScreen = !_fullScreen;
 
-                        prefsSetInt(PREFS_PROJECTS_EDIT_TRANSLATION_DIALOG_ENLARGED, _fullScreen ? 1 : 0);
+                        prefsSetInt(kPrefsProjectsEditTranslationDialogEnlarged, _fullScreen ? 1 : 0);
                       }),
                       tooltip: _fullScreen ? tt('edit_project_translation.shrink.tooltip') : tt('edit_project_translation.enlarge.tooltip'),
                     ),
@@ -321,10 +321,10 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
       _loadingIndex = index;
     });
 
-    final bool unescapeHTML = prefsInt(PREFS_TRANSLATIONS_NO_HTML) == 1;
+    final bool unescapeHTML = prefsInt(kPrefsTranslationsNoHtml) == 1;
     final unescape = HtmlUnescape();
-    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
-    final fallback = prefsInt(PREFS_TRANSLATIONS_FALLBACK) == 1;
+    final provider = TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!];
+    final fallback = prefsInt(kPrefsTranslationsFallback) == 1;
 
     for (int i = 0; i < widget.translation.languages.length; i++) {
       String translationLanguage = widget.translation.languages[i];

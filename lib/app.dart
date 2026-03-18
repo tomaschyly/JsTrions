@@ -6,8 +6,8 @@ import 'package:js_trions/core/app_preferences.dart' as AppPreferences;
 import 'package:js_trions/core/app_router.dart' as AppRouter;
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/images/TomasChyly.dart';
-import 'package:js_trions/service/desktop_service.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
+import 'package:js_trions/service/desktop_service.dart';
 import 'package:js_trions/service/openai_service.dart';
 import 'package:js_trions/ui/screens/dashboard_screen.dart';
 import 'package:path/path.dart';
@@ -16,6 +16,8 @@ import 'package:sembast/sembast.dart';
 import 'package:sqflite/sqflite.dart' as SQLite;
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
+
+import 'core/constants.dart';
 
 class App extends AbstractStatefulWidget {
   /// Create state for widget
@@ -42,7 +44,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
     final botToastBuilder = BotToastInit();
 
     return CoreApp(
-      title: 'JsTrions',
+      title: kAppTitle,
       initializationUi: Builder(
         builder: (BuildContext context) {
           return Scaffold(
@@ -109,8 +111,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
-        getInitialLanguage: (BuildContext context) async =>
-            prefsString(AppPreferences.PREFS_LANGUAGE),
+        getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.kPrefsLanguage),
       ),
       preferencesOptions: PreferencesOptions(
         intPrefs: AppPreferences.intPrefs,

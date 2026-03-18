@@ -47,7 +47,7 @@ const kTextWarning = TextStyle(color: kColorWarning, fontSize: 16);
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
-    force || prefsInt(PREFS_FANCY_FONT) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
+    force || prefsInt(kPrefsFancyFont) == 1 ? textStyle.copyWith(fontFamily: kFontFamily) : textStyle;
 
 const kButtonHeight = kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf;
 
@@ -103,6 +103,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     fullWidthMobileOnly: false,
     variant: ButtonVariant.TextOnly,
     alignment: Alignment.centerLeft,
+    textOverflow: TextOverflow.ellipsis,
   );
 
   final kIconButtonStyle = IconButtonStyle(
@@ -161,7 +162,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
           labelStyle: kTextBold,
           contentPadding: EdgeInsets.symmetric(
             horizontal: kCommonHorizontalMarginHalf,
-            vertical: prefsInt(PREFS_FANCY_FONT) == 1 ? 8 : 8,
+            vertical: prefsInt(kPrefsFancyFont) == 1 ? 8 : 8,
           ),
           enabledBorder: platformInputBorder,
           disabledBorder: platformInputBorder,
@@ -230,7 +231,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   return AppTheme(
-    fontFamily: prefsInt(PREFS_FANCY_FONT) == 1 ? kFontFamily : null,
+    fontFamily: prefsInt(kPrefsFancyFont) == 1 ? kFontFamily : null,
     buttonsStyle: ButtonsStyle(
       buttonStyle: kButtonStyle,
       iconButtonStyle: kIconButtonStyle,

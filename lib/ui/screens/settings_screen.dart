@@ -276,7 +276,7 @@ class _GeneralWidget extends StatelessWidget {
                   if (newValue != null) {
                     Translator.instance!.changeLanguage(newValue);
 
-                    prefsSetString(PREFS_LANGUAGE, Translator.instance!.currentLanguage);
+                    prefsSetString(kPrefsLanguage, Translator.instance!.currentLanguage);
 
                     Translator.instance!.initTranslations(context).then((value) {
                       AppState.instance.invalidate();
@@ -302,7 +302,7 @@ class _GeneralWidget extends StatelessWidget {
               CommonSpaceVDouble(),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.font'),
-                prefsKey: PREFS_FANCY_FONT,
+                prefsKey: kPrefsFancyFont,
                 descriptionOn: tt('settings.screen.font.on'),
                 descriptionOff: tt('settings.screen.font.off'),
                 onChange: (bool value) {
@@ -383,7 +383,7 @@ class _TranslationsWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final appTheme = context.appTheme;
 
-    final provider = TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!];
+    final provider = TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!];
 
     return Column(
       mainAxisSize: MainAxisSize.min,
@@ -417,7 +417,7 @@ class _TranslationsWidget extends StatelessWidget {
                 ],
                 onChange: (TranslationsProvider? newValue) {
                   if (newValue != null) {
-                    prefsSetInt(PREFS_TRANSLATIONS_PROVIDER, newValue.index);
+                    prefsSetInt(kPrefsTranslationsProvider, newValue.index);
 
                     displayScreenMessage(
                       ScreenMessage(
@@ -448,7 +448,7 @@ class _TranslationsWidget extends StatelessWidget {
               ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
-                prefsKey: PREFS_TRANSLATIONS_NO_HTML,
+                prefsKey: kPrefsTranslationsNoHtml,
                 descriptionOn: tt('settings.screen.translations.no_html_entities.on'),
                 descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
                 onChange: (bool value) {
@@ -501,8 +501,8 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
     _apiKeyDesc1 = processing[0];
     _apiKeyDescLink = processing[1];
 
-    _apiKeyController.text = prefsString(PREFS_TRANSLATIONS_OPENAI_API_KEY) ?? '';
-    _organizationController.text = prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION) ?? '';
+    _apiKeyController.text = prefsString(kPrefsTranslationsOpenaiApiKey) ?? '';
+    _organizationController.text = prefsString(kPrefsTranslationsOpenaiOrganization) ?? '';
 
     _updateOpenAIModelsAsOptions();
   }
@@ -627,15 +627,15 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               label: tt('settings.screen.openAI.selectModel'),
               selectionTitle: tt('settings.screen.openAI.selectModel.selection'),
               clearText: tt('settings.screen.openAI.selectModel.selection.cancel'),
-              initialValue: prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL),
+              initialValue: prefsString(kPrefsTranslationsOpenaiSelectedModel),
               options: _openAIModelsAsOptions,
               hasFilter: true,
               filterText: tt('settings.screen.openAI.selectModel.filter'),
               onChange: (String? newValue) {
                 if (newValue != null) {
-                  prefsSetString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL, newValue);
+                  prefsSetString(kPrefsTranslationsOpenaiSelectedModel, newValue);
                 } else {
-                  _selectModelKey.currentState?.setValue(prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL));
+                  _selectModelKey.currentState?.setValue(prefsString(kPrefsTranslationsOpenaiSelectedModel));
                 }
               },
             ),
@@ -648,7 +648,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
           ],
           PreferencesSwitchWidget(
             label: tt('settings.screen.translations.fallback'),
-            prefsKey: PREFS_TRANSLATIONS_FALLBACK,
+            prefsKey: kPrefsTranslationsFallback,
             descriptionOn: tt('settings.screen.translations.fallback.on'),
             descriptionOff: tt('settings.screen.translations.fallback.off'),
             onChange: (bool value) {
@@ -686,8 +686,8 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
     final appTheme = context.appTheme;
 
     if (_formKey.currentState!.validate()) {
-      prefsSetString(PREFS_TRANSLATIONS_OPENAI_API_KEY, _apiKeyController.text);
-      prefsSetString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION, _organizationController.text);
+      prefsSetString(kPrefsTranslationsOpenaiApiKey, _apiKeyController.text);
+      prefsSetString(kPrefsTranslationsOpenaiOrganization, _organizationController.text);
 
       await initOpenAIClient();
 
@@ -745,7 +745,7 @@ class _ProjectsWidget extends StatelessWidget {
               ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.code_only'),
-                prefsKey: PREFS_PROJECTS_CODE_ONLY,
+                prefsKey: kPrefsProjectsCodeOnly,
                 descriptionOn: tt('settings.screen.code_only.on'),
                 descriptionOff: tt('settings.screen.code_only.off'),
                 onChange: (bool value) {
@@ -780,7 +780,7 @@ class _ProjectsWidget extends StatelessWidget {
               ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.beautify_json'),
-                prefsKey: PREFS_PROJECTS_BEAUTIFY_JSON,
+                prefsKey: kPrefsProjectsBeautifyJson,
                 descriptionOn: tt('settings.screen.beautify_json.on'),
                 descriptionOff: tt('settings.screen.beautify_json.off'),
                 onChange: (bool value) {
@@ -815,7 +815,7 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    final selected = analysisOnInit.index == prefsInt(PREFS_PROJECTS_ANALYSIS);
+    final selected = analysisOnInit.index == prefsInt(kPrefsProjectsAnalysis);
 
     String text = '';
 
@@ -842,7 +842,7 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
       onTap: selected
           ? null
           : () {
-              prefsSetInt(PREFS_PROJECTS_ANALYSIS, analysisOnInit.index);
+              prefsSetInt(kPrefsProjectsAnalysis, analysisOnInit.index);
 
               AppState.instance.invalidate();
 
@@ -871,7 +871,7 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
   Widget build(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    final selected = source.index == prefsInt(PREFS_PROJECTS_SOURCE);
+    final selected = source.index == prefsInt(kPrefsProjectsSource);
 
     String text = '';
 
@@ -901,7 +901,7 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
       onTap: selected
           ? null
           : () {
-              prefsSetInt(PREFS_PROJECTS_SOURCE, source.index);
+              prefsSetInt(kPrefsProjectsSource, source.index);
 
               AppState.instance.invalidate();
 
