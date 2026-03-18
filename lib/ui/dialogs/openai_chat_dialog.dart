@@ -68,7 +68,7 @@ class _OpenAIChatDialogState extends AbstractStatefulWidgetState<OpenAIChatDialo
   void initState() {
     super.initState();
 
-    _fullScreen = prefsInt(PREFS_OPENAI_CHAT_DIALOG_ENLARGED) == 1;
+    _fullScreen = prefsInt(kPrefsOpenaiChatDialogEnlarged) == 1;
   }
 
   /// Manually dispose of resources
@@ -114,7 +114,7 @@ class _OpenAIChatDialogState extends AbstractStatefulWidgetState<OpenAIChatDialo
                       onTap: () => setStateNotDisposed(() {
                         _fullScreen = !_fullScreen;
 
-                        prefsSetInt(PREFS_OPENAI_CHAT_DIALOG_ENLARGED, _fullScreen ? 1 : 0);
+                        prefsSetInt(kPrefsOpenaiChatDialogEnlarged, _fullScreen ? 1 : 0);
                       }),
                       tooltip: _fullScreen ? tt('openai_chat.dialog.shrink.tooltip') : tt('openai_chat.dialog.enlarge.tooltip'),
                     ),

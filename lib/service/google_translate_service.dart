@@ -7,7 +7,7 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 /// Provide info for Dashboard, if enabled
 void getGoogleTranslateDashboardInfo(List<DashboardInfoPayload> info) {
-  if (TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!] == TranslationsProvider.google) {
+  if (TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!] == TranslationsProvider.google) {
     info.add(DashboardInfoPayload(
       title: tt('dashboard.info.googleTranslate.title'),
       text: tt('dashboard.info.googleTranslate.text'),

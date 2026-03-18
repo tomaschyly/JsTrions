@@ -12,8 +12,8 @@ Future<void> determineInfo(BuildContext context) async {
   }
   _intro = false;
 
-  if (prefsInt(PREFS_WELCOME) != 1) {
-    prefsSetInt(PREFS_WELCOME, 1);
+  if (prefsInt(kPrefsWelcome) != 1) {
+    prefsSetInt(kPrefsWelcome, 1);
 
     await Future.delayed(kThemeAnimationDuration, () => InfoDialog.show(context, info: Info.welcome()));
   }

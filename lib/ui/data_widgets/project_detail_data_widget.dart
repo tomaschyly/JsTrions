@@ -118,8 +118,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     _searchController.addListener(_searchTranslations);
 
-    _analysisOnInit = ProjectAnalysisOnInit.values[prefsInt(PREFS_PROJECTS_ANALYSIS)!];
-    _sourceOfTranslations = SourceOfTranslations.values[prefsInt(PREFS_PROJECTS_SOURCE)!];
+    _analysisOnInit = ProjectAnalysisOnInit.values[prefsInt(kPrefsProjectsAnalysis)!];
+    _sourceOfTranslations = SourceOfTranslations.values[prefsInt(kPrefsProjectsSource)!];
 
     _scrollController.addListener(_shouldShowScrollTop);
 
@@ -938,7 +938,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
       for (String key in _codePairsByLanguage[languageTopCount]!.keys) {
         if (!keysInAssets.contains(key) && !_ignoredTranslationKeys.contains(key)) {
-          final showCodeOnly = prefsInt(PREFS_PROJECTS_CODE_ONLY) == 1;
+          final showCodeOnly = prefsInt(kPrefsProjectsCodeOnly) == 1;
 
           if (showCodeOnly) {
             _displayOnlyCodeOnlyKeysKey.currentState?.changeValue(true);
@@ -1346,7 +1346,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
     final now = Jiffy.now();
-    final encoder = prefsInt(PREFS_PROJECTS_BEAUTIFY_JSON) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
+    final encoder = prefsInt(kPrefsProjectsBeautifyJson) == 1 ? JsonEncoder.withIndent('  ') : JsonEncoder();
 
     final metadataFile = File(join(translationsAssetsDirectory!, 'metadata.json'));
 

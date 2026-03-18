@@ -111,7 +111,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],
         supportedLocales: [const Locale('en'), const Locale('sk')],
-        getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.PREFS_LANGUAGE),
+        getInitialLanguage: (BuildContext context) async => prefsString(AppPreferences.kPrefsLanguage),
       ),
       preferencesOptions: PreferencesOptions(
         intPrefs: AppPreferences.intPrefs,

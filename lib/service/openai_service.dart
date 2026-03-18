@@ -12,8 +12,8 @@ List<String> openAIModalIds = [];
 
 /// Initialize OpenAI client
 Future<void> initOpenAIClient() async {
-  final apiKey = prefsString(PREFS_TRANSLATIONS_OPENAI_API_KEY);
-  final organization = prefsString(PREFS_TRANSLATIONS_OPENAI_ORGANIZATION);
+  final apiKey = prefsString(kPrefsTranslationsOpenaiApiKey);
+  final organization = prefsString(kPrefsTranslationsOpenaiOrganization);
 
   if (apiKey != null && apiKey.isNotEmpty) {
     _openAIClient = OpenAIClient.withApiKey(
@@ -42,8 +42,8 @@ Future<List<ListDialogOption<String>>> getOpenAIModelsAsOptions() async {
 
 /// Provide info for Dashboard, if enabled
 void getOpenAIDashboardInfo(List<DashboardInfoPayload> info) {
-  if (TranslationsProvider.values[prefsInt(PREFS_TRANSLATIONS_PROVIDER)!] == TranslationsProvider.openai) {
-    final theModelId = prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL) ?? tt('common.model.invalid');
+  if (TranslationsProvider.values[prefsInt(kPrefsTranslationsProvider)!] == TranslationsProvider.openai) {
+    final theModelId = prefsString(kPrefsTranslationsOpenaiSelectedModel) ?? tt('common.model.invalid');
     bool isDanger = false;
 
     String text = tt('dashboard.info.openAI.text').parameters({
@@ -74,7 +74,7 @@ Future<String?> openAITranslateText({
   String? context,
   String? modelId,
 }) async {
-  final theModelId = modelId ?? prefsString(PREFS_TRANSLATIONS_OPENAI_SELECTED_MODEL);
+  final theModelId = modelId ?? prefsString(kPrefsTranslationsOpenaiSelectedModel);
 
   if (isOpenAIClientInitialized && openAIModalIds.contains(theModelId)) {
     try {
