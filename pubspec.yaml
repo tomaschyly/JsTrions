@@ -13,8 +13,8 @@ version: 1.6.5+31
 #Snap needs to update version too in snapcraft.yaml
 
 environment:
-  sdk: ">=3.0.0 <4.0.0"
-  flutter: ">=3.0.0"
+  sdk: ">=3.11.0 <4.0.0"
+  flutter: ">=3.41.0"
 
 dependencies:
   flutter:
