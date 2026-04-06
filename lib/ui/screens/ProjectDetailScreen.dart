@@ -92,11 +92,11 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
     _project = project;
 
     final isDesktop = [
-      ResponsiveScreen.ExtraLargeDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.SmallDesktop,
-      ResponsiveScreen.Tablet,
-      ResponsiveScreen.LargePhone,
+      ResponsiveScreen.extraLargeDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.smallDesktop,
+      ResponsiveScreen.tablet,
+      ResponsiveScreen.largePhone,
     ].contains(snapshot.responsiveScreen);
 
     setStateNotDisposed(() {
@@ -110,7 +110,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
             button: isDesktop
                 ? ButtonWidget(
                     style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.TextOnly,
+                      variant: ButtonVariant.textOnly,
                       contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                       widthWrapContent: true,
                     ),
@@ -128,7 +128,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
             button: isDesktop
                 ? ButtonWidget(
                     style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.TextOnly,
+                      variant: ButtonVariant.textOnly,
                       contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                       widthWrapContent: true,
                       iconColor: kColorDanger,

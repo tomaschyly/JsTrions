@@ -135,9 +135,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     final isDesktop = [
-      ResponsiveScreen.SmallDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.smallDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.extraLargeDesktop,
     ].contains(snapshot.responsiveScreen);
 
     return ValueListenableBuilder(
@@ -181,7 +181,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                 CommonSpaceV(),
                 ButtonWidget(
                   style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.Filled,
+                    variant: ButtonVariant.filled,
                     widthWrapContent: true,
                   ),
                   text: tt('project_detail.macos_request_access'),
@@ -243,7 +243,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               opacity: _searchController.text.isNotEmpty ? 1 : 0,
                               child: IconButtonWidget(
                                 style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.IconOnly,
+                                  variant: IconButtonVariant.iconOnly,
                                 ),
                                 svgAssetPath: 'images/times-circle.svg',
                                 onTap: _searchController.text.isNotEmpty ? _clearSearch : null,
@@ -613,7 +613,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             if (_sourceOfTranslations != SourceOfTranslations.Code)
                               IconButtonWidget(
                                 style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.Filled,
+                                  variant: IconButtonVariant.filled,
                                   iconColor: kColorPrimaryLight,
                                 ),
                                 svgAssetPath: 'images/plus.svg',
@@ -623,7 +623,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             if (_sourceOfTranslations != SourceOfTranslations.Assets)
                               IconButtonWidget(
                                 style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.Filled,
+                                  variant: IconButtonVariant.filled,
                                   iconColor: kColorPrimaryLight,
                                 ),
                                 svgAssetPath: 'images/code.svg',
@@ -634,7 +634,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                           ],
                           IconButtonWidget(
                             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                              variant: IconButtonVariant.Filled,
+                              variant: IconButtonVariant.filled,
                               iconColor: kColorPrimaryLight,
                             ),
                             svgAssetPath: 'images/arrow-up.svg',
@@ -1762,7 +1762,7 @@ class _InfoWidget extends StatelessWidget {
             CommonSpaceHHalf(),
             IconButtonWidget(
               style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
+                variant: IconButtonVariant.iconOnly,
                 color: kColorDanger,
               ),
               svgAssetPath: 'images/times.svg',
@@ -1825,7 +1825,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
       if (widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.IconOnly,
+            variant: IconButtonVariant.iconOnly,
             iconColor: widget.isCodeOnly ? kColorSuccess : null,
           ),
           svgAssetPath: widget.isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
@@ -1841,7 +1841,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
       if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.IconOnly,
+            variant: IconButtonVariant.iconOnly,
             iconColor: kColorDanger,
           ),
           svgAssetPath: 'images/trash.svg',
@@ -1853,7 +1853,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
       if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.IconOnly,
+            variant: IconButtonVariant.iconOnly,
             iconColor: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
           ),
           svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',

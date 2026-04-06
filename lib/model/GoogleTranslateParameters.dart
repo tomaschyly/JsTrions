@@ -18,5 +18,9 @@ class GoogleTranslateParameters extends DataModel {
 
   /// Convert the object into JSON map
   @override
-  Map<String, dynamic> toJson() => json;
+  Map<String, dynamic> toJson() => <String, dynamic>{
+        'q': queries,
+        'source': sourceLanguage,
+        'target': targetLanguage,
+      };
 }

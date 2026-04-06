@@ -6,7 +6,7 @@ class GetProjectsDataRequest extends DataRequest<Projects> {
   GetProjectsDataRequest({
     Map<String, dynamic>? parameters,
   }) : super(
-          source: MainDataProviderSource.Sembast,
+          source: MainDataProviderSource.sembast,
           method: Projects.STORE,
           parameters: parameters,
           processResult: (json) => Projects.fromJson(json),

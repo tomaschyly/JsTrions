@@ -53,7 +53,7 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: ButtonWidget(
                   style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.Filled,
+                    variant: ButtonVariant.filled,
                     widthWrapContent: true,
                   ),
                   text: tt('dashboard.screen.projects.add'),

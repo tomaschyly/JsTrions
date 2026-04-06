@@ -71,9 +71,9 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   }
 
   if ([
-    ResponsiveScreen.ExtraLargeDesktop,
-    ResponsiveScreen.LargeDesktop,
-    ResponsiveScreen.SmallDesktop,
+    ResponsiveScreen.extraLargeDesktop,
+    ResponsiveScreen.largeDesktop,
+    ResponsiveScreen.smallDesktop,
   ].contains(snapshot.responsiveScreen)) {
     dialogsMainAxisAlignment = MainAxisAlignment.center;
   }
@@ -92,7 +92,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   final kButtonDangerStyle = kButtonStyle.copyWith(
-    variant: ButtonVariant.Filled,
+    variant: ButtonVariant.filled,
     filledTextStyle: kButtonStyle.filledTextStyle.copyWith(
       color: kColorTextPrimary,
     ),
@@ -101,7 +101,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kListItemButtonStyle = kButtonStyle.copyWith(
     fullWidthMobileOnly: false,
-    variant: ButtonVariant.TextOnly,
+    variant: ButtonVariant.textOnly,
     alignment: Alignment.centerLeft,
     textOverflow: TextOverflow.ellipsis,
   );
@@ -118,7 +118,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   final kAppBarIconButtonStyle = IconButtonStyle(
-    variant: IconButtonVariant.IconOnly,
+    variant: IconButtonVariant.iconOnly,
     width: kButtonHeight,
     height: kButtonHeight,
     iconWidth: kIconSizeNotTouch,
@@ -179,10 +179,10 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   final kListDialogStyle = ListDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
     optionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.TextOnly,
+      variant: ButtonVariant.textOnly,
     ),
     selectedOptionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.Filled,
+      variant: ButtonVariant.filled,
     ),
     dialogHeaderStyle: const DialogHeaderStyle(
       textStyle: kTextHeadline,
@@ -224,7 +224,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   );
 
   final kPreferencesSwitchStyle = PreferencesSwitchStyle(
-    layout: PreferencesSwitchLayout.Vertical,
+    layout: PreferencesSwitchLayout.vertical,
     labelStyle: kTextBold,
     descriptionStyle: kText,
     useSwitchToggleWidget: true,

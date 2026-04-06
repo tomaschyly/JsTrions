@@ -18,7 +18,6 @@ import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/form.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 import 'package:url_launcher/url_launcher_string.dart';
 
@@ -274,12 +273,10 @@ class _GeneralWidget extends StatelessWidget {
                 ],
                 onChange: (String? newValue) {
                   if (newValue != null) {
-                    Translator.instance!.changeLanguage(newValue);
+                    Translator.instance!.changeLanguage(newValue).then((_) {
+                      prefsSetString(kPrefsLanguage, Translator.instance!.currentLanguage);
 
-                    prefsSetString(kPrefsLanguage, Translator.instance!.currentLanguage);
-
-                    Translator.instance!.initTranslations(context).then((value) {
-                      AppState.instance.invalidate();
+                      // AppState.instance.invalidate();
 
                       pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
 
@@ -307,7 +304,7 @@ class _GeneralWidget extends StatelessWidget {
                 descriptionOff: tt('settings.screen.font.off'),
                 onChange: (bool value) {
                   Future.delayed(kThemeAnimationDuration).then((value) {
-                    AppState.instance.invalidate();
+                    // AppState.instance.invalidate();
 
                     pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
 
@@ -610,7 +607,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
           if (_openAIModelsLoading) ...[
             IconButtonWidget(
               style: appTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
+                variant: IconButtonVariant.iconOnly,
               ),
               svgAssetPath: '',
               isLoading: true,
@@ -681,7 +678,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
 
   /// Save OpenAI preferences
   Future<void> _save(BuildContext context) async {
-    clearFocus(context);
+    clearFocusToDummy(context);
 
     final appTheme = context.appTheme;
 

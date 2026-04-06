@@ -5,7 +5,7 @@ class GetProgrammingLanguagesDataRequest extends DataRequest<ProgrammingLanguage
   /// GetProgrammingLanguagesDataRequest initialization
   GetProgrammingLanguagesDataRequest()
       : super(
-          source: MainDataProviderSource.Sembast,
+          source: MainDataProviderSource.sembast,
           method: ProgrammingLanguages.STORE,
           processResult: (json) => ProgrammingLanguages.fromJson(json),
         );

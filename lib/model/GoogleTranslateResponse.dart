@@ -37,7 +37,7 @@ class GoogleTranslateResponse extends DataModel {
   }
 }
 
-class GoogleTranslateTranslation extends DataModel {
+class GoogleTranslateTranslation {
   final String translatedText;
   final String? detectedSourceLanguage;
 
@@ -45,18 +45,10 @@ class GoogleTranslateTranslation extends DataModel {
   GoogleTranslateTranslation({
     required this.translatedText,
     required this.detectedSourceLanguage,
-  }) : super.fromJson({
-          'translatedText': translatedText,
-          'detectedSourceLanguage': detectedSourceLanguage,
-        });
-
-  /// Convert the object into JSON map
-  @override
-  Map<String, dynamic> toJson() => json;
+  });
 
   /// Convert the object into string description
-  @override
   String toString() {
-    return 'GoogleTranslateTranslation${toJson()}';
+    return 'GoogleTranslateTranslation{translatedText: $translatedText, detectedSourceLanguage: $detectedSourceLanguage}';
   }
 }

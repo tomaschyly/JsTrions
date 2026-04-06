@@ -104,11 +104,11 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
     final commonTheme = context.commonTheme;
 
     final isDesktop = [
-      ResponsiveScreen.ExtraLargeDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.SmallDesktop,
-      ResponsiveScreen.Tablet,
-      ResponsiveScreen.LargePhone,
+      ResponsiveScreen.extraLargeDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.smallDesktop,
+      ResponsiveScreen.tablet,
+      ResponsiveScreen.largePhone,
     ].contains(snapshot.responsiveScreen);
 
     final theKey = widget.translation.key;
@@ -135,7 +135,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                     title: tt('edit_project_translation.title'),
                     trailing: IconButtonWidget(
                       style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                        variant: IconButtonVariant.IconOnly,
+                        variant: IconButtonVariant.iconOnly,
                         iconWidth: kButtonHeight,
                         iconHeight: kButtonHeight,
                       ),
@@ -162,7 +162,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         CommonSpaceHHalf(),
                         IconButtonWidget(
                           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                            variant: IconButtonVariant.IconOnly,
+                            variant: IconButtonVariant.iconOnly,
                           ),
                           svgAssetPath: 'images/clipboard.svg',
                           onTap: () {

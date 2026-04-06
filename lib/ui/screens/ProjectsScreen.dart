@@ -1,5 +1,6 @@
 import 'dart:async';
 
+import 'package:collection/collection.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/Project.dart';
@@ -13,7 +14,6 @@ import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/screens/ProjectDetailScreen.dart';
 import 'package:supercharged/supercharged.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/list.dart';
 import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
@@ -104,9 +104,9 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     final isDesktop = [
-      ResponsiveScreen.ExtraLargeDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.SmallDesktop,
+      ResponsiveScreen.extraLargeDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.smallDesktop,
     ].contains(snapshot.responsiveScreen);
 
     _project = project;
@@ -121,7 +121,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
           button: isDesktop
               ? ButtonWidget(
                   style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.TextOnly,
+                    variant: ButtonVariant.textOnly,
                     contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                     widthWrapContent: true,
                   ),
@@ -143,15 +143,15 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
               final snapshot = AppDataState.of(context)!;
 
               final isDesktop = [
-                ResponsiveScreen.ExtraLargeDesktop,
-                ResponsiveScreen.LargeDesktop,
-                ResponsiveScreen.SmallDesktop,
+                ResponsiveScreen.extraLargeDesktop,
+                ResponsiveScreen.largeDesktop,
+                ResponsiveScreen.smallDesktop,
               ].contains(snapshot.responsiveScreen);
 
               return isDesktop
                   ? ButtonWidget(
                       style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                        variant: ButtonVariant.TextOnly,
+                        variant: ButtonVariant.textOnly,
                         contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                         widthWrapContent: true,
                       ),
@@ -171,15 +171,15 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
               final snapshot = AppDataState.of(context)!;
 
               final isDesktop = [
-                ResponsiveScreen.ExtraLargeDesktop,
-                ResponsiveScreen.LargeDesktop,
-                ResponsiveScreen.SmallDesktop,
+                ResponsiveScreen.extraLargeDesktop,
+                ResponsiveScreen.largeDesktop,
+                ResponsiveScreen.smallDesktop,
               ].contains(snapshot.responsiveScreen);
 
               return isDesktop
                   ? ButtonWidget(
                       style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                        variant: ButtonVariant.TextOnly,
+                        variant: ButtonVariant.textOnly,
                         contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                         widthWrapContent: true,
                         iconColor: kColorDanger,
@@ -318,9 +318,9 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
     final snapshot = AppDataState.of(context)!;
 
     if ([
-      ResponsiveScreen.SmallDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.smallDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.extraLargeDesktop,
     ].contains(snapshot.responsiveScreen)) {
       setStateNotDisposed(() {
         _selectedProject = project;
@@ -486,9 +486,9 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     final isDesktop = [
-      ResponsiveScreen.SmallDesktop,
-      ResponsiveScreen.LargeDesktop,
-      ResponsiveScreen.ExtraLargeDesktop,
+      ResponsiveScreen.smallDesktop,
+      ResponsiveScreen.largeDesktop,
+      ResponsiveScreen.extraLargeDesktop,
     ].contains(snapshot.responsiveScreen);
 
     return ListDataWidget<GetProjectsDataRequest, Project>(
@@ -518,7 +518,7 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       buildItem: (BuildContext context, int position, Project item) {
         return ButtonWidget(
           style: commonTheme.listItemButtonStyle.copyWith(
-            variant: isDesktop && item.id == widget.selectedProject?.id ? ButtonVariant.Filled : ButtonVariant.TextOnly,
+            variant: isDesktop && item.id == widget.selectedProject?.id ? ButtonVariant.filled : ButtonVariant.textOnly,
           ),
           text: item.name,
           onTap: isDesktop && item.id == widget.selectedProject?.id

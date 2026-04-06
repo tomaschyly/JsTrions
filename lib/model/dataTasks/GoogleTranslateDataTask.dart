@@ -10,7 +10,7 @@ class GoogleTranslateDataTask extends DataTask<GoogleTranslateParameters, Google
   }) : super(
     method: '',
     options: HTTPTaskOptions(
-      type: HTTPType.Post,
+      type: HTTPType.post,
       url: kGoogleTranslateUrl,
     ),
     data: data,

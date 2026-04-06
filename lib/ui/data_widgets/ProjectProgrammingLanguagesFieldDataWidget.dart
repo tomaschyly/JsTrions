@@ -1,5 +1,6 @@
 import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:collection/collection.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
@@ -8,7 +9,6 @@ import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/list.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 

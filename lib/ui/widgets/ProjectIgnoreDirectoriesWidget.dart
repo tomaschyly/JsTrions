@@ -182,7 +182,7 @@ class _ChipWidget extends StatelessWidget {
       text: directory,
       suffixIcon: IconButtonWidget(
         style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-          variant: IconButtonVariant.IconOnly,
+          variant: IconButtonVariant.iconOnly,
           color: kColorDanger,
         ),
         svgAssetPath: 'images/times.svg',

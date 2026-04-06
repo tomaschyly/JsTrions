@@ -150,7 +150,7 @@ class _ChipWidget extends StatelessWidget {
       suffixIcon: canTap
           ? IconButtonWidget(
               style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
+                variant: IconButtonVariant.iconOnly,
                 color: kColorDanger,
               ),
               svgAssetPath: 'images/times.svg',

@@ -215,7 +215,7 @@ class _ChipWidget extends StatelessWidget {
         children: [
           IconButtonWidget(
             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-              variant: IconButtonVariant.IconOnly,
+              variant: IconButtonVariant.iconOnly,
               iconWidth: 16,
               iconHeight: 16,
             ),
@@ -224,7 +224,7 @@ class _ChipWidget extends StatelessWidget {
           ),
           IconButtonWidget(
             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-              variant: IconButtonVariant.IconOnly,
+              variant: IconButtonVariant.iconOnly,
               color: kColorDanger,
             ),
             svgAssetPath: 'images/times.svg',
