@@ -769,10 +769,10 @@ packages:
     dependency: "direct main"
     description:
       name: tch_appliable_core
-      sha256: f5959041d32eaba9504348f8892c8441f0c3fc09d9c3fc8274eea982b019b368
+      sha256: "6294c2175b75dd620551c46fa2375cd74d2234a05c4b7093816d33ac745a5181"
       url: "https://pub.dev"
     source: hosted
-    version: "0.37.0+2"
+    version: "0.37.0+3"
   tch_common_widgets:
     dependency: "direct main"
     description:
