@@ -9,8 +9,9 @@ class ChipWidget extends StatelessWidget {
   final GestureTapCallback? onTap;
 
   /// ChipWidget initialization
-  ChipWidget({
-    this.variant = ChipVariant.BothPadded,
+  const ChipWidget({
+    super.key,
+    this.variant = ChipVariant.bothPadded,
     required this.text,
     required this.suffixIcon,
     this.onTap,
@@ -23,7 +24,7 @@ class ChipWidget extends StatelessWidget {
 
     Widget chip = Container(
       height: kButtonHeight,
-      padding: variant == ChipVariant.BothPadded
+      padding: variant == ChipVariant.bothPadded
           ? const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf)
           : const EdgeInsets.only(left: kCommonHorizontalMarginHalf),
       decoration: BoxDecoration(
@@ -55,8 +56,8 @@ class ChipWidget extends StatelessWidget {
           color: Colors.transparent,
           child: InkWell(
             mouseCursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
-            child: chip,
             onTap: onTap,
+            child: chip,
           ),
         ),
       );
@@ -67,6 +68,6 @@ class ChipWidget extends StatelessWidget {
 }
 
 enum ChipVariant {
-  LeftPadded,
-  BothPadded,
+  leftPadded,
+  bothPadded,
 }

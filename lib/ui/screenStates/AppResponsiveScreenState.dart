@@ -12,23 +12,17 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 class AppScreenStateOptions extends AbstractScreenOptions {
   /// AppScreenStateOptions initialization for default app state
   AppScreenStateOptions.basic({
-    required String screenName,
-    required String title,
-  }) : super.basic(
-          screenName: screenName,
-          title: title,
-        ) {
+    required super.screenName,
+    required super.title,
+  }) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
   }
 
   /// AppScreenStateOptions initialization for state with Drawer
   AppScreenStateOptions.main({
-    required String screenName,
-    required String title,
-  }) : super.basic(
-          screenName: screenName,
-          title: title,
-        ) {
+    required super.screenName,
+    required super.title,
+  }) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
 
     drawerOptions = <DrawerOption>[
@@ -45,7 +39,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
           tt('drawer.dashboard'),
           style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/dashboard.svg', color: kColorTextPrimary),
+        icon: SvgPicture.asset(
+          'images/dashboard.svg',
+          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -60,7 +57,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
           tt('drawer.projects'),
           style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/project.svg', color: kColorTextPrimary),
+        icon: SvgPicture.asset(
+          'images/project.svg',
+          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -75,7 +75,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
           tt('drawer.settings'),
           style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/cog.svg', color: kColorTextPrimary),
+        icon: SvgPicture.asset(
+          'images/cog.svg',
+          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -90,7 +93,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
           tt('drawer.about'),
           style: fancyText(kText),
         ),
-        icon: SvgPicture.asset('images/info.svg', color: kColorTextPrimary),
+        icon: SvgPicture.asset(
+          'images/info.svg',
+          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
+        ),
       ),
     ];
   }
@@ -112,6 +118,7 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
 abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> extends AbstractResponsiveScreenState<T> {
   /// Create default AppBar
+  @override
   @protected
   PreferredSizeWidget? createAppBar(BuildContext context) {
     final appTheme = CommonTheme.of<AppTheme>(context)!;
@@ -164,7 +171,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
                             iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                             iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                           ),
-                          iconWidget: (theComplexIcon != null ? theComplexIcon : theIcon) ?? Container(),
+                          iconWidget: theComplexIcon ?? theIcon ?? Container(),
                           onTap: () {
                             option.onTap!(context);
                           },
@@ -177,10 +184,12 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
   }
 
   /// Create default BottomNavigationBar
+  @override
   @protected
   BottomNavigationBar? createBottomBar(BuildContext context) => null;
 
   /// Create default Drawer
+  @override
   @protected
   Widget? createDrawer(BuildContext context) {
     final theDrawerOptions = options.drawerOptions;
@@ -197,6 +206,15 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
                   color: option.isSelected(context) ? kColorPrimaryLight : kColorPrimary,
                   child: InkWell(
                     mouseCursor: !option.isSelected(context) ? SystemMouseCursors.click : MouseCursor.defer,
+                    onTap: !option.isSelected(context)
+                        ? () {
+                            if (!options.drawerIsPermanentlyVisible) {
+                              Navigator.pop(context);
+                            }
+
+                            option.onSelect(context);
+                          }
+                        : null,
                     child: Container(
                       height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
                       padding: option.icon != null
@@ -206,11 +224,11 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
                         mainAxisSize: MainAxisSize.max,
                         children: [
                           if (option.icon != null)
-                            Container(
+                            SizedBox(
                               width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
                               height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
                               child: Center(
-                                child: Container(
+                                child: SizedBox(
                                   width: kIconSizeNotTouch,
                                   height: kIconSizeNotTouch,
                                   child: option.icon,
@@ -221,19 +239,9 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
                         ],
                       ),
                     ),
-                    onTap: !option.isSelected(context)
-                        ? () {
-                            if (!options.drawerIsPermanentlyVisible) {
-                              Navigator.pop(context);
-                            }
-
-                            option.onSelect(context);
-                          }
-                        : null,
                   ),
                 ),
-              )
-              .toList(),
+              ),
         ]),
       );
 

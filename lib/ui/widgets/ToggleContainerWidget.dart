@@ -11,7 +11,8 @@ class ToggleContainerWidget extends AbstractStatefulWidget {
   final bool borderLess;
 
   /// ToggleContainerWidget initialization
-  ToggleContainerWidget({
+  const ToggleContainerWidget({
+    super.key,
     required this.title,
     required this.content,
     this.borderLess = false,
@@ -87,8 +88,8 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                           style: fancyText(kTextBold),
                         ),
                         CommonSpaceH(),
-                        Spacer(),
-                        Container(
+                        const Spacer(),
+                        SizedBox(
                           width: commonTheme.buttonsStyle.iconButtonStyle.width,
                           height: commonTheme.buttonsStyle.iconButtonStyle.height,
                           child: Center(
@@ -105,7 +106,10 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                                 'images/chevron-down.svg',
                                 width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
                                 height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
-                                color: commonTheme.buttonsStyle.iconButtonStyle.color,
+                                colorFilter: ColorFilter.mode(
+                                  commonTheme.buttonsStyle.iconButtonStyle.color ?? Colors.transparent,
+                                  BlendMode.srcIn,
+                                ),
                               ),
                             ),
                           ),

@@ -43,25 +43,21 @@ class NotificationToastWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.center,
       children: [
         Container(
-          decoration: BoxDecoration(
-            borderRadius: appTheme.buttonsStyle.buttonStyle.borderRadius,
-          ),
           margin: const EdgeInsets.only(left: 8, right: 8, top: 8, bottom: 8),
           alignment: Alignment.center,
           child: Material(
-            color: Colors.transparent,
+            color: background,
+            borderRadius: appTheme.buttonsStyle.buttonStyle.borderRadius,
+            clipBehavior: Clip.antiAlias,
             child: InkWell(
               mouseCursor: SystemMouseCursors.click,
+              borderRadius: appTheme.buttonsStyle.buttonStyle.borderRadius,
               onTap: () {
                 cancelFunc();
               },
               child: Container(
                 padding: const EdgeInsets.all(8),
                 constraints: const BoxConstraints(minHeight: 48),
-                decoration: BoxDecoration(
-                  color: background,
-                  borderRadius: appTheme.buttonsStyle.buttonStyle.borderRadius,
-                ),
                 alignment: Alignment.center,
                 child: Text(
                   message.message,
