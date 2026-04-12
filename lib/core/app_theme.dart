@@ -70,13 +70,13 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     platformBorderRadius = BorderRadius.circular(0);
   }
 
-  if ([
-    ResponsiveScreen.extraLargeDesktop,
-    ResponsiveScreen.largeDesktop,
-    ResponsiveScreen.smallDesktop,
-  ].contains(snapshot.responsiveScreen)) {
+  if ([ResponsiveScreen.extraLargeDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.smallDesktop].contains(snapshot.responsiveScreen)) {
     dialogsMainAxisAlignment = MainAxisAlignment.center;
   }
+
+  final kButtonHoverStyle = CommonButtonHoverStyle(
+    //TODO
+  );
 
   final kButtonStyle = CommonButtonStyle(
     height: kButtonHeight,
@@ -89,13 +89,12 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     preffixIconHeight: kIconSizeNotTouch,
     loadingIconWidth: kIconSizeNotTouch,
     loadingIconHeight: kIconSizeNotTouch,
+    hoverStyle: kButtonHoverStyle,
   );
 
   final kButtonDangerStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.filled,
-    filledTextStyle: kButtonStyle.filledTextStyle.copyWith(
-      color: kColorTextPrimary,
-    ),
+    filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
     color: kColorRed,
   );
 
@@ -104,6 +103,10 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     variant: ButtonVariant.textOnly,
     alignment: Alignment.centerLeft,
     textOverflow: TextOverflow.ellipsis,
+  );
+
+  final kIconButtonHoverStyle = IconButtonHoverStyle(
+    //TODO
   );
 
   final kIconButtonStyle = IconButtonStyle(
@@ -115,6 +118,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     loadingIconHeight: kIconSizeNotTouch,
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
+    hoverStyle: kIconButtonHoverStyle,
   );
 
   final kAppBarIconButtonStyle = IconButtonStyle(
@@ -135,41 +139,26 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kConfirmDialogStyle = ConfirmDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
-    dialogHeaderStyle: const DialogHeaderStyle(
-      textStyle: kTextHeadline,
-    ),
+    dialogHeaderStyle: const DialogHeaderStyle(textStyle: kTextHeadline),
     textStyle: kText,
     dialogFooterStyle: DialogFooterStyle(
-      buttonStyle: kButtonStyle.copyWith(
-        widthWrapContent: true,
-        filledTextStyle: kButtonStyle.filledTextStyle.copyWith(
-          color: kColorTextPrimary,
-        ),
-      ),
+      buttonStyle: kButtonStyle.copyWith(widthWrapContent: true, filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary)),
       dangerColor: kColorDanger,
     ),
   );
 
-  final OutlineInputBorder platformInputBorder = OutlineInputBorder(
-    borderSide: const BorderSide(
-      width: 1,
-    ),
-    borderRadius: platformBorderRadius,
-  );
+  final OutlineInputBorder platformInputBorder = OutlineInputBorder(borderSide: const BorderSide(width: 1), borderRadius: platformBorderRadius);
 
   final kTextFormFieldStyle = TextFormFieldStyle(
     inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
-          labelStyle: kTextBold,
-          contentPadding: EdgeInsets.symmetric(
-            horizontal: kCommonHorizontalMarginHalf,
-            vertical: prefsInt(kPrefsFancyFont) == 1 ? 8 : 8,
-          ),
-          enabledBorder: platformInputBorder,
-          disabledBorder: platformInputBorder,
-          focusedBorder: platformInputBorder,
-          errorBorder: platformInputBorder,
-          focusedErrorBorder: platformInputBorder,
-        ),
+      labelStyle: kTextBold,
+      contentPadding: EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf, vertical: prefsInt(kPrefsFancyFont) == 1 ? 8 : 8),
+      enabledBorder: platformInputBorder,
+      disabledBorder: platformInputBorder,
+      focusedBorder: platformInputBorder,
+      errorBorder: platformInputBorder,
+      focusedErrorBorder: platformInputBorder,
+    ),
     inputStyle: kText,
     borderColor: kColorTextPrimary,
     focusedBorderColor: kColorTextPrimary,
@@ -178,15 +167,9 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kListDialogStyle = ListDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
-    optionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.textOnly,
-    ),
-    selectedOptionStyle: kButtonStyle.copyWith(
-      variant: ButtonVariant.filled,
-    ),
-    dialogHeaderStyle: const DialogHeaderStyle(
-      textStyle: kTextHeadline,
-    ),
+    optionStyle: kButtonStyle.copyWith(variant: ButtonVariant.textOnly),
+    selectedOptionStyle: kButtonStyle.copyWith(variant: ButtonVariant.filled),
+    dialogHeaderStyle: const DialogHeaderStyle(textStyle: kTextHeadline),
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(
         widthWrapContent: true,
@@ -200,23 +183,13 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kEmailFormFieldStyle = kTextFormFieldStyle.copyWith(
     keyboardType: TextInputType.emailAddress,
-    validations: [
-      FormFieldValidation(
-        validator: validateEmail,
-        errorText: tt('validation.required'),
-      ),
-    ],
+    validations: [FormFieldValidation(validator: validateEmail, errorText: tt('validation.required'))],
   );
 
-  final kSelectionFormFieldStyle = SelectionFormFieldStyle(
-    inputStyle: kTextFormFieldStyle,
-  );
+  final kSelectionFormFieldStyle = SelectionFormFieldStyle(inputStyle: kTextFormFieldStyle);
 
   final kSwitchToggleWidgetStyle = SwitchToggleWidgetStyle(
-    iconButtonStyle: kIconButtonStyle.copyWith(
-      width: 104,
-      iconRestricted: false,
-    ),
+    iconButtonStyle: kIconButtonStyle.copyWith(width: 104, iconRestricted: false),
     useText: true,
     textStyle: kButtonStyle.textStyle,
     onText: tt('toggle.on'),
@@ -232,17 +205,11 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   return AppTheme(
     fontFamily: prefsInt(kPrefsFancyFont) == 1 ? kFontFamily : null,
-    buttonsStyle: ButtonsStyle(
-      buttonStyle: kButtonStyle,
-      iconButtonStyle: kIconButtonStyle,
-    ),
+    buttonsStyle: ButtonsStyle(buttonStyle: kButtonStyle, iconButtonStyle: kIconButtonStyle),
     buttonDangerStyle: kButtonDangerStyle,
     listItemButtonStyle: kListItemButtonStyle,
     appBarIconButtonStyle: kAppBarIconButtonStyle,
-    dialogsStyle: DialogsStyle(
-      confirmDialogStyle: kConfirmDialogStyle,
-      listDialogStyle: kListDialogStyle,
-    ),
+    dialogsStyle: DialogsStyle(confirmDialogStyle: kConfirmDialogStyle, listDialogStyle: kListDialogStyle),
     formStyle: FormStyle(
       textFormFieldStyle: kTextFormFieldStyle,
       selectionFormFieldStyle: kSelectionFormFieldStyle,
@@ -251,10 +218,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     ),
     emailFormFieldStyle: kEmailFormFieldStyle,
     tooltipStyle: TooltipStyle(
-      decoration: BoxDecoration(
-        color: Colors.black,
-        borderRadius: platformBorderRadius,
-      ),
+      decoration: BoxDecoration(color: Colors.black, borderRadius: platformBorderRadius),
     ),
     child: child,
   );
@@ -279,13 +243,13 @@ class AppTheme extends CommonTheme {
     required this.emailFormFieldStyle,
     required super.tooltipStyle,
   }) : super(
-          child: CommonTheme(
-            fontFamily: fontFamily,
-            buttonsStyle: buttonsStyle,
-            dialogsStyle: dialogsStyle,
-            formStyle: formStyle,
-            tooltipStyle: tooltipStyle,
-            child: child,
-          ),
-        );
+         child: CommonTheme(
+           fontFamily: fontFamily,
+           buttonsStyle: buttonsStyle,
+           dialogsStyle: dialogsStyle,
+           formStyle: formStyle,
+           tooltipStyle: tooltipStyle,
+           child: child,
+         ),
+       );
 }
