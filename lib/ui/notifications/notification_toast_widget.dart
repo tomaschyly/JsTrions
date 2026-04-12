@@ -51,6 +51,7 @@ class NotificationToastWidget extends StatelessWidget {
           child: Material(
             color: Colors.transparent,
             child: InkWell(
+              mouseCursor: SystemMouseCursors.click,
               onTap: () {
                 cancelFunc();
               },

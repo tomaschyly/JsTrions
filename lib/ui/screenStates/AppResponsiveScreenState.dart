@@ -196,6 +196,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
                 (DrawerOption option) => Material(
                   color: option.isSelected(context) ? kColorPrimaryLight : kColorPrimary,
                   child: InkWell(
+                    mouseCursor: !option.isSelected(context) ? SystemMouseCursors.click : MouseCursor.defer,
                     child: Container(
                       height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
                       padding: option.icon != null

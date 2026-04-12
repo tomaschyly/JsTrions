@@ -54,6 +54,7 @@ class ChipWidget extends StatelessWidget {
         child: Material(
           color: Colors.transparent,
           child: InkWell(
+            mouseCursor: onTap != null ? SystemMouseCursors.click : MouseCursor.defer,
             child: chip,
             onTap: onTap,
           ),

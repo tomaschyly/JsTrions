@@ -72,6 +72,7 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
               Material(
                 color: Colors.transparent,
                 child: InkWell(
+                  mouseCursor: SystemMouseCursors.click,
                   child: Container(
                     height: commonTheme.buttonsStyle.iconButtonStyle.height,
                     padding: const EdgeInsets.only(left: kCommonHorizontalMarginHalf),
