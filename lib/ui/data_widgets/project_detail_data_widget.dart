@@ -37,17 +37,13 @@ class ProjectDetailDataWidget extends AbstractDataWidget {
   final ValueChanged<Project?>? onProjectChanged;
 
   /// ProjectDetailDataWidget initialization
-  ProjectDetailDataWidget({
-    Key? key,
-    required this.projectId,
-    this.onProjectChanged,
-  }) : super(
-          key: key,
-          dataRequests: [
-            GetProjectDataRequest(projectId: projectId),
-            GetProgrammingLanguagesDataRequest(),
-          ],
-        );
+  ProjectDetailDataWidget({super.key, required this.projectId, this.onProjectChanged})
+    : super(
+        dataRequests: [
+          GetProjectDataRequest(projectId: projectId),
+          GetProgrammingLanguagesDataRequest(),
+        ],
+      );
 
   /// Create state for widget
   @override
@@ -59,7 +55,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   String _appVersion = '';
   final _topKey = GlobalKey();
-  ProjectAnalysisOnInit _analysisOnInit = ProjectAnalysisOnInit.Never;
+  ProjectAnalysisOnInit _analysisOnInit = ProjectAnalysisOnInit.never;
   int? _projectId;
   Project? _project;
   bool _projectDirNotFound = false;
@@ -76,7 +72,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   final _searchController = TextEditingController();
   final _searchDebouncer = Debouncer(milliseconds: 300);
   String _searchQuery = '';
-  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.All;
+  SourceOfTranslations _sourceOfTranslations = SourceOfTranslations.all;
   bool _isAnalyzing = false;
   bool _stopAnalysis = false;
   final ValueNotifier<String> _analysisProgress = ValueNotifier('');
@@ -123,9 +119,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     _scrollController.addListener(_shouldShowScrollTop);
 
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setStateNotDisposed(() {
-          _appVersion = packageInfo.version;
-        }));
+    PackageInfo.fromPlatform().then(
+      (PackageInfo packageInfo) => setStateNotDisposed(() {
+        _appVersion = packageInfo.version;
+      }),
+    );
   }
 
   /// Create screen content from widgets
@@ -134,11 +132,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final snapshot = AppDataState.of(context)!;
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    final isDesktop = [
-      ResponsiveScreen.smallDesktop,
-      ResponsiveScreen.largeDesktop,
-      ResponsiveScreen.extraLargeDesktop,
-    ].contains(snapshot.responsiveScreen);
+    final isDesktop = [ResponsiveScreen.smallDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.extraLargeDesktop].contains(snapshot.responsiveScreen);
 
     return ValueListenableBuilder(
       valueListenable: dataSource!.results,
@@ -161,9 +155,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           content = Padding(
             padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
             child: Text(
-              tt('project_detail.directory_not_found').parameters(<String, String>{
-                r'$directory': theProject.directory,
-              }),
+              tt('project_detail.directory_not_found').parameters(<String, String>{r'$directory': theProject.directory}),
               style: fancyText(kTextDanger),
             ),
           );
@@ -174,16 +166,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               mainAxisSize: MainAxisSize.min,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  tt('project_detail.macos_request_access.description'),
-                  style: fancyText(kTextDanger),
-                ),
+                Text(tt('project_detail.macos_request_access.description'), style: fancyText(kTextDanger)),
                 CommonSpaceV(),
                 ButtonWidget(
-                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.filled,
-                    widthWrapContent: true,
-                  ),
+                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(variant: ButtonVariant.filled, widthWrapContent: true),
                   text: tt('project_detail.macos_request_access'),
                   onTap: () => _confirmFilesAccess(theProject),
                 ),
@@ -194,9 +180,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           content = Padding(
             padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
             child: Text(
-              tt('project_detail.translation_assets_directory_not_found').parameters(<String, String>{
-                r'$directory': '${theProject.directory}${theProject.translationAssets}',
-              }),
+              tt(
+                'project_detail.translation_assets_directory_not_found',
+              ).parameters(<String, String>{r'$directory': '${theProject.directory}${theProject.translationAssets}'}),
               style: fancyText(kTextDanger),
             ),
           );
@@ -212,11 +198,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                     spacing: kCommonHorizontalMarginHalf,
                     runSpacing: kCommonVerticalMarginHalf,
                     children: _translationPairsByLanguage.keys
-                        .map((language) => _LanguageChipWidget(
-                              language: language,
-                              selected: _selectedLanguage == language,
-                              selectLanguage: _selectLanguage,
-                            ))
+                        .map((language) => _LanguageChipWidget(language: language, selected: _selectedLanguage == language, selectLanguage: _selectLanguage))
                         .toList(),
                   ),
                 ),
@@ -228,11 +210,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                     Expanded(
                       child: Stack(
                         alignment: Alignment.center,
+                        clipBehavior: Clip.none,
                         children: [
                           TextFormFieldWidget(
-                            style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                              fullWidthMobileOnly: false,
-                            ),
+                            style: commonTheme.formStyle.textFormFieldStyle.copyWith(fullWidthMobileOnly: false),
                             controller: _searchController,
                             label: tt('project_detail.field.search'),
                           ),
@@ -242,16 +223,13 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               duration: kThemeAnimationDuration,
                               opacity: _searchController.text.isNotEmpty ? 1 : 0,
                               child: IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.iconOnly,
-                                ),
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly),
                                 svgAssetPath: 'images/times-circle.svg',
                                 onTap: _searchController.text.isNotEmpty ? _clearSearch : null,
                               ),
                             ),
                           ),
                         ],
-                        clipBehavior: Clip.none,
                       ),
                     ),
                     CommonSpaceH(),
@@ -269,11 +247,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             mainAxisSize: MainAxisSize.max,
                             crossAxisAlignment: CrossAxisAlignment.start,
                             children: [
-                              Container(
-                                width: 1,
-                                height: 1,
-                                key: _topKey,
-                              ),
+                              SizedBox(width: 1, height: 1, key: _topKey),
                               Padding(
                                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                                 child: ToggleContainerWidget(
@@ -284,42 +258,36 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(
-                                          tt('project_detail.actions.source.title'),
-                                          style: fancyText(kTextBold),
-                                        ),
+                                        Text(tt('project_detail.actions.source.title'), style: fancyText(kTextBold)),
                                         CommonSpaceVHalf(),
                                         Wrap(
                                           spacing: kCommonHorizontalMarginHalf,
                                           runSpacing: kCommonVerticalMarginHalf,
                                           children: [
                                             _SourceOfTranslationsChipWidget(
-                                              source: SourceOfTranslations.All,
-                                              selected: _sourceOfTranslations == SourceOfTranslations.All,
+                                              source: SourceOfTranslations.all,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.all,
                                               selectSource: _selectSource,
                                             ),
                                             _SourceOfTranslationsChipWidget(
-                                              source: SourceOfTranslations.Assets,
-                                              selected: _sourceOfTranslations == SourceOfTranslations.Assets,
+                                              source: SourceOfTranslations.assets,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.assets,
                                               selectSource: _selectSource,
                                             ),
                                             _SourceOfTranslationsChipWidget(
-                                              source: SourceOfTranslations.Code,
-                                              selected: _sourceOfTranslations == SourceOfTranslations.Code,
+                                              source: SourceOfTranslations.code,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.code,
                                               selectSource: _selectSource,
                                             ),
                                             _SourceOfTranslationsChipWidget(
-                                              source: SourceOfTranslations.IgnoredKeys,
-                                              selected: _sourceOfTranslations == SourceOfTranslations.IgnoredKeys,
+                                              source: SourceOfTranslations.ignoredKeys,
+                                              selected: _sourceOfTranslations == SourceOfTranslations.ignoredKeys,
                                               selectSource: _selectSource,
                                             ),
                                           ],
                                         ),
                                         CommonSpaceV(),
-                                        Text(
-                                          tt('project_detail.actions.code_only_keys'),
-                                          style: fancyText(kTextBold),
-                                        ),
+                                        Text(tt('project_detail.actions.code_only_keys'), style: fancyText(kTextBold)),
                                         CommonSpaceVHalf(),
                                         SwitchToggleWidget(
                                           key: _displayOnlyCodeOnlyKeysKey,
@@ -333,27 +301,20 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           },
                                         ),
                                         CommonSpaceV(),
-                                        Text(
-                                          tt('project_detail.actions.import_export.title'),
-                                          style: fancyText(kTextBold),
-                                        ),
+                                        Text(tt('project_detail.actions.import_export.title'), style: fancyText(kTextBold)),
                                         CommonSpaceVHalf(),
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
                                           children: [
                                             ButtonWidget(
-                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                                widthWrapContent: true,
-                                              ),
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                               text: tt('project_detail.import_translations'),
                                               prefixIconSvgAssetPath: 'images/file-import.svg',
                                               onTap: () => _importTranslations(context, theProject, programmingLanguages.programmingLanguages),
                                             ),
                                             CommonSpaceHHalf(),
                                             ButtonWidget(
-                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                                widthWrapContent: true,
-                                              ),
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                               text: tt('project_detail.export_translations'),
                                               prefixIconSvgAssetPath: 'images/file-export.svg',
                                               onTap: () => _exportTranslations(context, theProject),
@@ -380,9 +341,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                       ..._infoList,
                                       if (_infoList.length > 1) ...[
                                         ButtonWidget(
-                                          style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                            widthWrapContent: true,
-                                          ),
+                                          style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                           text: tt('project_detail.info_list.clear_all'),
                                           onTap: () {
                                             setStateNotDisposed(() {
@@ -401,10 +360,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(
-                                    tt('project_detail.translations.label'),
-                                    style: fancyText(kTextHeadline),
-                                  ),
+                                  Text(tt('project_detail.translations.label'), style: fancyText(kTextHeadline)),
                                   CommonSpaceHHalf(),
                                   Text(
                                     tt('project_detail.translations.stats').parameters(<String, String>{
@@ -424,26 +380,22 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                   mainAxisSize: MainAxisSize.min,
                                   crossAxisAlignment: CrossAxisAlignment.end,
                                   children: [
-                                    if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+                                    if (_sourceOfTranslations != SourceOfTranslations.ignoredKeys)
                                       Row(
                                         mainAxisSize: MainAxisSize.max,
                                         mainAxisAlignment: MainAxisAlignment.end,
                                         children: [
-                                          if (_sourceOfTranslations != SourceOfTranslations.Code)
+                                          if (_sourceOfTranslations != SourceOfTranslations.code)
                                             ButtonWidget(
-                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                                widthWrapContent: true,
-                                              ),
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                               text: tt('project_detail.add_translation'),
                                               prefixIconSvgAssetPath: 'images/plus.svg',
                                               onTap: () => _processTranslationsForKey(context, theProject),
                                             ),
-                                          if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceH(),
-                                          if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                                          if (_sourceOfTranslations == SourceOfTranslations.all) CommonSpaceH(),
+                                          if (_sourceOfTranslations != SourceOfTranslations.assets)
                                             ButtonWidget(
-                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                                                widthWrapContent: true,
-                                              ),
+                                              style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                               text: tt('project_detail.analyze_code'),
                                               prefixIconSvgAssetPath: 'images/code.svg',
                                               onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
@@ -468,10 +420,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                                     ValueListenableBuilder(
                                                       valueListenable: _analysisProgress,
                                                       builder: (BuildContext context, String value, Widget? child) {
-                                                        return Text(
-                                                          value,
-                                                          style: fancyText(kText),
-                                                        );
+                                                        return Text(value, style: fancyText(kText));
                                                       },
                                                     ),
                                                     CommonSpaceH(),
@@ -500,10 +449,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               flexibleSpace: Container(
                                 height: kButtonHeight,
                                 margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                                decoration: BoxDecoration(
-                                  color: kColorSecondaryDark,
-                                  borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-                                ),
+                                decoration: BoxDecoration(color: kColorSecondaryDark, borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
@@ -512,10 +458,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.centerLeft,
                                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                                        child: Text(
-                                          tt('project_detail.table.key'),
-                                          style: fancyText(kTextBold),
-                                        ),
+                                        child: Text(tt('project_detail.table.key'), style: fancyText(kTextBold)),
                                       ),
                                     ),
                                     CommonSpaceH(),
@@ -524,15 +467,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.centerLeft,
                                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                                        child: Text(
-                                          tt('project_detail.table.translation'),
-                                          style: fancyText(kTextBold),
-                                        ),
+                                        child: Text(tt('project_detail.table.translation'), style: fancyText(kTextBold)),
                                       ),
                                     ),
-                                    SizedBox(
-                                      width: kButtonHeight + kCommonHorizontalMargin + kButtonHeight,
-                                    ),
+                                    SizedBox(width: kButtonHeight + kCommonHorizontalMargin + kButtonHeight),
                                   ],
                                 ),
                               ),
@@ -542,11 +480,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               itemBuilder: (context, index) {
                                 final rowIsOdd = (index % 2) == 1;
                                 final key = _processedKeys[index];
-                                final value = truncateText(
-                                  _processedLanguagePairs[key]!,
-                                  200,
-                                  addDots: true,
-                                );
+                                final value = truncateText(_processedLanguagePairs[key]!, 200, addDots: true);
 
                                 final isCodeOnly = _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
@@ -565,11 +499,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             ),
                           ],
                         ),
-                        SliverToBoxAdapter(
-                          child: Container(
-                            height: kButtonHeight + (!isDesktop ? (2 * kCommonVerticalMargin) : kCommonVerticalMargin),
-                          ),
-                        ),
+                        SliverToBoxAdapter(child: Container(height: kButtonHeight + (!isDesktop ? (2 * kCommonVerticalMargin) : kCommonVerticalMargin))),
                       ],
                     ),
                   ),
@@ -585,14 +515,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(
-                  theProject.name,
-                  style: fancyText(kTextHeadline),
-                ),
+                Text(theProject.name, style: fancyText(kTextHeadline)),
                 CommonSpaceV(),
-                Expanded(
-                  child: content,
-                ),
+                Expanded(child: content),
               ],
             ),
             ValueListenableBuilder(
@@ -609,23 +534,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                       child: Row(
                         mainAxisSize: MainAxisSize.min,
                         children: [
-                          if (_sourceOfTranslations != SourceOfTranslations.IgnoredKeys) ...[
-                            if (_sourceOfTranslations != SourceOfTranslations.Code)
+                          if (_sourceOfTranslations != SourceOfTranslations.ignoredKeys) ...[
+                            if (_sourceOfTranslations != SourceOfTranslations.code)
                               IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.filled,
-                                  iconColor: kColorPrimaryLight,
-                                ),
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
                                 svgAssetPath: 'images/plus.svg',
                                 onTap: () => _processTranslationsForKey(context, theProject),
                               ),
-                            if (_sourceOfTranslations == SourceOfTranslations.All) CommonSpaceHHalf(),
-                            if (_sourceOfTranslations != SourceOfTranslations.Assets)
+                            if (_sourceOfTranslations == SourceOfTranslations.all) CommonSpaceHHalf(),
+                            if (_sourceOfTranslations != SourceOfTranslations.assets)
                               IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                                  variant: IconButtonVariant.filled,
-                                  iconColor: kColorPrimaryLight,
-                                ),
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
                                 svgAssetPath: 'images/code.svg',
                                 onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
                                 isLoading: _isAnalyzing,
@@ -633,10 +552,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             CommonSpaceHHalf(),
                           ],
                           IconButtonWidget(
-                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                              variant: IconButtonVariant.filled,
-                              iconColor: kColorPrimaryLight,
-                            ),
+                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
                             svgAssetPath: 'images/arrow-up.svg',
                             onTap: () {
                               final theContext = _topKey.currentContext;
@@ -674,10 +590,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _infoList.clear();
     });
 
-    updateDataRequests([
-      GetProjectDataRequest(projectId: widget.projectId),
-      GetProgrammingLanguagesDataRequest(),
-    ]);
+    updateDataRequests([GetProjectDataRequest(projectId: widget.projectId), GetProgrammingLanguagesDataRequest()]);
   }
 
   /// Check if Projects exists, init translations from Project based on parameters
@@ -731,10 +644,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           final metadata = metadataMap.key;
           final ignoredFromMeta = metadataMap.value;
 
-          final translationPairsByLanguage = await _loadTranslationPairsByLanguage(
-            project,
-            translationsAssetsDirectory,
-          );
+          final translationPairsByLanguage = await _loadTranslationPairsByLanguage(project, translationsAssetsDirectory);
 
           setStateNotDisposed(() {
             _metadata = metadata;
@@ -744,10 +654,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             addPostFrameCallback((timeStamp) {
               _selectLanguage(_translationPairsByLanguage.keys.first);
 
-              if (_analysisOnInit == ProjectAnalysisOnInit.Always) {
+              if (_analysisOnInit == ProjectAnalysisOnInit.always) {
                 _processProjectCode(project, programmingLanguages);
-              } else if (_analysisOnInit == ProjectAnalysisOnInit.CodeVisibleOnly &&
-                  (_sourceOfTranslations == SourceOfTranslations.Code || _sourceOfTranslations == SourceOfTranslations.All)) {
+              } else if (_analysisOnInit == ProjectAnalysisOnInit.codeVisibleOnly &&
+                  (_sourceOfTranslations == SourceOfTranslations.code || _sourceOfTranslations == SourceOfTranslations.all)) {
                 _processProjectCode(project, programmingLanguages);
               } else {
                 _analyzeTranslations();
@@ -762,9 +672,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   }
 
   /// Loads metadata and ignored keys from the metadata file
-  Future<MapEntry<Map<String, TranslationKeyMetadata>, List<String>>> _loadMetadataAndIgnoredKeys(
-    File metadataFile,
-  ) async {
+  Future<MapEntry<Map<String, TranslationKeyMetadata>, List<String>>> _loadMetadataAndIgnoredKeys(File metadataFile) async {
     final Map<String, TranslationKeyMetadata> metadata = {};
     final List<String> ignoredFromMeta = [];
 
@@ -810,10 +718,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
   /// Load existing translations data from the translations directory
   /// Map contains maps by language sorted by keys
-  Future<Map<String, SplayTreeMap<String, String>>> _loadTranslationPairsByLanguage(
-    Project project,
-    String translationsAssetsDirectory,
-  ) async {
+  Future<Map<String, SplayTreeMap<String, String>>> _loadTranslationPairsByLanguage(Project project, String translationsAssetsDirectory) async {
     final translationPairsByLanguage = <String, SplayTreeMap<String, String>>{};
 
     for (String language in project.languages) {
@@ -915,10 +820,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             if (!languagesNotEqualKeys) {
               infoList.add(
                 _InfoWidget(
-                  text: tt('project_detail.info.languages_not_equal_keys').parameters(<String, String>{
-                    r'$language': language,
-                    r'$otherLanguage': otherLanguage,
-                  }),
+                  text: tt(
+                    'project_detail.info.languages_not_equal_keys',
+                  ).parameters(<String, String>{r'$language': language, r'$otherLanguage': otherLanguage}),
                   clearInfo: _clearInfo,
                 ),
               );
@@ -950,25 +854,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
             });
           }
 
-          infoList.add(
-            _InfoWidget(
-              text: tt('project_detail.info.code_key_not_translated'),
-              clearInfo: _clearInfo,
-            ),
-          );
+          infoList.add(_InfoWidget(text: tt('project_detail.info.code_key_not_translated'), clearInfo: _clearInfo));
           break;
         }
       }
     }
 
     if (infoList.isEmpty) {
-      infoList.add(
-        _InfoWidget(
-          text: tt('project_detail.info.success'),
-          isSuccess: true,
-          clearInfo: _clearInfo,
-        ),
-      );
+      infoList.add(_InfoWidget(text: tt('project_detail.info.success'), isSuccess: true, clearInfo: _clearInfo));
     }
 
     setStateNotDisposed(() {
@@ -1011,9 +904,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       final queryFilter = _searchQuery.isEmpty || key.toLowerCase().contains(_searchQuery) || _selectedLanguagePairs[key]!.toLowerCase().contains(_searchQuery);
 
       bool sourceFilter =
-          !_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.Assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null;
+          !_displayOnlyCodeOnlyKeys || _sourceOfTranslations == SourceOfTranslations.assets || _translationPairsByLanguage[_selectedLanguage]?[key] == null;
 
-      if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.IgnoredKeys) {
+      if (sourceFilter && _sourceOfTranslations == SourceOfTranslations.ignoredKeys) {
         sourceFilter = _ignoredTranslationKeys.contains(key);
       } else if (sourceFilter && _ignoredTranslationKeys.contains(key)) {
         sourceFilter = false;
@@ -1029,10 +922,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   /// Confirm access to Project files by picking the directory
   Future<void> _confirmFilesAccess(Project project) async {
     try {
-      final directoryPath = await getDirectoryPath(
-        initialDirectory: project.directory,
-        confirmButtonText: tt('project_detail.macos_request_access'),
-      );
+      final directoryPath = await getDirectoryPath(initialDirectory: project.directory, confirmButtonText: tt('project_detail.macos_request_access'));
 
       if (directoryPath == project.directory) {
         setStateNotDisposed(() {
@@ -1052,14 +942,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _selectedLanguagePairs = SplayTreeMap();
 
       switch (_sourceOfTranslations) {
-        case SourceOfTranslations.Assets:
+        case SourceOfTranslations.assets:
           _selectedLanguagePairs = _translationPairsByLanguage[language] ?? SplayTreeMap();
           break;
-        case SourceOfTranslations.Code:
+        case SourceOfTranslations.code:
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
           break;
-        case SourceOfTranslations.All:
-        case SourceOfTranslations.IgnoredKeys:
+        case SourceOfTranslations.all:
+        case SourceOfTranslations.ignoredKeys:
           _selectedLanguagePairs = _codePairsByLanguage[language] ?? SplayTreeMap();
 
           _selectedLanguagePairs.addAll(_translationPairsByLanguage[language] ?? SplayTreeMap());
@@ -1074,10 +964,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         final theContext = _topKey.currentContext;
 
         if (theContext != null) {
-          Scrollable.ensureVisible(
-            theContext,
-            alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart,
-          );
+          Scrollable.ensureVisible(theContext, alignmentPolicy: ScrollPositionAlignmentPolicy.keepVisibleAtStart);
         }
       });
     });
@@ -1128,7 +1015,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       XFile? file = await openFile(
         initialDirectory: (await getDownloadsDirectory())?.path,
         acceptedTypeGroups: [
-          XTypeGroup(label: typeLabel, extensions: ['zip'])
+          XTypeGroup(label: typeLabel, extensions: ['zip']),
         ],
       );
 
@@ -1149,10 +1036,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         }
 
         displayScreenMessage(
-          ScreenMessage(
-            message: tt('project.import.success'),
-            type: ScreenMessageType.success,
-          ),
+          ScreenMessage(message: tt('project.import.success'), type: ScreenMessageType.success),
           appTheme: appTheme,
         );
 
@@ -1162,10 +1046,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       debugPrint('TCH_e $e\n$t');
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('project.import.failure'),
-          type: ScreenMessageType.error,
-        ),
+        ScreenMessage(message: tt('project.import.failure'), type: ScreenMessageType.error),
         appTheme: appTheme,
       );
     }
@@ -1184,7 +1065,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       FileSaveLocation? savePath = await getSaveLocation(
         suggestedName: '$saveName.zip',
         acceptedTypeGroups: [
-          XTypeGroup(label: typeLabel, extensions: ['zip'])
+          XTypeGroup(label: typeLabel, extensions: ['zip']),
         ],
         initialDirectory: (await getDownloadsDirectory())?.path,
       );
@@ -1194,10 +1075,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         encoder.zipDirectory(Directory(translationsAssetsDirectory!), followLinks: false, filename: savePath.path);
 
         displayScreenMessage(
-          ScreenMessage(
-            message: tt('project.export.success'),
-            type: ScreenMessageType.success,
-          ),
+          ScreenMessage(message: tt('project.export.success'), type: ScreenMessageType.success),
           appTheme: appTheme,
         );
       }
@@ -1205,10 +1083,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       debugPrint('TCH_e $e\n$t');
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('project.export.failure'),
-          type: ScreenMessageType.error,
-        ),
+        ScreenMessage(message: tt('project.export.failure'), type: ScreenMessageType.error),
         appTheme: appTheme,
       );
     }
@@ -1235,12 +1110,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final translation = await EditProjectTranslationDialog.show(
       context,
       project: project,
-      translation: Translation(
-        key: key,
-        languages: languages,
-        translations: translations,
-        translationKeyMetadata: _metadata[key],
-      ),
+      translation: Translation(key: key, languages: languages, translations: translations, translationKeyMetadata: _metadata[key]),
     );
 
     if (translation != null) {
@@ -1267,17 +1137,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _processSelectedLanguagePairs();
       });
 
-      await _saveTranslationsToAssets(
-        context,
-        project,
-        saveKey: translation.key!,
-      );
+      await _saveTranslationsToAssets(project, appTheme: appTheme, saveKey: translation.key!);
 
       displayScreenMessage(
-        ScreenMessage(
-          message: isNew ? tt('project.translation.new.success') : tt('project.translation.edit.success'),
-          type: ScreenMessageType.success,
-        ),
+        ScreenMessage(message: isNew ? tt('project.translation.new.success') : tt('project.translation.edit.success'), type: ScreenMessageType.success),
         appTheme: appTheme,
       );
     }
@@ -1289,13 +1152,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
 
     final appTheme = context.appTheme;
 
-    final confirmed = await ConfirmDialog.show(
-      context,
-      isDanger: true,
-      title: tt('dialog.confirm.title'),
-      noText: tt('dialog.no'),
-      yesText: tt('dialog.yes'),
-    );
+    final confirmed = await ConfirmDialog.show(context, isDanger: true, title: tt('dialog.confirm.title'), noText: tt('dialog.no'), yesText: tt('dialog.yes'));
 
     if (confirmed == true) {
       for (String language in project.languages) {
@@ -1315,18 +1172,10 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         _processSelectedLanguagePairs();
       });
 
-      await _saveTranslationsToAssets(
-        context,
-        project,
-        saveKey: null,
-        deleteKey: key,
-      );
+      await _saveTranslationsToAssets(project, appTheme: appTheme, saveKey: null, deleteKey: key);
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('project.translation.delete.success'),
-          type: ScreenMessageType.success,
-        ),
+        ScreenMessage(message: tt('project.translation.delete.success'), type: ScreenMessageType.success),
         appTheme: appTheme,
       );
     }
@@ -1335,14 +1184,12 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   /// Save translations for all languages to Project translations assets directory
   /// Save also metadata
   Future<void> _saveTranslationsToAssets(
-    BuildContext context,
     Project project, {
+    required AppTheme appTheme,
     required String? saveKey,
     String? deleteKey,
     bool handleIgnoreKey = false,
   }) async {
-    final appTheme = context.appTheme;
-
     final translationsAssetsDirectory = getRealTranslationsAssetsDirectoryForProject(project);
 
     final now = Jiffy.now();
@@ -1378,11 +1225,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       debugPrint('TCH_e $e\n$t');
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('project.translation.save.error'),
-          type: ScreenMessageType.error,
-          duration: const Duration(milliseconds: 6000),
-        ),
+        ScreenMessage(message: tt('project.translation.save.error'), type: ScreenMessageType.error, duration: const Duration(milliseconds: 6000)),
         appTheme: appTheme,
       );
       return;
@@ -1391,9 +1234,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
     final Map<String, dynamic> metadata = {
       kMetadataJsTrions: {
         'version': _appVersion,
-        'message': tt('project.metadata.message').parameters({
-          r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss'),
-        }),
+        'message': tt('project.metadata.message').parameters({r'$date': now.format(pattern: 'yyyy-MM-dd HH:mm:ss')}),
         'description': tt('project.metadata.description'),
         'website': kAppWebsite,
         'windows': kDownloadWin,
@@ -1401,18 +1242,16 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         'ubuntu': kDownloadUbuntu,
       },
       kMetadataIgnoredTranslationKeys: saveIgnoredTranslationKeys,
-      ...saveMetadata.filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix))).toMap().map(
-            (key, value) => MapEntry(key, value.toJson()),
-          ),
+      ...saveMetadata
+          .filter((MapEntry<String, TranslationKeyMetadata> entry) => !kMetadataKeys.any((prefix) => entry.key.startsWith(prefix)))
+          .toMap()
+          .map((key, value) => MapEntry(key, value.toJson())),
     };
 
     Map<String, SplayTreeMap<String, String>> saveTranslationPairsByLanguage = {};
 
     try {
-      saveTranslationPairsByLanguage = await _loadTranslationPairsByLanguage(
-        project,
-        translationsAssetsDirectory,
-      );
+      saveTranslationPairsByLanguage = await _loadTranslationPairsByLanguage(project, translationsAssetsDirectory);
 
       if (!handleIgnoreKey) {
         for (String language in project.languages) {
@@ -1429,11 +1268,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       debugPrint('TCH_e $e\n$t');
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('project.translation.save.error'),
-          type: ScreenMessageType.error,
-          duration: const Duration(milliseconds: 6000),
-        ),
+        ScreenMessage(message: tt('project.translation.save.error'), type: ScreenMessageType.error, duration: const Duration(milliseconds: 6000)),
         appTheme: appTheme,
       );
       return;
@@ -1447,9 +1282,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       final pairs = saveTranslationPairsByLanguage[language]!;
 
       if (project.translationsJsonFormat == TranslationsJsonFormat.ObjectInside) {
-        final jsonObject = <String, dynamic>{
-          '${project.formatObjectInside}': pairs,
-        };
+        final jsonObject = <String, dynamic>{'${project.formatObjectInside}': pairs};
 
         await file.writeAsString(encoder.convert(jsonObject));
       } else {
@@ -1511,8 +1344,9 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
         final programmingLanguageForExtension = acceptedExtensions[fileExtension];
 
         if (programmingLanguageForExtension != null) {
-          final regExp =
-              RegExp(project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key);
+          final regExp = RegExp(
+            project.translationKeys.firstWhere((translationKey) => translationKey.programmingLanguage == programmingLanguageForExtension.id).key,
+          );
 
           final fileContents = await file.readAsString();
 
@@ -1527,9 +1361,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
           });
 
           filesAnalyzed++;
-          _analysisProgress.value = tt('project_detail.analysis.files_analyzed').parameters(<String, String>{
-            r'$filesAnalyzed': filesAnalyzed.toString(),
-          });
+          _analysisProgress.value = tt('project_detail.analysis.files_analyzed').parameters(<String, String>{r'$filesAnalyzed': filesAnalyzed.toString()});
         }
       }
     }
@@ -1598,6 +1430,8 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
   Future<void> _toggleIgnoreTranslationKey(BuildContext context, Project project, String key, bool ignore) async {
     _interruptAnalysis();
 
+    final appTheme = context.appTheme;
+
     String? saveKey;
     String? deleteKey;
 
@@ -1617,21 +1451,11 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
       _processSelectedLanguagePairs();
     });
 
-    await _saveTranslationsToAssets(
-      context,
-      project,
-      saveKey: saveKey,
-      deleteKey: deleteKey,
-      handleIgnoreKey: true,
-    );
+    await _saveTranslationsToAssets(project, appTheme: appTheme, saveKey: saveKey, deleteKey: deleteKey, handleIgnoreKey: true);
   }
 }
 
-enum ProjectAnalysisOnInit {
-  Always,
-  Never,
-  CodeVisibleOnly,
-}
+enum ProjectAnalysisOnInit { always, never, codeVisibleOnly }
 
 class _LanguageChipWidget extends StatelessWidget {
   final String language;
@@ -1639,11 +1463,7 @@ class _LanguageChipWidget extends StatelessWidget {
   final void Function(String language) selectLanguage;
 
   /// LanguageChipWidget initialization
-  _LanguageChipWidget({
-    required this.language,
-    this.selected = false,
-    required this.selectLanguage,
-  });
+  const _LanguageChipWidget({required this.language, this.selected = false, required this.selectLanguage});
 
   /// Create view layout from widgets
   @override
@@ -1656,19 +1476,16 @@ class _LanguageChipWidget extends StatelessWidget {
         selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
         width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
         height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
-        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+        colorFilter: commonTheme.buttonsStyle.iconButtonStyle.color == null
+            ? null
+            : ColorFilter.mode(commonTheme.buttonsStyle.iconButtonStyle.color!, BlendMode.srcIn),
       ),
       onTap: selected ? null : () => selectLanguage(language),
     );
   }
 }
 
-enum SourceOfTranslations {
-  Assets,
-  Code,
-  All,
-  IgnoredKeys,
-}
+enum SourceOfTranslations { assets, code, all, ignoredKeys }
 
 class _SourceOfTranslationsChipWidget extends StatelessWidget {
   final SourceOfTranslations source;
@@ -1676,11 +1493,7 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
   final void Function(SourceOfTranslations source) selectSource;
 
   /// SourceOfTranslationsChipWidget initialization
-  _SourceOfTranslationsChipWidget({
-    required this.source,
-    this.selected = false,
-    required this.selectSource,
-  });
+  const _SourceOfTranslationsChipWidget({required this.source, this.selected = false, required this.selectSource});
 
   /// Create view layout from widgets
   @override
@@ -1690,16 +1503,16 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
     String text = '';
 
     switch (source) {
-      case SourceOfTranslations.All:
+      case SourceOfTranslations.all:
         text = tt('project_detail.actions.source.all');
         break;
-      case SourceOfTranslations.Assets:
+      case SourceOfTranslations.assets:
         text = tt('project_detail.actions.source.assets');
         break;
-      case SourceOfTranslations.Code:
+      case SourceOfTranslations.code:
         text = tt('project_detail.actions.source.code');
         break;
-      case SourceOfTranslations.IgnoredKeys:
+      case SourceOfTranslations.ignoredKeys:
         text = tt('project_detail.actions.source.ignored_keys');
         break;
     }
@@ -1710,7 +1523,9 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
         selected ? 'images/circle-full.svg' : 'images/circle-empty.svg',
         width: commonTheme.buttonsStyle.iconButtonStyle.iconWidth,
         height: commonTheme.buttonsStyle.iconButtonStyle.iconHeight,
-        color: commonTheme.buttonsStyle.iconButtonStyle.color,
+        colorFilter: commonTheme.buttonsStyle.iconButtonStyle.color == null
+            ? null
+            : ColorFilter.mode(commonTheme.buttonsStyle.iconButtonStyle.color!, BlendMode.srcIn),
       ),
       onTap: selected ? null : () => selectSource(source),
     );
@@ -1723,11 +1538,7 @@ class _InfoWidget extends StatelessWidget {
   final void Function(_InfoWidget info) clearInfo;
 
   /// InfoWidget initialization
-  _InfoWidget({
-    required this.text,
-    this.isSuccess = false,
-    required this.clearInfo,
-  });
+  const _InfoWidget({required this.text, this.isSuccess = false, required this.clearInfo});
 
   /// Create view layout from widgets
   @override
@@ -1753,18 +1564,10 @@ class _InfoWidget extends StatelessWidget {
           mainAxisAlignment: MainAxisAlignment.start,
           crossAxisAlignment: CrossAxisAlignment.center,
           children: [
-            Flexible(
-              child: Text(
-                text,
-                style: fancyText(textStyle),
-              ),
-            ),
+            Flexible(child: Text(text, style: fancyText(textStyle))),
             CommonSpaceHHalf(),
             IconButtonWidget(
-              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.iconOnly,
-                color: kColorDanger,
-              ),
+              style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly, color: kColorDanger),
               svgAssetPath: 'images/times.svg',
               onTap: () => clearInfo(this),
             ),
@@ -1788,7 +1591,7 @@ class _KeyListItemWidget extends AbstractStatefulWidget {
   final ValueChanged<bool> onIgnore;
 
   /// KeyListItemWidget initialization
-  _KeyListItemWidget({
+  const _KeyListItemWidget({
     required this.keyString,
     required this.value,
     required this.theProject,
@@ -1822,49 +1625,33 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
     }
 
     final actions = <Widget>[
-      if (widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+      if (widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
-          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.iconOnly,
-            iconColor: widget.isCodeOnly ? kColorSuccess : null,
-          ),
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly, iconColor: widget.isCodeOnly ? kColorSuccess : null),
           svgAssetPath: widget.isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
           onTap: widget.onAddOrEdit,
           tooltip: widget.isCodeOnly
-              ? tt('project_detail.table.add_key.tooltip').parameters({
-                  r'$key': widget.keyString,
-                })
-              : tt('project_detail.table.edit.tooltip').parameters({
-                  r'$key': widget.keyString,
-                }),
+              ? tt('project_detail.table.add_key.tooltip').parameters({r'$key': widget.keyString})
+              : tt('project_detail.table.edit.tooltip').parameters({r'$key': widget.keyString}),
         ),
-      if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys)
+      if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
-          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.iconOnly,
-            iconColor: kColorDanger,
-          ),
+          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly, iconColor: kColorDanger),
           svgAssetPath: 'images/trash.svg',
           onTap: widget.onDelete,
-          tooltip: tt('project_detail.table.delete.tooltip').parameters({
-            r'$key': widget.keyString,
-          }),
+          tooltip: tt('project_detail.table.delete.tooltip').parameters({r'$key': widget.keyString}),
         ),
-      if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.IgnoredKeys)
+      if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
           style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
             variant: IconButtonVariant.iconOnly,
-            iconColor: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? kColorDanger : kColorSuccess,
+            iconColor: widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys ? kColorDanger : kColorSuccess,
           ),
-          svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
-          onTap: () => widget.onIgnore(widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys),
-          tooltip: widget.sourceOfTranslations != SourceOfTranslations.IgnoredKeys
-              ? tt('project_detail.table.ignore_key.tooltip').parameters({
-                  r'$key': widget.keyString,
-                })
-              : tt('project_detail.table.unignore_key.tooltip').parameters({
-                  r'$key': widget.keyString,
-                }),
+          svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
+          onTap: () => widget.onIgnore(widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys),
+          tooltip: widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys
+              ? tt('project_detail.table.ignore_key.tooltip').parameters({r'$key': widget.keyString})
+              : tt('project_detail.table.unignore_key.tooltip').parameters({r'$key': widget.keyString}),
         ),
     ];
 
@@ -1884,15 +1671,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
         decoration: BoxDecoration(
           color: rowColor,
           borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-          border: _isHovered
-              ? Border.all(
-                  color: kColorTextPrimary,
-                  width: 1,
-                )
-              : Border.all(
-                  color: rowColor,
-                  width: 1,
-                ),
+          border: _isHovered ? Border.all(color: kColorTextPrimary, width: 1) : Border.all(color: rowColor, width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -1902,10 +1681,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
                 constraints: BoxConstraints(minHeight: kButtonHeight),
                 alignment: Alignment.topLeft,
                 padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                child: Text(
-                  widget.keyString,
-                  style: fancyText(kText),
-                ),
+                child: Text(widget.keyString, style: fancyText(kText)),
               ),
             ),
             CommonSpaceH(),
@@ -1914,17 +1690,11 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
                 constraints: BoxConstraints(minHeight: kButtonHeight),
                 alignment: Alignment.topLeft,
                 padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                child: Text(
-                  widget.value,
-                  style: fancyText(kText),
-                ),
+                child: Text(widget.value, style: fancyText(kText)),
               ),
             ),
             CommonSpaceHHalf(),
-            for (final action in actions) ...[
-              action,
-              CommonSpaceHHalf(),
-            ],
+            for (final action in actions) ...[action, CommonSpaceHHalf()],
           ],
         ),
       ),

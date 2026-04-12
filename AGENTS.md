@@ -71,6 +71,11 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - Use those nearby implementations as the primary reference for architecture, naming, state handling, and UI composition decisions.
 - If patterns conflict, prefer the closest feature-equivalent example and call out the choice in your summary.
 
+### Tool fallback (`rg`)
+
+- Prefer `rg`/`rg --files` for search when available.
+- If `rg` is not available or not working in the current environment, immediately fall back to `grep`/`find` and provide the user with concise `ripgrep` installation instructions for their OS, including at least one web reference.
+
 ### Validation
 
 - After finishing code changes, run `flutter analyze` and resolve issues introduced by your changes before handoff.

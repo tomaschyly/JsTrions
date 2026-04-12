@@ -31,10 +31,7 @@ class SettingsScreen extends AbstractResponsiveScreen {
 
 class _SettingsScreenState extends AppResponsiveScreenState<SettingsScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.main(
-    screenName: SettingsScreen.ROUTE,
-    title: tt('settings.screen.title'),
-  );
+  AbstractScreenOptions options = AppScreenStateOptions.main(screenName: SettingsScreen.ROUTE, title: tt('settings.screen.title'));
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
@@ -100,9 +97,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _GeneralWidget(
-                  language: _language,
-                ),
+                child: _GeneralWidget(language: _language),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
@@ -173,9 +168,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _GeneralWidget(
-                          language: _language,
-                        ),
+                        child: _GeneralWidget(language: _language),
                       ),
                     ),
                   ),
@@ -222,9 +215,7 @@ class _GeneralWidget extends StatelessWidget {
   final _languageKey = GlobalKey<SelectionFormFieldWidgetState>();
 
   /// GeneralWidget initialization
-  _GeneralWidget({
-    required this.language,
-  });
+  _GeneralWidget({required this.language});
 
   /// Create view layout from widgets
   @override
@@ -235,10 +226,7 @@ class _GeneralWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CategoryHeaderWidget(
-          text: tt('settings.screen.category.general'),
-          doubleMargin: true,
-        ),
+        CategoryHeaderWidget(text: tt('settings.screen.category.general'), doubleMargin: true),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
@@ -262,14 +250,8 @@ class _GeneralWidget extends StatelessWidget {
                 clearText: tt('settings.screen.language.selection.cancel'),
                 initialValue: language,
                 options: <ListDialogOption<String>>[
-                  ListDialogOption(
-                    text: 'English',
-                    value: 'en',
-                  ),
-                  ListDialogOption(
-                    text: 'Slovenčina',
-                    value: 'sk',
-                  ),
+                  ListDialogOption(text: 'English', value: 'en'),
+                  ListDialogOption(text: 'Slovenčina', value: 'sk'),
                 ],
                 onChange: (String? newValue) {
                   if (newValue != null) {
@@ -281,10 +263,7 @@ class _GeneralWidget extends StatelessWidget {
                       pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
 
                       displayScreenMessage(
-                        ScreenMessage(
-                          message: tt('settings.screen.generic.success'),
-                          type: ScreenMessageType.success,
-                        ),
+                        ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                         appTheme: commonTheme,
                       );
                     });
@@ -292,10 +271,7 @@ class _GeneralWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(
-                tt('settings.screen.language.description'),
-                style: fancyText(kText),
-              ),
+              Text(tt('settings.screen.language.description'), style: fancyText(kText)),
               CommonSpaceVDouble(),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.font'),
@@ -309,10 +285,7 @@ class _GeneralWidget extends StatelessWidget {
                     pushNamedNewStack(context, SettingsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1'});
 
                     displayScreenMessage(
-                      ScreenMessage(
-                        message: tt('settings.screen.generic.success'),
-                        type: ScreenMessageType.success,
-                      ),
+                      ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                       appTheme: commonTheme,
                     );
                   });
@@ -341,28 +314,17 @@ class _GeneralWidget extends StatelessWidget {
     );
 
     if (confirmed == true) {
-      await MainDataProvider.instance!.executeDataTask(
-        DeleteProgrammingLanguagesDataTask(
-          data: ProgrammingLanguageQuery.fromJson({}),
-        ),
-      );
+      await MainDataProvider.instance!.executeDataTask(DeleteProgrammingLanguagesDataTask(data: ProgrammingLanguageQuery.fromJson({})));
 
       // Refill default programming languages after clearing user data
       await fillDBWithDefaultProgrammingLanguages();
 
-      await MainDataProvider.instance!.executeDataTask(
-        DeleteProjectsDataTask(
-          data: ProjectQuery.fromJson({}),
-        ),
-      );
+      await MainDataProvider.instance!.executeDataTask(DeleteProjectsDataTask(data: ProjectQuery.fromJson({})));
 
       await clearAllAppPrefs();
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('settings.screen.reset.success'),
-          type: ScreenMessageType.success,
-        ),
+        ScreenMessage(message: tt('settings.screen.reset.success'), type: ScreenMessageType.success),
         appTheme: appTheme,
       );
     }
@@ -386,10 +348,7 @@ class _TranslationsWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CategoryHeaderWidget(
-          text: tt('settings.screen.category.translations'),
-          doubleMargin: true,
-        ),
+        CategoryHeaderWidget(text: tt('settings.screen.category.translations'), doubleMargin: true),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
@@ -403,24 +362,15 @@ class _TranslationsWidget extends StatelessWidget {
                 clearText: tt('settings.screen.translationProvider.selection.cancel'),
                 initialValue: provider,
                 options: <ListDialogOption<TranslationsProvider>>[
-                  ListDialogOption(
-                    text: tt('common.googleTranslate'),
-                    value: TranslationsProvider.google,
-                  ),
-                  ListDialogOption(
-                    text: tt('common.openai'),
-                    value: TranslationsProvider.openai,
-                  ),
+                  ListDialogOption(text: tt('common.googleTranslate'), value: TranslationsProvider.google),
+                  ListDialogOption(text: tt('common.openai'), value: TranslationsProvider.openai),
                 ],
                 onChange: (TranslationsProvider? newValue) {
                   if (newValue != null) {
                     prefsSetInt(kPrefsTranslationsProvider, newValue.index);
 
                     displayScreenMessage(
-                      ScreenMessage(
-                        message: tt('settings.screen.translationProvider.success'),
-                        type: ScreenMessageType.success,
-                      ),
+                      ScreenMessage(message: tt('settings.screen.translationProvider.success'), type: ScreenMessageType.success),
                       appTheme: appTheme,
                     );
                   } else {
@@ -429,19 +379,12 @@ class _TranslationsWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(
-                tt('settings.screen.translationProvider.description'),
-                style: fancyText(kText),
-              ),
+              Text(tt('settings.screen.translationProvider.description'), style: fancyText(kText)),
               CommonSpaceVDouble(),
               AnimatedSize(
                 duration: kThemeAnimationDuration,
                 alignment: Alignment.topCenter,
-                child: provider == TranslationsProvider.openai
-                    ? _TranslationsOpenAIWidget()
-                    : const SizedBox(
-                        width: double.infinity,
-                      ),
+                child: provider == TranslationsProvider.openai ? _TranslationsOpenAIWidget() : const SizedBox(width: double.infinity),
               ),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.translations.no_html_entities'),
@@ -450,10 +393,7 @@ class _TranslationsWidget extends StatelessWidget {
                 descriptionOff: tt('settings.screen.translations.no_html_entities.off'),
                 onChange: (bool value) {
                   displayScreenMessage(
-                    ScreenMessage(
-                      message: tt('settings.screen.generic.success'),
-                      type: ScreenMessageType.success,
-                    ),
+                    ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                     appTheme: appTheme,
                   );
                 },
@@ -541,30 +481,20 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                     label: tt('settings.screen.openAIApiKey'),
                     textInputAction: TextInputAction.next,
                     obscureText: _obscureApiKey,
-                    validations: [
-                      FormFieldValidation(
-                        validator: validateRequired,
-                        errorText: tt('validation.required'),
-                      ),
-                    ],
+                    validations: [FormFieldValidation(validator: validateRequired, errorText: tt('validation.required'))],
                   ),
                   description: null,
                   trailing: Text.rich(
-                    TextSpan(children: [
-                      TextSpan(
-                        text: _apiKeyDesc1,
-                        style: fancyText(kText),
-                      ),
-                      TextSpan(
-                        text: _apiKeyDescLink,
-                        style: fancyText(kTextBold.copyWith(
-                          color: kColorSecondary,
-                          decoration: TextDecoration.underline,
-                          decorationColor: kColorSecondary,
-                        )),
-                        recognizer: TapGestureRecognizer()..onTap = () => launchUrlString(kOpenAIGetApKey),
-                      ),
-                    ]),
+                    TextSpan(
+                      children: [
+                        TextSpan(text: _apiKeyDesc1, style: fancyText(kText)),
+                        TextSpan(
+                          text: _apiKeyDescLink,
+                          style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline, decorationColor: kColorSecondary)),
+                          recognizer: TapGestureRecognizer()..onTap = () => launchUrlString(kOpenAIGetApKey),
+                        ),
+                      ],
+                    ),
                   ),
                 ),
               ),
@@ -574,10 +504,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                 onTap: () => setStateNotDisposed(() => _obscureApiKey = !_obscureApiKey),
               ),
               CommonSpaceH(),
-              IconButtonWidget(
-                svgAssetPath: 'images/save.svg',
-                onTap: () => _save(context),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/save.svg', onTap: () => _save(context)),
             ],
           ),
           Row(
@@ -598,25 +525,17 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                 ),
               ),
               CommonSpaceH(),
-              IconButtonWidget(
-                svgAssetPath: 'images/save.svg',
-                onTap: () => _save(context),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/save.svg', onTap: () => _save(context)),
             ],
           ),
           if (_openAIModelsLoading) ...[
             IconButtonWidget(
-              style: appTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.iconOnly,
-              ),
+              style: appTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly),
               svgAssetPath: '',
               isLoading: true,
             ),
             CommonSpaceV(),
-            Text(
-              tt('settings.screen.openAI.selectModel.description'),
-              style: fancyText(kText),
-            ),
+            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kText)),
             CommonSpaceVDouble(),
           ] else if (_openAIModelsAsOptions.isNotEmpty) ...[
             SelectionFormFieldWidget<String>(
@@ -637,10 +556,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               },
             ),
             CommonSpaceV(),
-            Text(
-              tt('settings.screen.openAI.selectModel.description'),
-              style: fancyText(kText),
-            ),
+            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kText)),
             CommonSpaceVDouble(),
           ],
           PreferencesSwitchWidget(
@@ -650,10 +566,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
             descriptionOff: tt('settings.screen.translations.fallback.off'),
             onChange: (bool value) {
               displayScreenMessage(
-                ScreenMessage(
-                  message: tt('settings.screen.generic.success'),
-                  type: ScreenMessageType.success,
-                ),
+                ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                 appTheme: appTheme,
               );
             },
@@ -691,10 +604,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
       _updateOpenAIModelsAsOptions();
 
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('settings.screen.openAI.success'),
-          type: ScreenMessageType.success,
-        ),
+        ScreenMessage(message: tt('settings.screen.openAI.success'), type: ScreenMessageType.success),
         appTheme: appTheme,
       );
     }
@@ -711,10 +621,7 @@ class _ProjectsWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CategoryHeaderWidget(
-          text: tt('settings.screen.category.projects'),
-          doubleMargin: true,
-        ),
+        CategoryHeaderWidget(text: tt('settings.screen.category.projects'), doubleMargin: true),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
@@ -727,15 +634,9 @@ class _ProjectsWidget extends StatelessWidget {
                   spacing: kCommonHorizontalMarginHalf,
                   runSpacing: kCommonVerticalMarginHalf,
                   children: [
-                    _ProjectAnalysisOnInitChipWidget(
-                      analysisOnInit: ProjectAnalysisOnInit.Always,
-                    ),
-                    _ProjectAnalysisOnInitChipWidget(
-                      analysisOnInit: ProjectAnalysisOnInit.Never,
-                    ),
-                    _ProjectAnalysisOnInitChipWidget(
-                      analysisOnInit: ProjectAnalysisOnInit.CodeVisibleOnly,
-                    ),
+                    _ProjectAnalysisOnInitChipWidget(analysisOnInit: ProjectAnalysisOnInit.always),
+                    _ProjectAnalysisOnInitChipWidget(analysisOnInit: ProjectAnalysisOnInit.never),
+                    _ProjectAnalysisOnInitChipWidget(analysisOnInit: ProjectAnalysisOnInit.codeVisibleOnly),
                   ],
                 ),
                 description: tt('settings.screen.analysis.description'),
@@ -747,10 +648,7 @@ class _ProjectsWidget extends StatelessWidget {
                 descriptionOff: tt('settings.screen.code_only.off'),
                 onChange: (bool value) {
                   displayScreenMessage(
-                    ScreenMessage(
-                      message: tt('settings.screen.generic.success'),
-                      type: ScreenMessageType.success,
-                    ),
+                    ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                     appTheme: appTheme,
                   );
                 },
@@ -762,15 +660,9 @@ class _ProjectsWidget extends StatelessWidget {
                   spacing: kCommonHorizontalMarginHalf,
                   runSpacing: kCommonVerticalMarginHalf,
                   children: [
-                    _SourceOfTranslationsChipWidget(
-                      source: SourceOfTranslations.All,
-                    ),
-                    _SourceOfTranslationsChipWidget(
-                      source: SourceOfTranslations.Assets,
-                    ),
-                    _SourceOfTranslationsChipWidget(
-                      source: SourceOfTranslations.Code,
-                    ),
+                    _SourceOfTranslationsChipWidget(source: SourceOfTranslations.all),
+                    _SourceOfTranslationsChipWidget(source: SourceOfTranslations.assets),
+                    _SourceOfTranslationsChipWidget(source: SourceOfTranslations.code),
                   ],
                 ),
                 description: tt('settings.screen.source.description'),
@@ -782,10 +674,7 @@ class _ProjectsWidget extends StatelessWidget {
                 descriptionOff: tt('settings.screen.beautify_json.off'),
                 onChange: (bool value) {
                   displayScreenMessage(
-                    ScreenMessage(
-                      message: tt('settings.screen.generic.success'),
-                      type: ScreenMessageType.success,
-                    ),
+                    ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                     appTheme: appTheme,
                   );
                 },
@@ -803,9 +692,7 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
   final ProjectAnalysisOnInit analysisOnInit;
 
   /// ProjectAnalysisOnInitChipWidget initialization
-  _ProjectAnalysisOnInitChipWidget({
-    required this.analysisOnInit,
-  });
+  _ProjectAnalysisOnInitChipWidget({required this.analysisOnInit});
 
   /// Create view layout from widgets
   @override
@@ -817,13 +704,13 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
     String text = '';
 
     switch (analysisOnInit) {
-      case ProjectAnalysisOnInit.Always:
+      case ProjectAnalysisOnInit.always:
         text = tt('settings.screen.analysis.always');
         break;
-      case ProjectAnalysisOnInit.Never:
+      case ProjectAnalysisOnInit.never:
         text = tt('settings.screen.analysis.never');
         break;
-      case ProjectAnalysisOnInit.CodeVisibleOnly:
+      case ProjectAnalysisOnInit.codeVisibleOnly:
         text = tt('settings.screen.analysis.code');
         break;
     }
@@ -844,10 +731,7 @@ class _ProjectAnalysisOnInitChipWidget extends StatelessWidget {
               AppState.instance.invalidate();
 
               displayScreenMessage(
-                ScreenMessage(
-                  message: tt('settings.screen.generic.success'),
-                  type: ScreenMessageType.success,
-                ),
+                ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                 appTheme: commonTheme,
               );
             },
@@ -859,9 +743,7 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
   final SourceOfTranslations source;
 
   /// SourceOfTranslationsChipWidget initialization
-  _SourceOfTranslationsChipWidget({
-    required this.source,
-  });
+  _SourceOfTranslationsChipWidget({required this.source});
 
   /// Create view layout from widgets
   @override
@@ -873,16 +755,16 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
     String text = '';
 
     switch (source) {
-      case SourceOfTranslations.All:
+      case SourceOfTranslations.all:
         text = tt('project_detail.actions.source.all');
         break;
-      case SourceOfTranslations.Assets:
+      case SourceOfTranslations.assets:
         text = tt('project_detail.actions.source.assets');
         break;
-      case SourceOfTranslations.Code:
+      case SourceOfTranslations.code:
         text = tt('project_detail.actions.source.code');
         break;
-      case SourceOfTranslations.IgnoredKeys:
+      case SourceOfTranslations.ignoredKeys:
         text = tt('project_detail.actions.source.ignored_keys');
         break;
     }
@@ -903,10 +785,7 @@ class _SourceOfTranslationsChipWidget extends StatelessWidget {
               AppState.instance.invalidate();
 
               displayScreenMessage(
-                ScreenMessage(
-                  message: tt('settings.screen.generic.success'),
-                  type: ScreenMessageType.success,
-                ),
+                ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                 appTheme: commonTheme,
               );
             },
@@ -922,19 +801,13 @@ class _ProgrammingLanguagesWidget extends StatelessWidget {
       mainAxisSize: MainAxisSize.min,
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
-        CategoryHeaderWidget(
-          text: tt('settings.screen.category.programming_languages'),
-          doubleMargin: true,
-        ),
+        CategoryHeaderWidget(text: tt('settings.screen.category.programming_languages'), doubleMargin: true),
         Container(
           padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
           child: Column(
             mainAxisSize: MainAxisSize.max,
             crossAxisAlignment: CrossAxisAlignment.start,
-            children: [
-              ManageProgrammingLanguagesDataWidget(),
-              CommonSpaceVDouble(),
-            ],
+            children: [ManageProgrammingLanguagesDataWidget(), CommonSpaceVDouble()],
           ),
         ),
       ],
