@@ -1615,6 +1615,9 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
   Widget buildContent(BuildContext context) {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
+    final animationDuration = commonTheme.buttonsStyle.buttonStyle.animationDuration;
+    final animationCurve = commonTheme.buttonsStyle.buttonStyle.animationCurve;
+
     Color rowColor = widget.rowIsOdd ? kColorPrimary : kColorPrimaryLight;
     if (widget.isCodeOnly) {
       rowColor = widget.rowIsOdd ? kColorWarning : kColorWarningDark;
@@ -1657,16 +1660,14 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
 
     return MouseRegion(
       onEnter: (_) {
-        setStateNotDisposed(() {
-          _isHovered = true;
-        });
+        _setHoverState(true);
       },
       onExit: (_) {
-        setStateNotDisposed(() {
-          _isHovered = false;
-        });
+        _setHoverState(false);
       },
-      child: Container(
+      child: AnimatedContainer(
+        duration: animationDuration,
+        curve: animationCurve,
         margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
         decoration: BoxDecoration(
           color: rowColor,
@@ -1699,5 +1700,16 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
         ),
       ),
     );
+  }
+
+  /// Update hover state and rebuild only when value changes
+  void _setHoverState(bool isHovered) {
+    if (_isHovered == isHovered) {
+      return;
+    }
+
+    setStateNotDisposed(() {
+      _isHovered = isHovered;
+    });
   }
 }
