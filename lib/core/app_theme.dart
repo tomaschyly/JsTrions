@@ -75,6 +75,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   }
 
   final kButtonHoverStyle = CommonButtonHoverStyle(
+    backgroundColor: kColorPrimaryLightHover,
+    borderColor: kColorTextPrimary,
     //TODO
   );
 
@@ -96,6 +98,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     variant: ButtonVariant.filled,
     filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
     color: kColorRed,
+    hoverStyle: CommonButtonHoverStyle(), //TODO(tomaschyly) add hoverStyle
   );
 
   final kListItemButtonStyle = kButtonStyle.copyWith(
@@ -103,6 +106,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     variant: ButtonVariant.textOnly,
     alignment: Alignment.centerLeft,
     textOverflow: TextOverflow.ellipsis,
+    hoverStyle: kButtonHoverStyle,
   );
 
   final kIconButtonHoverStyle = IconButtonHoverStyle(
