@@ -30,6 +30,8 @@
 .pub-cache/
 .pub/
 /build/
+/android/
+/ios/
 
 # Web related
 lib/generated_plugin_registrant.dart
@@ -52,3 +54,6 @@ lib/config.dart
 
 # Claude related
 .claude/settings.local.json
+
+# Codex related
+/.codex/
