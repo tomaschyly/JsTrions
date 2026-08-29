@@ -1,4 +1,4 @@
-# Tomas Chyly Appliable Core — Agent Instructions
+# JsTrions — Agent Instructions
 
 These instructions apply to the whole repository unless a deeper `AGENTS.md` overrides them.
 
@@ -58,6 +58,12 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - Keep generic helpers in `lib/service/`
 - Keep helpers inside component files only when they are used exclusively by that component
 - Write services in a functional, stateless style (function-based utilities), not OOP-style service classes with internal state
+
+### Build-time data processing
+
+- Keep widget build methods focused on composing UI from already prepared values.
+- Move non-trivial sorting, grouping, filtering, mapping, and statistical calculations out of build methods when they would otherwise run on every rebuild.
+- Recompute or cache derived values when their source data changes. Transformations that are trivial or depend on the current inherited UI context may remain in the build method.
 
 ### TODO ownership format
 
