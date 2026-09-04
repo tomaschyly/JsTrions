@@ -23,3 +23,13 @@ JsTrions works well with Translator provided by my Flutter package [tch_appliabl
 ![MacOS-Settings.png](screenshots/MacOS-Settings.png)
 
 ![MacOS-Translations.png](screenshots/MacOS-Translations.png)
+
+## Setup
+
+`lib/config.dart` is not in git as it holds api keys. Copy the template and fill in the placeholder values:
+
+```
+cp lib/config.example.dart lib/config.dart
+```
+
+When a constant is added or changed in `lib/config.dart`, update `lib/config.example.dart` in the same commit so the project keeps building from a fresh clone.
