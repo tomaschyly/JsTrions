@@ -59,11 +59,11 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - Keep helpers inside component files only when they are used exclusively by that component
 - Write services in a functional, stateless style (function-based utilities), not OOP-style service classes with internal state
 
-### Build-time data processing
+### Build method data processing
 
 - Keep widget build methods focused on composing UI from already prepared values.
-- Move non-trivial sorting, grouping, filtering, mapping, and statistical calculations out of build methods when they would otherwise run on every rebuild.
-- Recompute or cache derived values when their source data changes. Transformations that are trivial or depend on the current inherited UI context may remain in the build method.
+- Prefer preparing and storing derived collections in state when data is received instead of sorting, grouping, mapping, filtering, or calculating potentially expensive statistics during every build.
+- Recompute derived state when its source data changes; only perform transformations in build methods when they are demonstrably trivial and depend on current inherited UI context.
 
 ### TODO ownership format
 
@@ -134,6 +134,13 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 ## Development workflow
 
+### Complex feature planning
+
+- When a new feature is likely to span multiple days or affect several architectural layers, pause before writing code and suggest creating a plan file first.
+- Signals that a feature warrants a plan include changes to persisted models or schemas, a new integration, a new screen flow, or a feature that does not exist anywhere in the codebase yet.
+- Briefly outline the affected areas and ask the user to confirm before creating the plan or proceeding with code.
+- If the user wants to start coding immediately without a plan, respect that and note the suggestion only once.
+
 ### Context-first preparation
 
 - Before proposing a plan or starting code changes, review related files in the same domain/context to identify established patterns and structure.
@@ -157,3 +164,31 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - For each relevant change block, include the starting line number using the `path:line` format (for example `lib/ui/widgets/device/device_form_widget.dart:890`).
 - Do not use markdown file links for handoff file references.
 - Keep this summary concise and focused on user-impacting or logic-impacting edits.
+
+### Long-term plans
+
+- Plan files live in `plans/`; completed plans live in `plans/archive/`.
+- Active plans must use checklists for implementation steps.
+- When working on a task that corresponds to a plan step, reference the relevant plan file and tick completed steps (change `- [ ]` to `- [x]`) as part of the handoff.
+- When all items in a phase are checked, append `[DONE]` to the phase heading (for example `### Phase N — … [DONE]`).
+- When all steps are complete, ask the user to confirm that the plan is fully done and no new steps will be added before moving it to `plans/archive/`.
+- Do not create new plan files unless the user explicitly asks for one.
+
+### Meeting-focused plan markers
+
+- When a plan has points that need discussion in meetings, add a `## Meeting focus` section near the top of the plan.
+- Use GitLab-friendly text labels instead of relying on colors or custom styling.
+- Include this label legend in the meeting focus section:
+  - `**[DECISION]**` — needs a product or architecture choice before implementation can be finalized.
+  - `**[VERIFY]**` — needs review or validation, but likely does not need a product decision.
+  - `**[BLOCKER]**` — blocks dependent implementation work.
+- Add a short checklist of current focus items in the meeting focus section, and prefix the matching original checklist item titles with the same label.
+- Keep the meeting focus list curated; remove or tick items when the source checklist item is resolved.
+
+### Android emulator run defaults
+
+- When asked to run the app in an Android emulator, prefer `flutter run -d emulator-5554 -t lib/main.dart` unless explicitly instructed otherwise.
+- When an emulator app run is active, automatically refresh it after code changes without waiting for an explicit prompt.
+- Prefer hot reload (`r`) for small UI-only changes.
+- Prefer hot restart (`R`) for more complex state, model, or service changes where a full state refresh is safer.
+- If hot reload or hot restart cannot be triggered, restart the app after changes.
