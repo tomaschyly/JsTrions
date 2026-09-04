@@ -1,8 +1,5 @@
-import 'dart:io';
-
-import 'package:js_trions/config.dart';
 import 'package:js_trions/core/app_theme.dart';
-import 'package:js_trions/model/dataTasks/HttpGetDataTask.dart';
+import 'package:js_trions/service/feedback_service.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
@@ -10,16 +7,11 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class FeedbackDialog extends AbstractStatefulWidget {
   /// Show the dialog as a popup
-  static Future<bool?> show(
-    BuildContext context,
-  ) {
+  static Future<bool?> show(BuildContext context) {
     return showDialog<bool>(
       context: context,
       builder: (BuildContext context) {
-        return Material(
-          color: Colors.transparent,
-          child: FeedbackDialog(),
-        );
+        return Material(color: Colors.transparent, child: FeedbackDialog());
       },
     );
   }
@@ -77,15 +69,10 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                 mainAxisSize: MainAxisSize.min,
                 crossAxisAlignment: CrossAxisAlignment.start,
                 children: [
-                  DialogHeader(
-                    style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle,
-                    title: tt('feedback.title'),
-                  ),
+                  DialogHeader(style: commonTheme.dialogsStyle.listDialogStyle.dialogHeaderStyle, title: tt('feedback.title')),
                   CommonSpaceVHalf(),
                   TextFormFieldWidget(
-                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                      textCapitalization: TextCapitalization.words,
-                    ),
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(textCapitalization: TextCapitalization.words),
                     controller: _nameController,
                     focusNode: _nameFocus,
                     nextFocus: _emailFocus,
@@ -103,9 +90,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                   ),
                   CommonSpaceVHalf(),
                   TextFormFieldWidget(
-                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                      textCapitalization: TextCapitalization.words,
-                    ),
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(textCapitalization: TextCapitalization.words),
                     controller: _subjectController,
                     focusNode: _subjectFocus,
                     nextFocus: _messageFocus,
@@ -114,19 +99,12 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                   ),
                   CommonSpaceVHalf(),
                   TextFormFieldWidget(
-                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                      textCapitalization: TextCapitalization.sentences,
-                    ),
+                    style: commonTheme.formStyle.textFormFieldStyle.copyWith(textCapitalization: TextCapitalization.sentences),
                     controller: _messageController,
                     focusNode: _messageFocus,
                     label: tt('feedback.message'),
                     lines: 3,
-                    validations: [
-                      FormFieldValidation(
-                        validator: validateRequired,
-                        errorText: tt('validation.required'),
-                      ),
-                    ],
+                    validations: [FormFieldValidation(validator: validateRequired, errorText: tt('validation.required'))],
                   ),
                   CommonSpaceV(),
                   Container(
@@ -142,10 +120,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                             mainAxisSize: MainAxisSize.max,
                             children: [
                               Expanded(
-                                child: Text(
-                                  tt('feedback.gdpr'),
-                                  style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.labelStyle!),
-                                ),
+                                child: Text(tt('feedback.gdpr'), style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.labelStyle!)),
                               ),
                               CommonSpaceH(),
                               SwitchToggleWidget(
@@ -162,10 +137,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                           if (!_gdpr && _gdprError)
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                              child: Text(
-                                tt('feedback.gdpr.error'),
-                                style: fancyText(kText.copyWith(color: Colors.red)),
-                              ),
+                              child: Text(tt('feedback.gdpr.error'), style: fancyText(kText.copyWith(color: Colors.red))),
                             ),
                         ],
                       ),
@@ -212,20 +184,15 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
 
       final String version = (await PackageInfo.fromPlatform()).version;
 
-      final HttpGetDataTask dataTask = await MainDataProvider.instance!.executeDataTask(HttpGetDataTask(
-        url: kFeedbackUrl,
-        parameters: <String, String>{
-          "app": 'js_trions',
-          "version": version,
-          "platform": Platform.operatingSystem.toLowerCase(),
-          "name": name,
-          "email": _emailController.text,
-          "subject": _subjectController.text,
-          "message": _messageController.text,
-        },
-      ));
+      final bool isSent = await sendFeedback(
+        version: version,
+        name: name,
+        email: _emailController.text,
+        subject: _subjectController.text,
+        message: _messageController.text,
+      );
 
-      if (dataTask.result != null && (dataTask.result!.error == null || dataTask.result!.error?.isEmpty == true)) {
+      if (isSent) {
         setStateNotDisposed(() {
           _isSending = false;
 
@@ -239,10 +206,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
         });
 
         displayScreenMessage(
-          ScreenMessage(
-            message: tt('feedback.submit.fail'),
-            type: ScreenMessageType.error,
-          ),
+          ScreenMessage(message: tt('feedback.submit.fail'), type: ScreenMessageType.error),
           appTheme: appTheme,
         );
       }
