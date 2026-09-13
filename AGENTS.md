@@ -107,12 +107,17 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - In mapping, prefer: `field: clearField == true ? null : (field ?? this.field)`.
 - Do not use sentinel placeholders (for example `_copyWithUndefined`) for this use case unless explicitly requested.
 
-## Screens & routing
+## Screen implementation & routing
 
 ### Screen architecture
 
-- For new screens, follow the architecture from the latest similar existing screen in this project.
-- Keep screen registration and navigation behavior consistent with nearby screens.
+- For new screens, follow the architecture from the latest similar existing screen in the same domain.
+- Extend `AbstractResponsiveScreen` and use an `AppResponsiveScreenState` implementation for screen state.
+- Implement all six responsive methods: `smallPhoneScreen`, `largePhoneScreen`, `tabletScreen`, `smallDesktopScreen`, `largeDesktopScreen`, and `extraLargeDesktopScreen`.
+- Use `_BodyWidget` for phone and tablet layouts and `_BodyDesktopWidget` for desktop layouts unless the closest related screen establishes a different breakpoint behavior.
+- When mobile and desktop variants share fields or behavior, follow the established `_AbstractBodyWidget` and `_AbstractBodyWidgetState` pattern. Override only the layout that actually differs.
+- Mark every `_BodyWidget` and `_BodyDesktopWidget` constructor field as `required`, including nullable fields, so callers must make the value explicit.
+- Register every new screen in `lib/core/app_router.dart` and keep navigation behavior consistent with nearby screens.
 
 ### Routing consistency (`lib/core/app_router.dart`)
 
@@ -121,9 +126,11 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 ### Shared destinations and circular navigation
 
-- When a screen is reachable from multiple contexts, document those entry contexts and any route arguments that change navigation or available actions above the screen class.
-- When a destination can navigate back into an ancestor domain, review the complete nested route path and prevent circular stacking using the closest established navigation pattern.
-- When adding a new entry context, verify that route arguments survive route replacement and redirect flows, Back returns to the intended parent, and successful add, edit, or delete flows preserve the intended stack.
+- Document shared screen classes above the class declaration. State their main entry contexts and identify route arguments that change contextual navigation, available actions, or event ownership.
+- When a destination can navigate back into an ancestor domain, review the complete nested route path and explicitly prevent circular stacking using the closest established navigation pattern.
+- A read-only route must hide mutation actions and disable links that can reopen an ancestor. Keep passive data refresh behavior active when it is still valid in read-only mode.
+- When adding a new entry context, verify that route arguments survive route replacement and redirect flows, Back returns to the intended parent, and update or deletion handling cannot pop or replace the wrong occurrence of a shared screen.
+- Review app-bar actions and nested add, edit, delete, and completion flows for the new context. Successful actions must preserve the intended navigation stack.
 
 ### Routing arguments typing
 
@@ -203,3 +210,10 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
   - `**[BLOCKER]**` — blocks dependent implementation work.
 - Add a short checklist of current focus items in the meeting focus section, and prefix the matching original checklist item titles with the same label.
 - Keep the meeting focus list curated; remove or tick items when the source checklist item is resolved.
+
+### Active Flutter run defaults
+
+- When a Flutter app run is already active, trigger a refresh after code changes without waiting for an explicit user prompt.
+- Prefer hot reload (`r`) for small UI-only changes.
+- Prefer hot restart (`R`) for state, model, service, initialization, or routing changes where recreating app state is safer.
+- If hot reload or hot restart cannot be sent to the active process, restart the app with the same target and entry point.
