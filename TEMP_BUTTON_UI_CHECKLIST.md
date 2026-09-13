@@ -29,9 +29,10 @@ switch-toggle icon button (`app_theme.dart:196`).
 - [ ] **Icon buttons have no hover feedback at all.** `kIconButtonHoverStyle` is empty (`app_theme.dart:112`),
       and the app-bar style inherits it. Covers every icon-button case below.
 - [x] **Danger button has no hover feedback.** `CommonButtonHoverStyle()` at `app_theme.dart:101` is a no-op.
-- [ ] **Filled buttons probably unreadable on hover.** `kButtonHoverStyle` sets
+- [x] **Filled buttons probably unreadable on hover.** `kButtonHoverStyle` sets
       `backgroundColor: kColorPrimaryLightHover` (#606060) but no `filledTextStyle`, so filled buttons keep
       `kColorPrimaryLight` (#404040) text — dark grey on dark grey. Check case 3 first.
+      Fixed with `kButtonFilledStyle` (light hover text), also used by list-dialog selected option and footer Yes.
 - [x] **Decide: border on hover for text-only buttons.** The widget does `borderColor = hoverStyle.borderColor ?? color`
       (`button_widget.dart:187`) and `kButtonHoverStyle` sets `borderColor: kColorTextPrimary`, so a full border
       appears on hover for text-only buttons and list items. Intentional or not?
@@ -60,9 +61,9 @@ switch-toggle icon button (`app_theme.dart:196`).
       (`lib/ui/screens/ProjectsScreen.dart:519`)
 - [x] 8. **Danger, filled** — Settings, the Reset data action
       (`lib/ui/screens/settings_screen.dart:236`)
-- [ ] 9. **Confirm-dialog footer, incl. danger Yes** — trigger via Settings Reset
+- [x] 9. **Confirm-dialog footer, incl. danger Yes** — trigger via Settings Reset
       (`lib/ui/screens/settings_screen.dart:307`, style at `lib/core/app_theme.dart:148`)
-- [ ] 10. **List-dialog options, text-only + filled selected** — Settings, the app language picker
+- [x] 10. **List-dialog options, text-only + filled selected** — Settings, the app language picker
       (`lib/ui/screens/settings_screen.dart:246`, style at `lib/core/app_theme.dart:174`)
 
 ## Visual checklist — `IconButtonWidget`

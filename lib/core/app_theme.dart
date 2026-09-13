@@ -159,6 +159,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     textStyle: kText,
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(widthWrapContent: true, filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary)),
+      // All app confirm dialogs are danger, so Yes uses danger style including its hover
+      yesButtonStyle: kButtonDangerStyle.copyWith(widthWrapContent: true),
       dangerColor: kColorDanger,
     ),
   );
@@ -183,8 +185,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kListDialogStyle = ListDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
-    optionStyle: kButtonStyle.copyWith(variant: ButtonVariant.textOnly),
-    selectedOptionStyle: kButtonStyle.copyWith(variant: ButtonVariant.filled),
+    optionStyle: kButtonTextOnlyStyle,
+    selectedOptionStyle: kButtonFilledStyle,
     dialogHeaderStyle: const DialogHeaderStyle(textStyle: kTextHeadline),
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(
@@ -193,6 +195,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
         loadingIconWidth: kIconSizeNotTouch,
         loadingIconHeight: kIconSizeNotTouch,
       ),
+      // Filled Yes needs light text on dark hover background
+      yesButtonStyle: kButtonFilledStyle.copyWith(widthWrapContent: true, iconColor: kColorWarning),
     ),
     filterStyle: kTextFormFieldStyle,
   );
