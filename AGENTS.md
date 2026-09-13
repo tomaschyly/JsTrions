@@ -157,6 +157,7 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - Before choosing the “latest” version, verify the release date from an official source such as the package registry, vendor release notes, or repository release page.
 - If the latest version is newer than 30 days, select the newest version that is at least 30 days old and explain the choice in the handoff.
 - Exception: urgent security fixes may use a newer version only when the user explicitly approves that specific update.
+- Exception: the user's own packages `tch_appliable_core` and `tch_common_widgets` are trusted and may be updated to a newly published version without waiting 30 days.
 
 ## Development workflow
 
