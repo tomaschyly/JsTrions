@@ -20,10 +20,17 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
     - `VERSION_AS_NUMBER x,x,x`
     - `VERSION_AS_STRING "x.x.x"`
 
+- During every app version bump, check the `pubspec.yaml` `environment` constraints against the Flutter version used by the project.
+- When Flutter is upgraded, update the Dart SDK and Flutter constraints together so they remain compatible with the new Flutter toolchain.
+- Current baseline: Flutter `3.44.9` uses:
+  - `sdk: ">=3.12.0 <4.0.0"`
+  - `flutter: ">=3.44.0"`
+
 - When user asks to bump app to `x.x.x`, follow this order:
   1. Ensure branch `version/x.x.x` exists and is checked out — create and switch to it automatically if missing, without asking the user.
   2. Update version values in all files listed above.
-  3. Commit all version changes with message: `Next version`.
+  3. Verify the `pubspec.yaml` `environment` constraints and update them if the Flutter toolchain changed.
+  4. Commit all version and environment changes with message: `Next version`.
 
 ## General coding conventions
 
@@ -51,7 +58,13 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - If multiple patterns exist, choose the one used in the closest relevant files unless the user explicitly asks otherwise.
 - When adding or moving methods, widget helpers, fields, constants, route entries, configuration values, or service functions, place them with the related code instead of at the end of the file or the first convenient location.
 - Before editing a file, scan nearby declarations for the existing grouping/order pattern (for example fields before lifecycle methods, lifecycle methods before build helpers, callbacks near related UI, route display order, domain workflow order, or alphabetical order) and preserve it.
+- In a file centered on a primary class, mixin, extension, or other type, declare that primary type before supporting top-level declarations. Place helper data classes, enums, constants, typedefs, and similar supporting declarations after the primary type unless Dart or Flutter requires a different order.
 - For cross-file lists or registries that represent the same domain concept, keep the order consistent across the related files.
+
+### Button loading state
+
+- When a `ButtonWidget` or `IconButtonWidget` receives a loading value through `isLoading`, do not use that same loading value to disable or guard the button's `onTap` callback.
+- Derive `onTap` only from the action's actual eligibility, such as validation or selection state. Both widgets already prevent taps and display the loading UI while `isLoading` is true.
 
 ### Helpers and services architecture
 
@@ -105,6 +118,12 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 - Register every new screen route in `onGenerateRoute`.
 - Keep route entries ordered consistently with related navigation and screen declarations.
+
+### Shared destinations and circular navigation
+
+- When a screen is reachable from multiple contexts, document those entry contexts and any route arguments that change navigation or available actions above the screen class.
+- When a destination can navigate back into an ancestor domain, review the complete nested route path and prevent circular stacking using the closest established navigation pattern.
+- When adding a new entry context, verify that route arguments survive route replacement and redirect flows, Back returns to the intended parent, and successful add, edit, or delete flows preserve the intended stack.
 
 ### Routing arguments typing
 
