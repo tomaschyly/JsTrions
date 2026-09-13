@@ -11,12 +11,7 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class DashboardProjectsDataWidget extends AbstractDataWidget {
   /// DashboardProjectsDataWidget initialization
-  DashboardProjectsDataWidget()
-      : super(
-          dataRequests: [
-            GetProjectsDataRequest(),
-          ],
-        );
+  DashboardProjectsDataWidget() : super(dataRequests: [GetProjectsDataRequest()]);
 
   /// Create state for widget
   @override
@@ -27,7 +22,7 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
   /// Create screen content from widgets
   @override
   Widget buildContent(BuildContext context) {
-    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+    final appTheme = context.appTheme;
 
     return ValueListenableBuilder(
       valueListenable: dataSource!.results,
@@ -43,19 +38,13 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
             children: [
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: Text(
-                  tt('dashboard.screen.projects.empty'),
-                  style: fancyText(kText),
-                ),
+                child: Text(tt('dashboard.screen.projects.empty'), style: fancyText(kText)),
               ),
               CommonSpaceV(),
               Padding(
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
                 child: ButtonWidget(
-                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.filled,
-                    widthWrapContent: true,
-                  ),
+                  style: appTheme.buttonFilledStyle.copyWith(widthWrapContent: true),
                   text: tt('dashboard.screen.projects.add'),
                   onTap: () => _addProject(context),
                 ),
@@ -72,31 +61,24 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
           mainAxisSize: MainAxisSize.min,
           crossAxisAlignment: CrossAxisAlignment.start,
           children: [
-            Text(
-              tt('dashboard.screen.recent_projects'),
-              style: fancyText(kTextHeadline),
-            ),
+            Text(tt('dashboard.screen.recent_projects'), style: fancyText(kTextHeadline)),
             CommonSpaceV(),
             if (recentProjects.isNotEmpty)
               ...recentProjects.take(5).map((project) {
                 return ButtonWidget(
-                  style: commonTheme.listItemButtonStyle.copyWith(
-                    height: kMinInteractiveSize + kCommonVerticalMargin,
-                  ),
+                  style: appTheme.listItemButtonStyle.copyWith(height: kMinInteractiveSize + kCommonVerticalMargin),
                   text: '${project.name}\n${millisToDefault(project.lastSeen)}',
                   onTap: () {
-                    pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{
-                      'router-no-animation': '1',
-                      Project.COL_ID: project.id!.toString(),
-                    });
+                    pushNamedNewStack(
+                      context,
+                      ProjectsScreen.ROUTE,
+                      arguments: <String, String>{'router-no-animation': '1', Project.COL_ID: project.id!.toString()},
+                    );
                   },
                 );
               }).toList()
             else
-              Text(
-                tt('dashboard.screen.recent_projects.empty'),
-                style: fancyText(kText),
-              ),
+              Text(tt('dashboard.screen.recent_projects.empty'), style: fancyText(kText)),
           ],
         );
       },
@@ -108,10 +90,7 @@ class _DashboardProjectsDataWidgetState extends AbstractDataWidgetState<Dashboar
     final int? id = await EditProjectDialog.show(context);
 
     if (id != null) {
-      pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{
-        'router-no-animation': '1',
-        Project.COL_ID: id.toString(),
-      });
+      pushNamedNewStack(context, ProjectsScreen.ROUTE, arguments: <String, String>{'router-no-animation': '1', Project.COL_ID: id.toString()});
     }
   }
 }

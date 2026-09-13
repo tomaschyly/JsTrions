@@ -40,11 +40,11 @@ switch-toggle icon button (`app_theme.dart:196`).
 
 ## Visual checklist — `ButtonWidget`
 
-- [ ] 1. **Outlined, default** — About screen, the Website / Repository / Contact / Privacy stack
+- [x] 1. **Outlined, default** — About screen, the Website / Repository / Contact / Privacy stack
       (`lib/ui/screens/AboutScreen.dart:292`)
-- [ ] 2. **Outlined, wrap content** — Project Detail, Import / Export translations actions
+- [x] 2. **Outlined, wrap content** — Project Detail, Import / Export translations actions
       (`lib/ui/data_widgets/project_detail_data_widget.dart:309`)
-- [ ] 3. **Filled** — Dashboard, **Add project** when no projects exist
+- [x] 3. **Filled** — Dashboard, **Add project** when no projects exist
       (`lib/ui/data_widgets/dashboard_projects_data_widget.dart:54`)
 - [ ] 4. **Text-only, desktop app bar** — Projects screen app bar, Add / Edit project
       (`lib/ui/screens/ProjectsScreen.dart:122`)

@@ -94,6 +94,16 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     hoverStyle: kButtonHoverStyle,
   );
 
+  final kButtonFilledStyle = kButtonStyle.copyWith(
+    variant: ButtonVariant.filled,
+    // Hover background is dark, switch text to light for readability
+    // Border blends into background, so hovered filled button stays a solid block unlike outlined one
+    hoverStyle: kButtonHoverStyle.copyWith(
+      borderColor: kColorPrimaryLightHover,
+      filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
+    ),
+  );
+
   final kButtonDangerStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.filled,
     filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
@@ -210,6 +220,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
   return AppTheme(
     fontFamily: prefsInt(kPrefsFancyFont) == 1 ? kFontFamily : null,
     buttonsStyle: ButtonsStyle(buttonStyle: kButtonStyle, iconButtonStyle: kIconButtonStyle),
+    buttonFilledStyle: kButtonFilledStyle,
     buttonDangerStyle: kButtonDangerStyle,
     listItemButtonStyle: kListItemButtonStyle,
     appBarIconButtonStyle: kAppBarIconButtonStyle,
@@ -229,6 +240,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 }
 
 class AppTheme extends CommonTheme {
+  final CommonButtonStyle buttonFilledStyle;
   final CommonButtonStyle buttonDangerStyle;
   final CommonButtonStyle listItemButtonStyle;
   final IconButtonStyle appBarIconButtonStyle;
@@ -239,6 +251,7 @@ class AppTheme extends CommonTheme {
     required Widget child,
     super.fontFamily,
     required super.buttonsStyle,
+    required this.buttonFilledStyle,
     required this.buttonDangerStyle,
     required this.listItemButtonStyle,
     required this.appBarIconButtonStyle,
