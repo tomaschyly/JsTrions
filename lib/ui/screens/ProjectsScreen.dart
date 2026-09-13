@@ -27,10 +27,8 @@ class ProjectsScreen extends AbstractResponsiveScreen {
 
 class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.main(
-    screenName: ProjectsScreen.ROUTE,
-    title: tt('projects.screen.title'),
-  )..appBarOptions = <AppBarOption>[
+  AbstractScreenOptions options = AppScreenStateOptions.main(screenName: ProjectsScreen.ROUTE, title: tt('projects.screen.title'))
+    ..appBarOptions = <AppBarOption>[
       AppBarOption(
         onTap: (BuildContext context) {
           EditProjectDialog.show(context);
@@ -43,34 +41,22 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
   Project? _project;
 
   @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget tabletScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   /// Run initializations of screen on first build only
   @override
@@ -103,11 +89,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
     final snapshot = AppDataState.of(context)!;
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    final isDesktop = [
-      ResponsiveScreen.extraLargeDesktop,
-      ResponsiveScreen.largeDesktop,
-      ResponsiveScreen.smallDesktop,
-    ].contains(snapshot.responsiveScreen);
+    final isDesktop = [ResponsiveScreen.extraLargeDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.smallDesktop].contains(snapshot.responsiveScreen);
 
     _project = project;
 
@@ -120,8 +102,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
           icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
           button: isDesktop
               ? ButtonWidget(
-                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                    variant: ButtonVariant.textOnly,
+                  style: commonTheme.buttonTextOnlyStyle.copyWith(
                     contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                     widthWrapContent: true,
                   ),
@@ -139,59 +120,61 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
               EditProjectDialog.show(context, project: _project);
             },
             icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
-            button: Builder(builder: (context) {
-              final snapshot = AppDataState.of(context)!;
+            button: Builder(
+              builder: (context) {
+                final snapshot = AppDataState.of(context)!;
 
-              final isDesktop = [
-                ResponsiveScreen.extraLargeDesktop,
-                ResponsiveScreen.largeDesktop,
-                ResponsiveScreen.smallDesktop,
-              ].contains(snapshot.responsiveScreen);
+                final isDesktop = [
+                  ResponsiveScreen.extraLargeDesktop,
+                  ResponsiveScreen.largeDesktop,
+                  ResponsiveScreen.smallDesktop,
+                ].contains(snapshot.responsiveScreen);
 
-              return isDesktop
-                  ? ButtonWidget(
-                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                        variant: ButtonVariant.textOnly,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                        widthWrapContent: true,
-                      ),
-                      text: tt('project_detail.edit_project'),
-                      prefixIconSvgAssetPath: 'images/edit.svg',
-                      onTap: () {
-                        EditProjectDialog.show(context, project: _project);
-                      },
-                    )
-                  : Container();
-            }),
+                return isDesktop
+                    ? ButtonWidget(
+                        style: commonTheme.buttonTextOnlyStyle.copyWith(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                          widthWrapContent: true,
+                        ),
+                        text: tt('project_detail.edit_project'),
+                        prefixIconSvgAssetPath: 'images/edit.svg',
+                        onTap: () {
+                          EditProjectDialog.show(context, project: _project);
+                        },
+                      )
+                    : Container();
+              },
+            ),
           ),
           AppBarOption(
             onTap: (BuildContext context) => deleteProject(context, project: project),
             icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
-            button: Builder(builder: (BuildContext context) {
-              final snapshot = AppDataState.of(context)!;
+            button: Builder(
+              builder: (BuildContext context) {
+                final snapshot = AppDataState.of(context)!;
 
-              final isDesktop = [
-                ResponsiveScreen.extraLargeDesktop,
-                ResponsiveScreen.largeDesktop,
-                ResponsiveScreen.smallDesktop,
-              ].contains(snapshot.responsiveScreen);
+                final isDesktop = [
+                  ResponsiveScreen.extraLargeDesktop,
+                  ResponsiveScreen.largeDesktop,
+                  ResponsiveScreen.smallDesktop,
+                ].contains(snapshot.responsiveScreen);
 
-              return isDesktop
-                  ? ButtonWidget(
-                      style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                        variant: ButtonVariant.textOnly,
-                        contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                        widthWrapContent: true,
-                        iconColor: kColorDanger,
-                      ),
-                      text: tt('project_detail.delete_project'),
-                      prefixIconSvgAssetPath: 'images/trash.svg',
-                      onTap: () {
-                        deleteProject(context, project: project);
-                      },
-                    )
-                  : Container();
-            }),
+                return isDesktop
+                    ? ButtonWidget(
+                        style: commonTheme.buttonTextOnlyStyle.copyWith(
+                          contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
+                          widthWrapContent: true,
+                          iconColor: kColorDanger,
+                        ),
+                        text: tt('project_detail.delete_project'),
+                        prefixIconSvgAssetPath: 'images/trash.svg',
+                        onTap: () {
+                          deleteProject(context, project: project);
+                        },
+                      )
+                    : Container();
+              },
+            ),
           ),
         ],
       ];
@@ -203,9 +186,7 @@ abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
   final ValueChanged<Project?> onDataWidgetProjectInit;
 
   /// AbstractBodyWidget initialization
-  _AbstractBodyWidget({
-    required this.onDataWidgetProjectInit,
-  });
+  _AbstractBodyWidget({required this.onDataWidgetProjectInit});
 }
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
@@ -254,9 +235,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               CommonSpaceH(),
               Expanded(
                 child: TextFormFieldWidget(
-                  style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                    fullWidthMobileOnly: false,
-                  ),
+                  style: commonTheme.formStyle.textFormFieldStyle.copyWith(fullWidthMobileOnly: false),
                   controller: _searchController,
                   label: tt('projects.screen.field.search'),
                 ),
@@ -266,11 +245,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
           ),
           CommonSpaceV(),
           Expanded(
-            child: _ProjectsListWidget(
-              searchQuery: _searchQuery,
-              selectProject: _selectProject,
-              selectedProject: _selectedProject,
-            ),
+            child: _ProjectsListWidget(searchQuery: _searchQuery, selectProject: _selectProject, selectedProject: _selectedProject),
           ),
         ],
       ),
@@ -285,13 +260,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
     if (projectId != null) {
       final dataTask = await MainDataProvider.instance!.executeDataTask(
-        GetProjectDataTask(
-          data: ProjectQuery.fromJson(
-            <String, dynamic>{
-              Project.COL_ID: projectId,
-            },
-          ),
-        ),
+        GetProjectDataTask(data: ProjectQuery.fromJson(<String, dynamic>{Project.COL_ID: projectId})),
       );
 
       final theProject = dataTask.result;
@@ -317,31 +286,21 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   void _selectProject(Project? project) {
     final snapshot = AppDataState.of(context)!;
 
-    if ([
-      ResponsiveScreen.smallDesktop,
-      ResponsiveScreen.largeDesktop,
-      ResponsiveScreen.extraLargeDesktop,
-    ].contains(snapshot.responsiveScreen)) {
+    if ([ResponsiveScreen.smallDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.extraLargeDesktop].contains(snapshot.responsiveScreen)) {
       setStateNotDisposed(() {
         _selectedProject = project;
       });
     } else if (project != null) {
       _selectedProject = project;
 
-      pushNamed(context, ProjectDetailScreen.ROUTE, arguments: <String, String>{
-        Project.COL_ID: project.id!.toString(),
-      });
+      pushNamed(context, ProjectDetailScreen.ROUTE, arguments: <String, String>{Project.COL_ID: project.id!.toString()});
     }
   }
 }
 
 class _BodyWidget extends _AbstractBodyWidget {
   /// BodyWidget initialization
-  _BodyWidget({
-    required ValueChanged<Project?> onDataWidgetProjectInit,
-  }) : super(
-          onDataWidgetProjectInit: onDataWidgetProjectInit,
-        );
+  _BodyWidget({required ValueChanged<Project?> onDataWidgetProjectInit}) : super(onDataWidgetProjectInit: onDataWidgetProjectInit);
 
   /// Create state for widget
   @override
@@ -352,11 +311,7 @@ class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
 
 class _BodyDesktopWidget extends _AbstractBodyWidget {
   /// BodyDesktopWidget initialization
-  _BodyDesktopWidget({
-    required ValueChanged<Project?> onDataWidgetProjectInit,
-  }) : super(
-          onDataWidgetProjectInit: onDataWidgetProjectInit,
-        );
+  _BodyDesktopWidget({required ValueChanged<Project?> onDataWidgetProjectInit}) : super(onDataWidgetProjectInit: onDataWidgetProjectInit);
 
   /// Create state for widget
   @override
@@ -397,9 +352,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                           CommonSpaceH(),
                           Expanded(
                             child: TextFormFieldWidget(
-                              style: commonTheme.formStyle.textFormFieldStyle.copyWith(
-                                fullWidthMobileOnly: false,
-                              ),
+                              style: commonTheme.formStyle.textFormFieldStyle.copyWith(fullWidthMobileOnly: false),
                               controller: _searchController,
                               label: tt('projects.screen.field.search'),
                             ),
@@ -409,34 +362,21 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       ),
                       CommonSpaceV(),
                       Expanded(
-                        child: _ProjectsListWidget(
-                          searchQuery: _searchQuery,
-                          selectProject: _selectProject,
-                          selectedProject: _selectedProject,
-                        ),
+                        child: _ProjectsListWidget(searchQuery: _searchQuery, selectProject: _selectProject, selectedProject: _selectedProject),
                       ),
                     ],
                   ),
                 ),
-                Container(
-                  width: 1,
-                  height: double.infinity,
-                  color: kColorSecondaryDark,
-                ),
+                Container(width: 1, height: double.infinity, color: kColorSecondaryDark),
                 if (theProject != null)
                   Expanded(
                     child: Container(
                       padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                      child: ProjectDetailDataWidget(
-                        projectId: theProject.id!,
-                        onProjectChanged: widget.onDataWidgetProjectInit,
-                      ),
+                      child: ProjectDetailDataWidget(projectId: theProject.id!, onProjectChanged: widget.onDataWidgetProjectInit),
                     ),
                   )
                 else
-                  Expanded(
-                    child: Container(),
-                  ),
+                  Expanded(child: Container()),
               ],
             ),
           ),
@@ -453,11 +393,7 @@ class _ProjectsListWidget extends AbstractStatefulWidget {
   final Project? selectedProject;
 
   /// ProjectsListWidget initialization
-  _ProjectsListWidget({
-    required this.searchQuery,
-    required this.selectProject,
-    this.selectedProject,
-  });
+  _ProjectsListWidget({required this.searchQuery, required this.selectProject, this.selectedProject});
 
   /// Create state for widget
   @override
@@ -473,9 +409,7 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
     super.didUpdateWidget(oldWidget);
 
     if (oldWidget.searchQuery != widget.searchQuery) {
-      _listKey.currentState!.updateDataRequests([
-        _dataRequest(),
-      ]);
+      _listKey.currentState!.updateDataRequests([_dataRequest()]);
     }
   }
 
@@ -485,11 +419,7 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
     final snapshot = AppDataState.of(context)!;
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
-    final isDesktop = [
-      ResponsiveScreen.smallDesktop,
-      ResponsiveScreen.largeDesktop,
-      ResponsiveScreen.extraLargeDesktop,
-    ].contains(snapshot.responsiveScreen);
+    final isDesktop = [ResponsiveScreen.smallDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.extraLargeDesktop].contains(snapshot.responsiveScreen);
 
     return ListDataWidget<GetProjectsDataRequest, Project>(
       key: _listKey,
@@ -531,30 +461,20 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       buildLoadingItemWithGlobalKey: (BuildContext context, GlobalKey globalKey) {
         return LoadingItemWidget(
           containerKey: globalKey,
-          text: Text(
-            tt('list.item.loading'),
-            style: fancyText(kText),
-          ),
+          text: Text(tt('list.item.loading'), style: fancyText(kText)),
         );
       },
       emptyState: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(kCommonPrimaryMargin),
         alignment: Alignment.topCenter,
-        child: Text(
-          tt('list.empty'),
-          style: fancyText(kText),
-        ),
+        child: Text(tt('list.empty'), style: fancyText(kText)),
       ),
     );
   }
 
   /// Create the DataRequest for current parameters
   GetProjectsDataRequest _dataRequest() {
-    return GetProjectsDataRequest(
-      parameters: <String, dynamic>{
-        if (widget.searchQuery.isNotEmpty) '${Project.COL_NAME} LIKE': widget.searchQuery,
-      },
-    );
+    return GetProjectsDataRequest(parameters: <String, dynamic>{if (widget.searchQuery.isNotEmpty) '${Project.COL_NAME} LIKE': widget.searchQuery});
   }
 }

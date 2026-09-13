@@ -35,6 +35,7 @@ const kColorSilverLighter = Color(0xFFf2f2f2);
 
 /// Hover colors (lighter variants for dark theme)
 const kColorPrimaryLightHover = Color(0xFF606060); // lighter than kColorPrimaryLight (0xFF404040)
+const kColorRedHover = Color(0xFFb30000); // darker than kColorRed (0xFFe60000)
 
 const kFontFamily = 'Kalam';
 
@@ -104,20 +105,21 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     ),
   );
 
+  final kButtonTextOnlyStyle = kButtonStyle.copyWith(
+    variant: ButtonVariant.textOnly,
+    // Border blends into background, so hovered text-only button is highlighted without outline
+    hoverStyle: kButtonHoverStyle.copyWith(borderColor: kColorPrimaryLightHover),
+  );
+
   final kButtonDangerStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.filled,
     filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
     color: kColorRed,
-    hoverStyle: CommonButtonHoverStyle(), //TODO(tomaschyly) add hoverStyle
+    // Darker red on hover, text is already light so it stays readable
+    hoverStyle: CommonButtonHoverStyle(backgroundColor: kColorRedHover, borderColor: kColorRedHover),
   );
 
-  final kListItemButtonStyle = kButtonStyle.copyWith(
-    fullWidthMobileOnly: false,
-    variant: ButtonVariant.textOnly,
-    alignment: Alignment.centerLeft,
-    textOverflow: TextOverflow.ellipsis,
-    hoverStyle: kButtonHoverStyle,
-  );
+  final kListItemButtonStyle = kButtonTextOnlyStyle.copyWith(fullWidthMobileOnly: false, alignment: Alignment.centerLeft, textOverflow: TextOverflow.ellipsis);
 
   final kIconButtonHoverStyle = IconButtonHoverStyle(
     //TODO
@@ -221,6 +223,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     fontFamily: prefsInt(kPrefsFancyFont) == 1 ? kFontFamily : null,
     buttonsStyle: ButtonsStyle(buttonStyle: kButtonStyle, iconButtonStyle: kIconButtonStyle),
     buttonFilledStyle: kButtonFilledStyle,
+    buttonTextOnlyStyle: kButtonTextOnlyStyle,
     buttonDangerStyle: kButtonDangerStyle,
     listItemButtonStyle: kListItemButtonStyle,
     appBarIconButtonStyle: kAppBarIconButtonStyle,
@@ -241,6 +244,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
 class AppTheme extends CommonTheme {
   final CommonButtonStyle buttonFilledStyle;
+  final CommonButtonStyle buttonTextOnlyStyle;
   final CommonButtonStyle buttonDangerStyle;
   final CommonButtonStyle listItemButtonStyle;
   final IconButtonStyle appBarIconButtonStyle;
@@ -252,6 +256,7 @@ class AppTheme extends CommonTheme {
     super.fontFamily,
     required super.buttonsStyle,
     required this.buttonFilledStyle,
+    required this.buttonTextOnlyStyle,
     required this.buttonDangerStyle,
     required this.listItemButtonStyle,
     required this.appBarIconButtonStyle,

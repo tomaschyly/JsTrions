@@ -20,43 +20,28 @@ class ProjectDetailScreen extends AbstractResponsiveScreen {
 
 class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.basic(
-    screenName: ProjectDetailScreen.ROUTE,
-    title: tt('project_detail.screen.title'),
-  );
+  AbstractScreenOptions options = AppScreenStateOptions.basic(screenName: ProjectDetailScreen.ROUTE, title: tt('project_detail.screen.title'));
 
   ResponsiveScreen? _lastResponsiveScreen;
   Project? _project;
 
   @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget(
-        onDataWidgetProjectInit: _onDataWidgetProjectInit,
-      );
+  Widget tabletScreen(BuildContext context) => _BodyWidget(onDataWidgetProjectInit: _onDataWidgetProjectInit);
 
   /// Run initializations of screen on first build only
   @override
@@ -109,8 +94,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
             icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
             button: isDesktop
                 ? ButtonWidget(
-                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.textOnly,
+                    style: commonTheme.buttonTextOnlyStyle.copyWith(
                       contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                       widthWrapContent: true,
                     ),
@@ -127,8 +111,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
             icon: SvgPicture.asset('images/trash.svg', color: kColorDanger),
             button: isDesktop
                 ? ButtonWidget(
-                    style: commonTheme.buttonsStyle.buttonStyle.copyWith(
-                      variant: ButtonVariant.textOnly,
+                    style: commonTheme.buttonTextOnlyStyle.copyWith(
                       contentPadding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
                       widthWrapContent: true,
                       iconColor: kColorDanger,
@@ -141,7 +124,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
                   )
                 : null,
           ),
-        ]
+        ],
       ];
     });
   }
@@ -151,9 +134,7 @@ abstract class _AbstractBodyWidget extends AbstractStatefulWidget {
   final ValueChanged<Project?> onDataWidgetProjectInit;
 
   /// AbstractBodyWidget initialization
-  _AbstractBodyWidget({
-    required this.onDataWidgetProjectInit,
-  });
+  _AbstractBodyWidget({required this.onDataWidgetProjectInit});
 }
 
 abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends AbstractStatefulWidgetState<T> {
@@ -173,10 +154,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
         children: [
           CommonSpaceV(),
           Expanded(
-            child: ProjectDetailDataWidget(
-              projectId: projectId,
-              onProjectChanged: widget.onDataWidgetProjectInit,
-            ),
+            child: ProjectDetailDataWidget(projectId: projectId, onProjectChanged: widget.onDataWidgetProjectInit),
           ),
         ],
       ),
@@ -186,11 +164,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
 
 class _BodyWidget extends _AbstractBodyWidget {
   /// BodyWidget initialization
-  _BodyWidget({
-    required ValueChanged<Project?> onDataWidgetProjectInit,
-  }) : super(
-          onDataWidgetProjectInit: onDataWidgetProjectInit,
-        );
+  _BodyWidget({required ValueChanged<Project?> onDataWidgetProjectInit}) : super(onDataWidgetProjectInit: onDataWidgetProjectInit);
 
   /// Create state for widget
   @override
@@ -201,11 +175,7 @@ class _BodyWidgetState extends _AbstractBodyWidgetState<_BodyWidget> {}
 
 class _BodyDesktopWidget extends _AbstractBodyWidget {
   /// BodyDesktopWidget initialization
-  _BodyDesktopWidget({
-    required ValueChanged<Project?> onDataWidgetProjectInit,
-  }) : super(
-          onDataWidgetProjectInit: onDataWidgetProjectInit,
-        );
+  _BodyDesktopWidget({required ValueChanged<Project?> onDataWidgetProjectInit}) : super(onDataWidgetProjectInit: onDataWidgetProjectInit);
 
   /// Create state for widget
   @override

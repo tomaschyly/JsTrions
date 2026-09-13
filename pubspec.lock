@@ -801,10 +801,10 @@ packages:
     dependency: "direct main"
     description:
       name: tch_common_widgets
-      sha256: "454effdb62062765e9af3ba70c6d68c2d88ddbffebaf8ccf901d5ee5eaf1d83a"
+      sha256: "84d077045246754a27e399881980337033dbbea73737846642575ce3fd0d6678"
       url: "https://pub.dev"
     source: hosted
-    version: "0.42.0"
+    version: "0.42.1"
   term_glyph:
     dependency: transitive
     description:

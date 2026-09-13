@@ -28,13 +28,17 @@ switch-toggle icon button (`app_theme.dart:196`).
 
 - [ ] **Icon buttons have no hover feedback at all.** `kIconButtonHoverStyle` is empty (`app_theme.dart:112`),
       and the app-bar style inherits it. Covers every icon-button case below.
-- [ ] **Danger button has no hover feedback.** `CommonButtonHoverStyle()` at `app_theme.dart:101` is a no-op.
+- [x] **Danger button has no hover feedback.** `CommonButtonHoverStyle()` at `app_theme.dart:101` is a no-op.
 - [ ] **Filled buttons probably unreadable on hover.** `kButtonHoverStyle` sets
       `backgroundColor: kColorPrimaryLightHover` (#606060) but no `filledTextStyle`, so filled buttons keep
       `kColorPrimaryLight` (#404040) text — dark grey on dark grey. Check case 3 first.
-- [ ] **Decide: border on hover for text-only buttons.** The widget does `borderColor = hoverStyle.borderColor ?? color`
+- [x] **Decide: border on hover for text-only buttons.** The widget does `borderColor = hoverStyle.borderColor ?? color`
       (`button_widget.dart:187`) and `kButtonHoverStyle` sets `borderColor: kColorTextPrimary`, so a full border
       appears on hover for text-only buttons and list items. Intentional or not?
+      Decided: no outline on hover, border blends into the background (`kButtonTextOnlyStyle`), list items included (`kListItemButtonStyle`).
+- [x] **Hover fade darkened intermediate frames.** `tch_common_widgets` animated from `Colors.transparent` (transparent black),
+      fixed in `button_widget.dart` (local `version/0.42.1`) by fading from a transparent hover color. `IconButtonHoverStyle` gained
+      `backgroundColor` + `borderColor` with the same fade (icon-only variant supports hover background too).
 - [ ] **Unset hover styles the package supports:** `SwitchToggleWidgetStyle.hoverStyle` and
       `SelectionFormFieldStyle.hoverStyle` are never configured.
 
@@ -46,15 +50,15 @@ switch-toggle icon button (`app_theme.dart:196`).
       (`lib/ui/data_widgets/project_detail_data_widget.dart:309`)
 - [x] 3. **Filled** — Dashboard, **Add project** when no projects exist
       (`lib/ui/data_widgets/dashboard_projects_data_widget.dart:54`)
-- [ ] 4. **Text-only, desktop app bar** — Projects screen app bar, Add / Edit project
+- [x] 4. **Text-only, desktop app bar** — Projects screen app bar, Add / Edit project
       (`lib/ui/screens/ProjectsScreen.dart:122`)
-- [ ] 5. **Text-only with danger icon** — Projects screen app bar, Delete project
+- [x] 5. **Text-only with danger icon** — Projects screen app bar, Delete project
       (`lib/ui/screens/ProjectsScreen.dart:180`)
-- [ ] 6. **List item, text-only** — Dashboard recent projects, and the Projects list
+- [x] 6. **List item, text-only** — Dashboard recent projects, and the Projects list
       (`lib/ui/data_widgets/dashboard_projects_data_widget.dart:82`, `lib/ui/screens/ProjectsScreen.dart:519`)
-- [ ] 7. **List item, filled (selected)** — Projects list on desktop, currently selected project
+- [x] 7. **List item, filled (selected)** — Projects list on desktop, currently selected project
       (`lib/ui/screens/ProjectsScreen.dart:519`)
-- [ ] 8. **Danger, filled** — Settings, the Reset data action
+- [x] 8. **Danger, filled** — Settings, the Reset data action
       (`lib/ui/screens/settings_screen.dart:236`)
 - [ ] 9. **Confirm-dialog footer, incl. danger Yes** — trigger via Settings Reset
       (`lib/ui/screens/settings_screen.dart:307`, style at `lib/core/app_theme.dart:148`)
