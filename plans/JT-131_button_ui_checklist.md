@@ -115,21 +115,31 @@ switch-toggle icon button (`app_theme.dart:196`).
       (`lib/ui/data_widgets/project_detail_data_widget.dart:225`)
       Verified in package: `onTap: null` makes `isInteractive` false, so hover style is skipped and cursor is basic.
 
-## Tappable widgets
+## Tappable widgets [DONE]
 
 All use plain `InkWell` without a hover style, so they fall back to the default `ThemeData.hoverColor`
 (about 4 % black), which is barely visible on the dark background.
 
-- [ ] 21. **Chip** — shared `ChipWidget`, one fix covers all radio-like chips; selected chips have `onTap: null`, so no hover
+- [x] 21. **Chip** — shared `ChipWidget`, one fix covers all radio-like chips; selected chips have `onTap: null`, so no hover
       (`lib/ui/widgets/ChipWidget.dart:57`). Check in Settings analysis on init and source of translations
       (`lib/ui/screens/settings_screen.dart:718`), Project Detail language and source chips
       (`lib/ui/data_widgets/project_detail_data_widget.dart:1478`), Edit Project translations JSON format
       (`lib/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart:139`)
-- [ ] 22. **Drawer items** — background `kColorPrimary`, selected `kColorPrimaryLight` and not tappable; always visible on desktop
+      Stateful now, `InkWell.onHover` fades `kColorPrimaryLightHover` background from its transparent variant with button
+      animation duration/curve, border stays `kColorTextPrimary`; default `InkWell` hover overlay disabled. Chips with inner
+      icon buttons (ignore dirs, languages, manage programming languages) have no chip `onTap`, so no double hover.
+      Also covers Edit Project programming languages multi-select chips
+      (`lib/ui/data_widgets/ProjectProgrammingLanguagesFieldDataWidget.dart:265`).
+- [x] 22. **Drawer items** — background `kColorPrimary`, selected `kColorPrimaryLight` and not tappable; always visible on desktop
       (`lib/ui/screenStates/AppResponsiveScreenState.dart:207`)
-- [ ] 23. **Toggle container header** — full-width expand/collapse header, Project Detail actions and Edit Project advanced
+      Extracted `_DrawerOptionWidget`, `AnimatedContainer` below transparent `Material` animates `kColorPrimary` →
+      `kColorPrimaryLightHover` with button duration/curve, so `InkWell` splash stays visible; selected has no hover.
+- [x] 23. **Toggle container header** — full-width expand/collapse header, Project Detail actions and Edit Project advanced
       (`lib/ui/widgets/ToggleContainerWidget.dart:75`, `lib/ui/data_widgets/project_detail_data_widget.dart:258`,
       `lib/ui/dialogs/EditProjectDialog.dart:213`)
+      Header `AnimatedContainer` below transparent `Material` fades `kColorPrimaryLightHover` from its transparent variant with
+      button duration/curve, same structure as drawer items so splash stays visible.
+      Header background and `InkWell` use inner radius (container radius minus 1px border), all corners closed, top only open.
 
 Skipped: notification toast (`lib/ui/notifications/notification_toast_widget.dart:52`), background depends on message type.
 

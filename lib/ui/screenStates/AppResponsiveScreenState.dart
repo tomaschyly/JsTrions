@@ -11,18 +11,12 @@ import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 class AppScreenStateOptions extends AbstractScreenOptions {
   /// AppScreenStateOptions initialization for default app state
-  AppScreenStateOptions.basic({
-    required super.screenName,
-    required super.title,
-  }) : super.basic() {
+  AppScreenStateOptions.basic({required super.screenName, required super.title}) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
   }
 
   /// AppScreenStateOptions initialization for state with Drawer
-  AppScreenStateOptions.main({
-    required super.screenName,
-    required super.title,
-  }) : super.basic() {
+  AppScreenStateOptions.main({required super.screenName, required super.title}) : super.basic() {
     optionsBuildPreProcessor = optionsBuildPreProcess;
 
     drawerOptions = <DrawerOption>[
@@ -35,14 +29,8 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == DashboardScreen.ROUTE;
         },
-        title: Text(
-          tt('drawer.dashboard'),
-          style: fancyText(kText),
-        ),
-        icon: SvgPicture.asset(
-          'images/dashboard.svg',
-          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
-        ),
+        title: Text(tt('drawer.dashboard'), style: fancyText(kText)),
+        icon: SvgPicture.asset('images/dashboard.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -53,14 +41,8 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == ProjectsScreen.ROUTE;
         },
-        title: Text(
-          tt('drawer.projects'),
-          style: fancyText(kText),
-        ),
-        icon: SvgPicture.asset(
-          'images/project.svg',
-          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
-        ),
+        title: Text(tt('drawer.projects'), style: fancyText(kText)),
+        icon: SvgPicture.asset('images/project.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -71,14 +53,8 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == SettingsScreen.ROUTE;
         },
-        title: Text(
-          tt('drawer.settings'),
-          style: fancyText(kText),
-        ),
-        icon: SvgPicture.asset(
-          'images/cog.svg',
-          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
-        ),
+        title: Text(tt('drawer.settings'), style: fancyText(kText)),
+        icon: SvgPicture.asset('images/cog.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -89,14 +65,8 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == AboutScreen.ROUTE;
         },
-        title: Text(
-          tt('drawer.about'),
-          style: fancyText(kText),
-        ),
-        icon: SvgPicture.asset(
-          'images/info.svg',
-          colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn),
-        ),
+        title: Text(tt('drawer.about'), style: fancyText(kText)),
+        icon: SvgPicture.asset('images/info.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
       ),
     ];
   }
@@ -106,11 +76,7 @@ class AppScreenStateOptions extends AbstractScreenOptions {
   void optionsBuildPreProcess(BuildContext context) {
     final AbstractAppDataStateSnapshot snapshot = AppDataState.of(context)!;
 
-    final permanentlyVisibleDrawerScreens = [
-      ResponsiveScreen.extraLargeDesktop,
-      ResponsiveScreen.largeDesktop,
-      ResponsiveScreen.smallDesktop,
-    ];
+    final permanentlyVisibleDrawerScreens = [ResponsiveScreen.extraLargeDesktop, ResponsiveScreen.largeDesktop, ResponsiveScreen.smallDesktop];
 
     drawerIsPermanentlyVisible = permanentlyVisibleDrawerScreens.contains(snapshot.responsiveScreen);
   }
@@ -125,60 +91,60 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
 
     return AppBar(
       toolbarHeight: 44,
-      title: Text(
-        options.title,
-        style: fancyText(kTextHeadline),
-      ),
+      title: Text(options.title, style: fancyText(kTextHeadline)),
       centerTitle: false,
       leading: options.drawerOptions?.isNotEmpty == true
           ? (!options.drawerIsPermanentlyVisible
-              ? Builder(
-                  builder: (BuildContext context) {
-                    return IconButtonWidget(
-                      style: appTheme.appBarIconButtonStyle,
-                      svgAssetPath: 'images/hamburger.svg',
-                      onTap: () {
-                        Scaffold.of(context).openDrawer();
-                      },
-                    );
-                  },
-                )
-              : null)
+                ? Builder(
+                    builder: (BuildContext context) {
+                      return IconButtonWidget(
+                        style: appTheme.appBarIconButtonStyle,
+                        svgAssetPath: 'images/hamburger.svg',
+                        onTap: () {
+                          Scaffold.of(context).openDrawer();
+                        },
+                      );
+                    },
+                  )
+                : null)
           : (Navigator.of(context).canPop() == true
-              ? Builder(
-                  builder: (BuildContext context) {
-                    return IconButtonWidget(
-                      style: appTheme.appBarIconButtonStyle,
-                      svgAssetPath: 'images/back.svg',
-                      onTap: () {
-                        Navigator.pop(context);
-                      },
-                    );
-                  },
-                )
-              : null),
+                ? Builder(
+                    builder: (BuildContext context) {
+                      return IconButtonWidget(
+                        style: appTheme.appBarIconButtonStyle,
+                        svgAssetPath: 'images/back.svg',
+                        onTap: () {
+                          Navigator.pop(context);
+                        },
+                      );
+                    },
+                  )
+                : null),
       actions: options.appBarOptions
-          ?.map((AppBarOption option) => Builder(
-                builder: (BuildContext context) {
-                  final theIcon = option.icon;
-                  final theComplexIcon = option.complexIcon;
+          ?.map(
+            (AppBarOption option) => Builder(
+              builder: (BuildContext context) {
+                final theIcon = option.icon;
+                final theComplexIcon = option.complexIcon;
 
-                  return Padding(
-                    padding: const EdgeInsets.only(right: 12),
-                    child: option.button ??
-                        IconButtonWidget(
-                          style: appTheme.appBarIconButtonStyle.copyWith(
-                            iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
-                            iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
-                          ),
-                          iconWidget: theComplexIcon ?? theIcon ?? Container(),
-                          onTap: () {
-                            option.onTap!(context);
-                          },
+                return Padding(
+                  padding: const EdgeInsets.only(right: 12),
+                  child:
+                      option.button ??
+                      IconButtonWidget(
+                        style: appTheme.appBarIconButtonStyle.copyWith(
+                          iconWidth: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
+                          iconHeight: option.complexIcon != null ? kMinInteractiveSize : kIconSize,
                         ),
-                  );
-                },
-              ))
+                        iconWidget: theComplexIcon ?? theIcon ?? Container(),
+                        onTap: () {
+                          option.onTap!(context);
+                        },
+                      ),
+                );
+              },
+            ),
+          )
           .toList(),
     );
   }
@@ -198,59 +164,31 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
       final drawerList = Container(
         width: options.drawerIsPermanentlyVisible ? kDrawerWidthOverride : null,
         color: kColorPrimary,
-        child: ListView(padding: EdgeInsets.zero, children: [
-          Container(height: MediaQuery.of(context).padding.top),
-          ...theDrawerOptions
-              .map(
-                (DrawerOption option) => Material(
-                  color: option.isSelected(context) ? kColorPrimaryLight : kColorPrimary,
-                  child: InkWell(
-                    mouseCursor: !option.isSelected(context) ? SystemMouseCursors.click : MouseCursor.defer,
-                    onTap: !option.isSelected(context)
-                        ? () {
-                            if (!options.drawerIsPermanentlyVisible) {
-                              Navigator.pop(context);
-                            }
+        child: ListView(
+          padding: EdgeInsets.zero,
+          children: [
+            Container(height: MediaQuery.of(context).padding.top),
+            ...theDrawerOptions.map(
+              (DrawerOption option) => _DrawerOptionWidget(
+                option: option,
+                isSelected: option.isSelected(context),
+                onSelect: () {
+                  if (!options.drawerIsPermanentlyVisible) {
+                    Navigator.pop(context);
+                  }
 
-                            option.onSelect(context);
-                          }
-                        : null,
-                    child: Container(
-                      height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
-                      padding: option.icon != null
-                          ? const EdgeInsets.only(right: kCommonHorizontalMargin)
-                          : const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                      child: Row(
-                        mainAxisSize: MainAxisSize.max,
-                        children: [
-                          if (option.icon != null)
-                            SizedBox(
-                              width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
-                              height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
-                              child: Center(
-                                child: SizedBox(
-                                  width: kIconSizeNotTouch,
-                                  height: kIconSizeNotTouch,
-                                  child: option.icon,
-                                ),
-                              ),
-                            ),
-                          option.title!,
-                        ],
-                      ),
-                    ),
-                  ),
-                ),
+                  option.onSelect(context);
+                },
               ),
-        ]),
+            ),
+          ],
+        ),
       );
 
       if (options.drawerIsPermanentlyVisible) {
         return drawerList;
       } else {
-        return Drawer(
-          child: drawerList,
-        );
+        return Drawer(child: drawerList);
       }
     }
 
@@ -263,26 +201,105 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
   void screenMessage(BuildContext context, ScreenMessage message) {
     final appTheme = context.appTheme;
 
-    displayScreenMessage(
-      message,
-      appTheme: appTheme,
+    displayScreenMessage(message, appTheme: appTheme);
+  }
+}
+
+class _DrawerOptionWidget extends AbstractStatefulWidget {
+  final DrawerOption option;
+  final bool isSelected;
+  final VoidCallback onSelect;
+
+  /// DrawerOptionWidget initialization
+  const _DrawerOptionWidget({required this.option, required this.isSelected, required this.onSelect});
+
+  /// Create state for widget
+  @override
+  State<StatefulWidget> createState() => _DrawerOptionWidgetState();
+}
+
+class _DrawerOptionWidgetState extends AbstractStatefulWidgetState<_DrawerOptionWidget> {
+  bool _isHovered = false;
+
+  /// Widget parameters changed
+  @override
+  void didUpdateWidget(covariant _DrawerOptionWidget oldWidget) {
+    super.didUpdateWidget(oldWidget);
+
+    // InkWell without onTap does not report hover exit, so stale hover would remain once option is deselected
+    if (widget.isSelected) {
+      _isHovered = false;
+    }
+  }
+
+  /// Create view layout from widgets
+  @override
+  Widget buildContent(BuildContext context) {
+    final commonTheme = CommonTheme.of<AppTheme>(context)!;
+
+    final option = widget.option;
+
+    Color color = widget.isSelected ? kColorPrimaryLight : kColorPrimary;
+    if (!widget.isSelected && _isHovered) {
+      color = kColorPrimaryLightHover;
+    }
+
+    // Background is below Material, so InkWell splash stays visible above hover color
+    return AnimatedContainer(
+      duration: commonTheme.buttonsStyle.buttonStyle.animationDuration,
+      curve: commonTheme.buttonsStyle.buttonStyle.animationCurve,
+      color: color,
+      child: Material(
+        color: Colors.transparent,
+        child: InkWell(
+          mouseCursor: !widget.isSelected ? SystemMouseCursors.click : MouseCursor.defer,
+          // Hover is drawn by animated background, default InkWell hover overlay would double it
+          hoverColor: Colors.transparent,
+          onHover: _setHoverState,
+          onTap: !widget.isSelected ? widget.onSelect : null,
+          child: Container(
+            height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+            padding: option.icon != null
+                ? const EdgeInsets.only(right: kCommonHorizontalMargin)
+                : const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
+            child: Row(
+              mainAxisSize: MainAxisSize.max,
+              children: [
+                if (option.icon != null)
+                  SizedBox(
+                    width: kMinInteractiveSizeNotTouch + kCommonHorizontalMarginHalf,
+                    height: kMinInteractiveSizeNotTouch + kCommonVerticalMarginHalf,
+                    child: Center(
+                      child: SizedBox(width: kIconSizeNotTouch, height: kIconSizeNotTouch, child: option.icon),
+                    ),
+                  ),
+                option.title!,
+              ],
+            ),
+          ),
+        ),
+      ),
     );
+  }
+
+  /// Update hover state and rebuild only when value changes
+  void _setHoverState(bool isHovered) {
+    if (_isHovered == isHovered) {
+      return;
+    }
+
+    setStateNotDisposed(() {
+      _isHovered = isHovered;
+    });
   }
 }
 
 /// Show message by options
-void displayScreenMessage(
-  ScreenMessage message, {
-  required AppTheme appTheme,
-}) {
+void displayScreenMessage(ScreenMessage message, {required AppTheme appTheme}) {
   Future.delayed(kThemeAnimationDuration, () {
     BotToast.showCustomNotification(
       toastBuilder: (CancelFunc cancelFunc) {
-        return NotificationToastWidget(
-          appTheme: appTheme,
-          message: message,
-          cancelFunc: cancelFunc,
-        );
+        return NotificationToastWidget(appTheme: appTheme, message: message, cancelFunc: cancelFunc);
       },
       duration: message.duration,
       align: Alignment.topCenter,
