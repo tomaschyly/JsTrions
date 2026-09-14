@@ -141,7 +141,16 @@ All use plain `InkWell` without a hover style, so they fall back to the default 
       button duration/curve, same structure as drawer items so splash stays visible.
       Header background and `InkWell` use inner radius (container radius minus 1px border), all corners closed, top only open.
 
+- [x] 29. **Text links** — gold underlined `TextSpan` links with `TapGestureRecognizer`, click cursor already by default,
+      no hover; About author and Font Awesome links, Settings OpenAI API key link, Edit Project regexr link
+      (`lib/ui/screens/AboutScreen.dart:459`, `lib/ui/screens/settings_screen.dart:494`,
+      `lib/ui/data_widgets/ProjectProgrammingLanguagesFieldDataWidget.dart:174`)
+      New shared `LinkTextWidget` + `LinkTextPart` (`lib/ui/widgets/link_text_widget.dart`), `TextSpan.onEnter/onExit` drive
+      per-link `AnimationController` with button duration/curve, `kColorSecondary` → `kColorSecondaryLight` for text, underline
+      fades out on hover; widget owns and disposes `TapGestureRecognizer`s (previously created in build and never disposed).
+
 Skipped: notification toast (`lib/ui/notifications/notification_toast_widget.dart:52`), background depends on message type.
+Skipped: scrollbars, Flutter default desktop hover without `scrollbarTheme`.
 
 ## Text fields [DONE]
 
@@ -171,7 +180,7 @@ Skipped: notification toast (`lib/ui/notifications/notification_toast_widget.dar
       (`lib/ui/screens/settings_screen.dart:548`)
 - [x] 28. **Focused and error states** — focused field and failed validation while hovered, e.g. Feedback dialog
 
-## Package release
+## Package release [DONE]
 
-- [ ] Release `tch_common_widgets` `0.42.2` with all package tweaks.
-- [ ] Switch `pubspec.yaml` back from local `path` to `tch_common_widgets: ^0.42.2`.
+- [x] Release `tch_common_widgets` `0.42.2` with all package tweaks.
+- [x] Switch `pubspec.yaml` back from local `path` to `tch_common_widgets: ^0.42.2`.

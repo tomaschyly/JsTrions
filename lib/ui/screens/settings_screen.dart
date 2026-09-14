@@ -1,4 +1,3 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/app.dart';
 import 'package:js_trions/config.dart';
@@ -16,6 +15,7 @@ import 'package:js_trions/ui/data_widgets/project_detail_data_widget.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
+import 'package:js_trions/ui/widgets/link_text_widget.dart';
 import 'package:js_trions/ui/widgets/settings/setting_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -484,17 +484,11 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
                     validations: [FormFieldValidation(validator: validateRequired, errorText: tt('validation.required'))],
                   ),
                   description: null,
-                  trailing: Text.rich(
-                    TextSpan(
-                      children: [
-                        TextSpan(text: _apiKeyDesc1, style: fancyText(kText)),
-                        TextSpan(
-                          text: _apiKeyDescLink,
-                          style: fancyText(kTextBold.copyWith(color: kColorSecondary, decoration: TextDecoration.underline, decorationColor: kColorSecondary)),
-                          recognizer: TapGestureRecognizer()..onTap = () => launchUrlString(kOpenAIGetApKey),
-                        ),
-                      ],
-                    ),
+                  trailing: LinkTextWidget(
+                    parts: [
+                      LinkTextPart(text: _apiKeyDesc1),
+                      LinkTextPart(text: _apiKeyDescLink, onTap: () => launchUrlString(kOpenAIGetApKey)),
+                    ],
                   ),
                 ),
               ),
