@@ -199,6 +199,7 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - When working on a task that corresponds to a plan step, reference the relevant plan file and tick completed steps (change `- [ ]` to `- [x]`) as part of the handoff.
 - When all items in a phase are checked, append `[DONE]` to the phase heading (for example `### Phase N — … [DONE]`).
 - When all steps are complete, ask the user to confirm that the plan is fully done and no new steps will be added before moving it to `plans/archive/`.
+- When archiving a plan, add `Finished: YYYY-MM-DD` immediately below its ID/title heading as the second line, using the date the plan is finished and moved to `plans/archive/`.
 - Do not create new plan files unless the user explicitly asks for one.
 
 ### Meeting-focused plan markers
