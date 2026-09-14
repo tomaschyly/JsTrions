@@ -1,4 +1,5 @@
 # JT-131 — Button UI review
+Finished: 2026-09-14
 
 Scope: `ButtonWidget` and `IconButtonWidget` across the app, checked for hover animation and hover style.
 Extended to other tappable widgets and text fields. Package tweaks go to local `../tch_common_widgets` during development
