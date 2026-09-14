@@ -1,6 +1,8 @@
 # JT-131 — Button UI review
 
 Scope: `ButtonWidget` and `IconButtonWidget` across the app, checked for hover animation and hover style.
+Extended to other tappable widgets and text fields. Package tweaks go to local `../tch_common_widgets` during development
+(`pubspec.yaml` uses `path`) and are released as `tch_common_widgets` `0.42.2`.
 
 > **Mouse cursor — verified OK everywhere, no per-case check needed.**
 > Nothing in `lib/` overrides `mouseCursor`. Both widgets default to `SystemMouseCursors.click` while
@@ -112,3 +114,54 @@ switch-toggle icon button (`app_theme.dart:196`).
       reaction and the basic cursor
       (`lib/ui/data_widgets/project_detail_data_widget.dart:225`)
       Verified in package: `onTap: null` makes `isInteractive` false, so hover style is skipped and cursor is basic.
+
+## Tappable widgets
+
+All use plain `InkWell` without a hover style, so they fall back to the default `ThemeData.hoverColor`
+(about 4 % black), which is barely visible on the dark background.
+
+- [ ] 21. **Chip** — shared `ChipWidget`, one fix covers all radio-like chips; selected chips have `onTap: null`, so no hover
+      (`lib/ui/widgets/ChipWidget.dart:57`). Check in Settings analysis on init and source of translations
+      (`lib/ui/screens/settings_screen.dart:718`), Project Detail language and source chips
+      (`lib/ui/data_widgets/project_detail_data_widget.dart:1478`), Edit Project translations JSON format
+      (`lib/ui/widgets/ProjectTranslationsJsonFormatFieldWidget.dart:139`)
+- [ ] 22. **Drawer items** — background `kColorPrimary`, selected `kColorPrimaryLight` and not tappable; always visible on desktop
+      (`lib/ui/screenStates/AppResponsiveScreenState.dart:207`)
+- [ ] 23. **Toggle container header** — full-width expand/collapse header, Project Detail actions and Edit Project advanced
+      (`lib/ui/widgets/ToggleContainerWidget.dart:75`, `lib/ui/data_widgets/project_detail_data_widget.dart:258`,
+      `lib/ui/dialogs/EditProjectDialog.dart:213`)
+
+Skipped: notification toast (`lib/ui/notifications/notification_toast_widget.dart:52`), background depends on message type.
+
+## Text fields [DONE]
+
+`TextFormFieldWidget` has no hover support in `tch_common_widgets` `0.42.1` (date picker and selection field do).
+
+- [x] **Package: add `TextFormFieldHoverStyle`** to `TextFormFieldStyle` in `../tch_common_widgets`
+      (`lib/src/ui/form/text_form_field_widget.dart`), animated like other hover styles, faded from a transparent color.
+      `fillColor` is animated by the widget (`TweenAnimationBuilder`, `TextFormFieldStyle.animationDuration` / `animationCurve`,
+      defaults `kThemeAnimationDuration` + `Curves.easeOut` like buttons) as opacity fade blended over base fill; built-in
+      `InputDecoration.hoverColor` is disabled because its fade is hardcoded to 15ms. Skipped when disabled.
+      `borderColor` replaces only the enabled border while hovered, focused/error/disabled borders stay, Flutter animates
+      the border change. `MouseRegion` is added only when the hover style sets something.
+- [x] **Decide: what hover changes** — fill only (like selection field) or border too; must not clash with focused,
+      error, or disabled states.
+      Decided: fill only (`kColorPrimaryLightHover`), matches selection field; border stays `kColorTextPrimary`.
+- [x] **App: configure hover** in `kTextFormFieldStyle` (`lib/core/app_theme.dart`).
+      Set `TextFormFieldHoverStyle(fillColor: kColorPrimaryLightHover)`, animated like buttons.
+- [x] **Verify: selection field** builds its input from `kTextFormFieldStyle` behind `IgnorePointer`; text field hover must
+      not double up with `kSelectionFormFieldStyle` hover (`lib/ui/screens/settings_screen.dart:246`).
+- [x] 24. **Single-line field** — Project Detail search, Projects search
+      (`lib/ui/data_widgets/project_detail_data_widget.dart:215`, `lib/ui/screens/ProjectsScreen.dart:237`)
+- [x] 25. **Field with inline action** — Project Detail search with clear-search icon button, both hovers together
+      (`lib/ui/data_widgets/project_detail_data_widget.dart:215`)
+- [x] 26. **Dialog fields** — Edit Project, Feedback including multi-line message
+      (`lib/ui/dialogs/EditProjectDialog.dart:111`, `lib/ui/dialogs/FeedbackDialog.dart:74`)
+- [x] 27. **List-dialog filter** — Settings OpenAI model selection with filter
+      (`lib/ui/screens/settings_screen.dart:548`)
+- [x] 28. **Focused and error states** — focused field and failed validation while hovered, e.g. Feedback dialog
+
+## Package release
+
+- [ ] Release `tch_common_widgets` `0.42.2` with all package tweaks.
+- [ ] Switch `pubspec.yaml` back from local `path` to `tch_common_widgets: ^0.42.2`.

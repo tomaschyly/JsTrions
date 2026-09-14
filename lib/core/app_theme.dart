@@ -193,6 +193,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     inputStyle: kText,
     borderColor: kColorTextPrimary,
     focusedBorderColor: kColorTextPrimary,
+    // Filled on hover like selection field and outlined buttons, border already uses kColorTextPrimary
+    hoverStyle: const TextFormFieldHoverStyle(fillColor: kColorPrimaryLightHover),
     textAlign: TextAlign.center,
   );
 
