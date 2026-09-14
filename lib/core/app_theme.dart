@@ -121,9 +121,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kListItemButtonStyle = kButtonTextOnlyStyle.copyWith(fullWidthMobileOnly: false, alignment: Alignment.centerLeft, textOverflow: TextOverflow.ellipsis);
 
-  final kIconButtonHoverStyle = IconButtonHoverStyle(
-    //TODO
-  );
+  final kIconButtonHoverStyle = IconButtonHoverStyle(backgroundColor: kColorPrimaryLightHover, borderColor: kColorTextPrimary);
 
   final kIconButtonStyle = IconButtonStyle(
     width: kButtonHeight,
@@ -135,6 +133,13 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
     hoverStyle: kIconButtonHoverStyle,
+  );
+
+  final kIconButtonFilledStyle = kIconButtonStyle.copyWith(
+    variant: IconButtonVariant.filled,
+    iconColor: kColorPrimaryLight,
+    // Hover background is dark, switch icon to light for readability and blend border like filled button
+    hoverStyle: kIconButtonHoverStyle.copyWith(borderColor: kColorPrimaryLightHover, iconColor: kColorTextPrimary),
   );
 
   final kAppBarIconButtonStyle = IconButtonStyle(
@@ -230,6 +235,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     buttonTextOnlyStyle: kButtonTextOnlyStyle,
     buttonDangerStyle: kButtonDangerStyle,
     listItemButtonStyle: kListItemButtonStyle,
+    iconButtonFilledStyle: kIconButtonFilledStyle,
     appBarIconButtonStyle: kAppBarIconButtonStyle,
     dialogsStyle: DialogsStyle(confirmDialogStyle: kConfirmDialogStyle, listDialogStyle: kListDialogStyle),
     formStyle: FormStyle(
@@ -251,11 +257,13 @@ class AppTheme extends CommonTheme {
   final CommonButtonStyle buttonTextOnlyStyle;
   final CommonButtonStyle buttonDangerStyle;
   final CommonButtonStyle listItemButtonStyle;
+  final IconButtonStyle iconButtonFilledStyle;
   final IconButtonStyle appBarIconButtonStyle;
   final TextFormFieldStyle emailFormFieldStyle;
 
   /// AppTheme initialization
   AppTheme({
+    super.key,
     required Widget child,
     super.fontFamily,
     required super.buttonsStyle,
@@ -263,6 +271,7 @@ class AppTheme extends CommonTheme {
     required this.buttonTextOnlyStyle,
     required this.buttonDangerStyle,
     required this.listItemButtonStyle,
+    required this.iconButtonFilledStyle,
     required this.appBarIconButtonStyle,
     required super.dialogsStyle,
     required super.formStyle,

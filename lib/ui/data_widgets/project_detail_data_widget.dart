@@ -218,12 +218,17 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             label: tt('project_detail.field.search'),
                           ),
                           Positioned(
-                            right: 0,
+                            right: 2,
                             child: AnimatedOpacity(
                               duration: kThemeAnimationDuration,
                               opacity: _searchController.text.isNotEmpty ? 1 : 0,
                               child: IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly),
+                                // Inset inside field border, so hover background does not overlap it
+                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
+                                  variant: IconButtonVariant.iconOnly,
+                                  width: kButtonHeight - 4,
+                                  height: kButtonHeight - 4,
+                                ),
                                 svgAssetPath: 'images/times-circle.svg',
                                 onTap: _searchController.text.isNotEmpty ? _clearSearch : null,
                               ),
@@ -537,14 +542,14 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                           if (_sourceOfTranslations != SourceOfTranslations.ignoredKeys) ...[
                             if (_sourceOfTranslations != SourceOfTranslations.code)
                               IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
+                                style: commonTheme.iconButtonFilledStyle,
                                 svgAssetPath: 'images/plus.svg',
                                 onTap: () => _processTranslationsForKey(context, theProject),
                               ),
                             if (_sourceOfTranslations == SourceOfTranslations.all) CommonSpaceHHalf(),
                             if (_sourceOfTranslations != SourceOfTranslations.assets)
                               IconButtonWidget(
-                                style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
+                                style: commonTheme.iconButtonFilledStyle,
                                 svgAssetPath: 'images/code.svg',
                                 onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
                                 isLoading: _isAnalyzing,
@@ -552,7 +557,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                             CommonSpaceHHalf(),
                           ],
                           IconButtonWidget(
-                            style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.filled, iconColor: kColorPrimaryLight),
+                            style: commonTheme.iconButtonFilledStyle,
                             svgAssetPath: 'images/arrow-up.svg',
                             onTap: () {
                               final theContext = _topKey.currentContext;

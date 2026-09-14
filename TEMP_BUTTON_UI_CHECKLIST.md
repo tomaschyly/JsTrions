@@ -68,15 +68,15 @@ switch-toggle icon button (`app_theme.dart:196`).
 
 ## Visual checklist — `IconButtonWidget`
 
-- [ ] 11. **Outlined, default** — About screen social links (LinkedIn / X / GitHub)
+- [x] 11. **Outlined, default** — About screen social links (LinkedIn / X / GitHub)
       (`lib/ui/screens/AboutScreen.dart:316`); same style on the folder pickers in Edit Project
       (`lib/ui/dialogs/EditProjectDialog.dart:159`) and the save actions in Settings OpenAI
       (`lib/ui/screens/settings_screen.dart:507`)
-- [ ] 12. **Filled, custom icon color** — Project Detail floating bottom actions (add key, analyze code, scroll up)
+- [x] 12. **Filled, custom icon color** — Project Detail floating bottom actions (add key, analyze code, scroll up)
       (`lib/ui/data_widgets/project_detail_data_widget.dart:539`)
-- [ ] 13. **Icon-only, plain** — Project Detail, clear-search button inside the search field
+- [x] 13. **Icon-only, plain** — Project Detail, clear-search button inside the search field
       (`lib/ui/data_widgets/project_detail_data_widget.dart:225`)
-- [ ] 14. **Icon-only, danger via `color`** — Ignore-directories chips in Edit Project, and the delete action on
+- [x] 14. **Icon-only, danger via `color`** — Ignore-directories chips in Edit Project, and the delete action on
       programming-language chips
       (`lib/ui/widgets/ProjectIgnoreDirectoriesWidget.dart:183`,
       `lib/ui/data_widgets/manage_programming_languages_data_widget.dart:225`)
