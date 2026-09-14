@@ -12,6 +12,17 @@ App works fully offline, so it is not dependant on some online service.
 
 JsTrions works well with Translator provided by my Flutter package [tch_appliable_core](https://github.com/tomaschyly/tch_appliable_core), but is compatible with any simple json translations.
 
+## Platforms
+
+Supported:
+- [macOS](https://apps.apple.com/us/app/jstrions-ai-translations/id1573640111) (Mac App Store)
+- [Windows](https://www.microsoft.com/store/apps/9NM153P944CC) (Microsoft Store only)
+- [Ubuntu](https://snapcraft.io/js-trions) (Snap only)
+
+Not supported, no plans to support:
+- **Web** — JsTrions reads and writes translation files directly in your local project directories, browsers cannot provide this reliably across all of them
+- **Mobile** (Android, iOS) — managing project source code and translation files is a desktop workflow
+
 ## App Gallery
 
 ![MacOS-Projects.png](screenshots/MacOS-Projects.png)
