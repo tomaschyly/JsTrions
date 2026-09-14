@@ -24,10 +24,11 @@ Derived styles that inherit hover from the base ones: confirm-dialog footer (`ap
 list-dialog option and selected option (`app_theme.dart:174`), list-dialog footer (`app_theme.dart:178`),
 switch-toggle icon button (`app_theme.dart:196`).
 
-## Issues to resolve
+## Issues to resolve [DONE]
 
-- [ ] **Icon buttons have no hover feedback at all.** `kIconButtonHoverStyle` is empty (`app_theme.dart:112`),
+- [x] **Icon buttons have no hover feedback at all.** `kIconButtonHoverStyle` is empty (`app_theme.dart:112`),
       and the app-bar style inherits it. Covers every icon-button case below.
+      Fixed with `kIconButtonHoverStyle` (hover background + border), app-bar style now sets it explicitly.
 - [x] **Danger button has no hover feedback.** `CommonButtonHoverStyle()` at `app_theme.dart:101` is a no-op.
 - [x] **Filled buttons probably unreadable on hover.** `kButtonHoverStyle` sets
       `backgroundColor: kColorPrimaryLightHover` (#606060) but no `filledTextStyle`, so filled buttons keep
@@ -40,17 +41,20 @@ switch-toggle icon button (`app_theme.dart:196`).
 - [x] **Hover fade darkened intermediate frames.** `tch_common_widgets` animated from `Colors.transparent` (transparent black),
       fixed in `button_widget.dart` (local `version/0.42.1`) by fading from a transparent hover color. `IconButtonHoverStyle` gained
       `backgroundColor` + `borderColor` with the same fade (icon-only variant supports hover background too).
-- [ ] **Unset hover styles the package supports:** `SwitchToggleWidgetStyle.hoverStyle` and
+- [x] **Unset hover styles the package supports:** `SwitchToggleWidgetStyle.hoverStyle` and
       `SelectionFormFieldStyle.hoverStyle` are never configured.
+      Switch toggle needs none: its `SwitchToggleWidgetHoverStyle` only changes text, and the inherited `kIconButtonHoverStyle`
+      keeps silver text readable. Selection field now fades in `kColorPrimaryLightHover` fill (`kSelectionFormFieldStyle`).
 
-## Visual checklist — `ButtonWidget`
+## Visual checklist — `ButtonWidget` [DONE]
 
 - [x] 1. **Outlined, default** — About screen, the Website / Repository / Contact / Privacy stack
       (`lib/ui/screens/AboutScreen.dart:292`)
 - [x] 2. **Outlined, wrap content** — Project Detail, Import / Export translations actions
       (`lib/ui/data_widgets/project_detail_data_widget.dart:309`)
 - [x] 3. **Filled** — Dashboard, **Add project** when no projects exist
-      (`lib/ui/data_widgets/dashboard_projects_data_widget.dart:54`)
+      (`lib/ui/data_widgets/dashboard_projects_data_widget.dart:54`); same style on Project Detail **Confirm Access**
+      (macOS file access request, `lib/ui/data_widgets/project_detail_data_widget.dart:172`)
 - [x] 4. **Text-only, desktop app bar** — Projects screen app bar, Add / Edit project
       (`lib/ui/screens/ProjectsScreen.dart:122`)
 - [x] 5. **Text-only with danger icon** — Projects screen app bar, Delete project
@@ -66,7 +70,7 @@ switch-toggle icon button (`app_theme.dart:196`).
 - [x] 10. **List-dialog options, text-only + filled selected** — Settings, the app language picker
       (`lib/ui/screens/settings_screen.dart:246`, style at `lib/core/app_theme.dart:174`)
 
-## Visual checklist — `IconButtonWidget`
+## Visual checklist — `IconButtonWidget` [DONE]
 
 - [x] 11. **Outlined, default** — About screen social links (LinkedIn / X / GitHub)
       (`lib/ui/screens/AboutScreen.dart:316`); same style on the folder pickers in Edit Project
@@ -80,22 +84,31 @@ switch-toggle icon button (`app_theme.dart:196`).
       programming-language chips
       (`lib/ui/widgets/ProjectIgnoreDirectoriesWidget.dart:183`,
       `lib/ui/data_widgets/manage_programming_languages_data_widget.dart:225`)
-- [ ] 15. **Icon-only, danger via `iconColor`** — Project Detail translations table, delete-key row action
+- [x] 15. **Icon-only, danger via `iconColor`** — Project Detail translations table, delete-key row action
       (`lib/ui/data_widgets/project_detail_data_widget.dart:1641`)
-- [ ] 16. **Icon-only, state-driven color** — Project Detail translations table, add/edit and ignore/unignore row
+- [x] 16. **Icon-only, state-driven color** — Project Detail translations table, add/edit and ignore/unignore row
       actions that switch between success and danger
       (`lib/ui/data_widgets/project_detail_data_widget.dart:1632`,
       `lib/ui/data_widgets/project_detail_data_widget.dart:1648`)
       Note: the row itself already has its own hover (`kColorPrimaryLightHover`, `project_detail_data_widget.dart:1626`),
       so the icon hover style must read well on top of it.
-- [ ] 17. **App bar** — drawer/back leading icon and app bar actions on any screen
+      Fixed with `kIconButtonRowActionStyle`, hover background `kColorPrimaryLight` (darker than the hovered row), used by all
+      three row actions.
+- [x] 17. **App bar** — drawer/back leading icon and app bar actions on any screen
       (`lib/ui/screenStates/AppResponsiveScreenState.dart:137`, `lib/ui/screenStates/AppResponsiveScreenState.dart:169`)
-- [ ] 18. **Switch toggle** — Project Detail "code only keys" toggle, and Feedback dialog
+      `kAppBarIconButtonStyle` uses `kIconButtonHoverStyle`, background only since icon-only has no border.
+      Text button actions (`option.button`) are covered by cases 4 and 5.
+- [x] 18. **Switch toggle** — Project Detail "code only keys" toggle, and Feedback dialog
       (`lib/ui/data_widgets/project_detail_data_widget.dart:292`, `lib/ui/dialogs/FeedbackDialog.dart:126`,
       style at `lib/core/app_theme.dart:195`)
-- [ ] 19. **Loading state** — Settings, OpenAI models loading spinner button; and Project Detail analyze-code
+      Inherits `kIconButtonHoverStyle` through `kIconButtonStyle`, no change needed. Selection form field (Settings language,
+      translations provider, OpenAI model) checked along with it (`lib/ui/screens/settings_screen.dart:246`).
+- [x] 19. **Loading state** — Settings, OpenAI models loading spinner button; and Project Detail analyze-code
       action while running
       (`lib/ui/screens/settings_screen.dart:532`, `lib/ui/data_widgets/project_detail_data_widget.dart:546`)
-- [ ] 20. **Disabled state** — clear-search with empty input, any action with `onTap: null`; confirm no hover
+      Verified in package: `isInteractive = onTap != null && !(isLoading && ignoreInteractionsWhenLoading)` gates hover and cursor,
+      `ignoreInteractionsWhenLoading` defaults to true and is not overridden. Analyze-code buttons no longer null `onTap` while loading.
+- [x] 20. **Disabled state** — clear-search with empty input, any action with `onTap: null`; confirm no hover
       reaction and the basic cursor
       (`lib/ui/data_widgets/project_detail_data_widget.dart:225`)
+      Verified in package: `onTap: null` makes `isInteractive` false, so hover style is skipped and cursor is basic.

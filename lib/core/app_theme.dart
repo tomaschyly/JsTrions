@@ -142,6 +142,12 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     hoverStyle: kIconButtonHoverStyle.copyWith(borderColor: kColorPrimaryLightHover, iconColor: kColorTextPrimary),
   );
 
+  final kIconButtonRowActionStyle = kIconButtonStyle.copyWith(
+    variant: IconButtonVariant.iconOnly,
+    // Row actions are visible on hovered row which already uses kColorPrimaryLightHover, so hover background is darker to stand out
+    hoverStyle: kIconButtonHoverStyle.copyWith(backgroundColor: kColorPrimaryLight),
+  );
+
   final kAppBarIconButtonStyle = IconButtonStyle(
     variant: IconButtonVariant.iconOnly,
     width: kButtonHeight,
@@ -150,6 +156,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     iconHeight: kIconSizeNotTouch,
     color: kColorTextPrimary,
     borderRadius: platformBorderRadius,
+    // Icon only variant has no border, so only hover background is visible on app bar
+    hoverStyle: kIconButtonHoverStyle,
   );
 
   final kDialogContainerStyle = DialogContainerStyle(
@@ -211,7 +219,16 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     validations: [FormFieldValidation(validator: validateEmail, errorText: tt('validation.required'))],
   );
 
-  final kSelectionFormFieldStyle = SelectionFormFieldStyle(inputStyle: kTextFormFieldStyle);
+  final kSelectionFormFieldStyle = SelectionFormFieldStyle(
+    // Base fill is transparent variant of hover fill, so hover animation only fades opacity
+    inputStyle: kTextFormFieldStyle.copyWith(
+      inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kColorPrimaryLightHover.withValues(alpha: 0)),
+    ),
+    // Filled on hover like outlined buttons, border already uses kColorTextPrimary
+    hoverStyle: SelectionFormFieldHoverStyle(
+      inputStyle: kTextFormFieldStyle.copyWith(inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kColorPrimaryLightHover)),
+    ),
+  );
 
   final kSwitchToggleWidgetStyle = SwitchToggleWidgetStyle(
     iconButtonStyle: kIconButtonStyle.copyWith(width: 104, iconRestricted: false),
@@ -236,6 +253,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     buttonDangerStyle: kButtonDangerStyle,
     listItemButtonStyle: kListItemButtonStyle,
     iconButtonFilledStyle: kIconButtonFilledStyle,
+    iconButtonRowActionStyle: kIconButtonRowActionStyle,
     appBarIconButtonStyle: kAppBarIconButtonStyle,
     dialogsStyle: DialogsStyle(confirmDialogStyle: kConfirmDialogStyle, listDialogStyle: kListDialogStyle),
     formStyle: FormStyle(
@@ -258,6 +276,7 @@ class AppTheme extends CommonTheme {
   final CommonButtonStyle buttonDangerStyle;
   final CommonButtonStyle listItemButtonStyle;
   final IconButtonStyle iconButtonFilledStyle;
+  final IconButtonStyle iconButtonRowActionStyle;
   final IconButtonStyle appBarIconButtonStyle;
   final TextFormFieldStyle emailFormFieldStyle;
 
@@ -272,6 +291,7 @@ class AppTheme extends CommonTheme {
     required this.buttonDangerStyle,
     required this.listItemButtonStyle,
     required this.iconButtonFilledStyle,
+    required this.iconButtonRowActionStyle,
     required this.appBarIconButtonStyle,
     required super.dialogsStyle,
     required super.formStyle,

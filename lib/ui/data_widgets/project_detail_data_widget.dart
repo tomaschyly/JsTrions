@@ -169,7 +169,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                 Text(tt('project_detail.macos_request_access.description'), style: fancyText(kTextDanger)),
                 CommonSpaceV(),
                 ButtonWidget(
-                  style: commonTheme.buttonsStyle.buttonStyle.copyWith(variant: ButtonVariant.filled, widthWrapContent: true),
+                  style: commonTheme.buttonFilledStyle.copyWith(widthWrapContent: true),
                   text: tt('project_detail.macos_request_access'),
                   onTap: () => _confirmFilesAccess(theProject),
                 ),
@@ -403,7 +403,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                               style: commonTheme.buttonsStyle.buttonStyle.copyWith(widthWrapContent: true),
                                               text: tt('project_detail.analyze_code'),
                                               prefixIconSvgAssetPath: 'images/code.svg',
-                                              onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                              onTap: () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
                                               isLoading: _isAnalyzing,
                                             ),
                                           CommonSpaceH(),
@@ -551,7 +551,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               IconButtonWidget(
                                 style: commonTheme.iconButtonFilledStyle,
                                 svgAssetPath: 'images/code.svg',
-                                onTap: _isAnalyzing ? null : () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
+                                onTap: () => _processProjectCode(theProject, programmingLanguages.programmingLanguages),
                                 isLoading: _isAnalyzing,
                               ),
                             CommonSpaceHHalf(),
@@ -1635,7 +1635,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
     final actions = <Widget>[
       if (widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
-          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly, iconColor: widget.isCodeOnly ? kColorSuccess : null),
+          style: commonTheme.iconButtonRowActionStyle.copyWith(iconColor: widget.isCodeOnly ? kColorSuccess : null),
           svgAssetPath: widget.isCodeOnly ? 'images/plus.svg' : 'images/edit.svg',
           onTap: widget.onAddOrEdit,
           tooltip: widget.isCodeOnly
@@ -1644,15 +1644,14 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
         ),
       if (!widget.isCodeOnly && widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
-          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(variant: IconButtonVariant.iconOnly, iconColor: kColorDanger),
+          style: commonTheme.iconButtonRowActionStyle.copyWith(iconColor: kColorDanger),
           svgAssetPath: 'images/trash.svg',
           onTap: widget.onDelete,
           tooltip: tt('project_detail.table.delete.tooltip').parameters({r'$key': widget.keyString}),
         ),
       if (widget.isCodeOnly || widget.sourceOfTranslations == SourceOfTranslations.ignoredKeys)
         IconButtonWidget(
-          style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-            variant: IconButtonVariant.iconOnly,
+          style: commonTheme.iconButtonRowActionStyle.copyWith(
             iconColor: widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys ? kColorDanger : kColorSuccess,
           ),
           svgAssetPath: widget.sourceOfTranslations != SourceOfTranslations.ignoredKeys ? 'images/icons8-block.svg' : 'images/minus.svg',
