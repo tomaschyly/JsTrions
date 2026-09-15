@@ -9,7 +9,7 @@ class GetProjectsDataTask extends DataTask<ProjectQuery, Projects> {
   }) : super(
           method: Projects.STORE,
           options: SembastTaskOptions(
-            type: SembastType.Query,
+            type: SembastType.query,
           ),
           data: data,
           processResult: (json) => Projects.fromJson(json),

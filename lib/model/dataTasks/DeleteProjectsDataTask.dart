@@ -10,7 +10,7 @@ class DeleteProjectsDataTask extends DataTask<ProjectQuery, SembastResult> {
   }) : super(
           method: Project.STORE,
           options: SembastTaskOptions(
-            type: SembastType.DeleteWhere,
+            type: SembastType.deleteWhere,
           ),
           data: data,
           processResult: (json) => SembastResult.fromJson(json),

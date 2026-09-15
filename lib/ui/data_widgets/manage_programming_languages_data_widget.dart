@@ -208,14 +208,14 @@ class _ChipWidget extends StatelessWidget {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     return ChipWidget(
-      variant: ChipVariant.LeftPadded,
+      variant: ChipVariant.leftPadded,
       text: programmingLanguage.name,
       suffixIcon: Row(
         mainAxisSize: MainAxisSize.min,
         children: [
           IconButtonWidget(
             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-              variant: IconButtonVariant.IconOnly,
+              variant: IconButtonVariant.iconOnly,
               iconWidth: 16,
               iconHeight: 16,
             ),
@@ -224,7 +224,7 @@ class _ChipWidget extends StatelessWidget {
           ),
           IconButtonWidget(
             style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-              variant: IconButtonVariant.IconOnly,
+              variant: IconButtonVariant.iconOnly,
               color: kColorDanger,
             ),
             svgAssetPath: 'images/times.svg',

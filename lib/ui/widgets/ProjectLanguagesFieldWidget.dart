@@ -145,12 +145,12 @@ class _ChipWidget extends StatelessWidget {
     final commonTheme = CommonTheme.of<AppTheme>(context)!;
 
     return ChipWidget(
-      variant: ChipVariant.LeftPadded,
+      variant: ChipVariant.leftPadded,
       text: language,
       suffixIcon: canTap
           ? IconButtonWidget(
               style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                variant: IconButtonVariant.IconOnly,
+                variant: IconButtonVariant.iconOnly,
                 color: kColorDanger,
               ),
               svgAssetPath: 'images/times.svg',

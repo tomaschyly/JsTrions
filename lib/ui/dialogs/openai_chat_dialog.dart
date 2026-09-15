@@ -106,7 +106,7 @@ class _OpenAIChatDialogState extends AbstractStatefulWidgetState<OpenAIChatDialo
                     title: tt('openai_chat.dialog.title'),
                     trailing: IconButtonWidget(
                       style: commonTheme.buttonsStyle.iconButtonStyle.copyWith(
-                        variant: IconButtonVariant.IconOnly,
+                        variant: IconButtonVariant.iconOnly,
                         iconWidth: kButtonHeight,
                         iconHeight: kButtonHeight,
                       ),

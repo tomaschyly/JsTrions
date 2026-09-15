@@ -21,8 +21,8 @@ const String kPrefsTranslationsNoHtml = 'prefs_translations_no_html';
 /// Int values, it is for init, defaults and in memory storage
 final Map<String, int> intPrefs = {
   kPrefsFancyFont: 1,
-  kPrefsProjectsSource: SourceOfTranslations.All.index,
-  kPrefsProjectsAnalysis: ProjectAnalysisOnInit.Always.index,
+  kPrefsProjectsSource: SourceOfTranslations.all.index,
+  kPrefsProjectsAnalysis: ProjectAnalysisOnInit.always.index,
   kPrefsProjectsBeautifyJson: 1,
   kPrefsProjectsCodeOnly: 1,
   kPrefsTranslationsProvider: TranslationsProvider.google.index,
@@ -31,9 +31,7 @@ final Map<String, int> intPrefs = {
 };
 
 /// String values, it is for init, defaults and in memory storage
-final Map<String, String> stringPrefs = {
-  kPrefsTranslationsOpenaiSelectedModel: 'gpt-5.4-mini',
-};
+final Map<String, String> stringPrefs = {kPrefsTranslationsOpenaiSelectedModel: 'gpt-5.4-mini'};
 
 /// Clear all application preferences (using all defined keys with correct types)
 Future<void> clearAllAppPrefs() async {

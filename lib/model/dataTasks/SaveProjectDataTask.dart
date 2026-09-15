@@ -9,7 +9,7 @@ class SaveProjectDataTask extends DataTask<Project, SembastResult> {
   }) : super(
           method: Project.STORE,
           options: SembastTaskOptions(
-            type: SembastType.Save,
+            type: SembastType.save,
           ),
           data: data,
           processResult: (json) => SembastResult.fromJson(json),

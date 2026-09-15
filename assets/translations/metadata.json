@@ -1,8 +1,8 @@
 {
   "$JsTrions": {
-    "version": "1.6.1",
-    "message": "Tento metadátový súbor bol vygenerovaný pomocou JsTrions dňa 2026-02-15 12:35:47, needitujte, pokiaľ neviete, čo robiť",
-    "description": "Jednoduché AI-asistované preklady vašich projektov. Použite Google Translate alebo modely OpenAI na automatické preklady. Použite JsTrions na analýzu kódu projektu, aby ste zistili, kde sa preklady používajú; potom ľahko uvidíte, ktoré preklady chýbajú, a pridáte ich. JsTrions dobre spolupracuje s Translatorom poskytovaným mojím Flutter balíkom tch_appliable_core, ale je kompatibilný s akýmikoľvek jednoduchými JSON prekladmi.",
+    "version": "1.6.5",
+    "message": "This metadata was generated using JsTrions at 2026-09-14 14:33:13, do not edit unless you know what to do",
+    "description": "Easy to use AI assisted translations of your projects. Use Google Translate or OpenAI models for automatic translations. Use JsTrions to analyze project code for translations usage, you can then easily see which translations are missing and add them. JsTrions works well with Translator provided by my Flutter package tch_appliable_core, but is compatible with any simple json translations.",
     "website": "https://tomas-chyly.com/en/project/jstrions/",
     "windows": "https://www.microsoft.com/store/apps/9NM153P944CC",
     "macos": "https://apps.apple.com/us/app/jstrions-ai-translations/id1573640111",

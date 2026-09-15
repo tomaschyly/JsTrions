@@ -1,10 +1,10 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/flutter_svg.dart';
 import 'package:js_trions/config.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/ui/dialogs/FeedbackDialog.dart';
 import 'package:js_trions/ui/screenStates/AppResponsiveScreenState.dart';
 import 'package:js_trions/ui/widgets/CategoryHeaderWidget.dart';
+import 'package:js_trions/ui/widgets/link_text_widget.dart';
 import 'package:package_info_plus/package_info_plus.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
@@ -21,10 +21,7 @@ class AboutScreen extends AbstractResponsiveScreen {
 
 class _AboutScreenState extends AppResponsiveScreenState<AboutScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.main(
-    screenName: AboutScreen.ROUTE,
-    title: tt('about.screen.title'),
-  );
+  AbstractScreenOptions options = AppScreenStateOptions.main(screenName: AboutScreen.ROUTE, title: tt('about.screen.title'));
 
   @override
   Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget();
@@ -64,9 +61,11 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   firstBuildOnly(BuildContext context) {
     super.firstBuildOnly(context);
 
-    PackageInfo.fromPlatform().then((PackageInfo packageInfo) => setStateNotDisposed(() {
-          _version = 'JsTrions: ${packageInfo.version}';
-        }));
+    PackageInfo.fromPlatform().then(
+      (PackageInfo packageInfo) => setStateNotDisposed(() {
+        _version = 'JsTrions: ${packageInfo.version}';
+      }),
+    );
   }
 
   /// Create view layout from widgets
@@ -91,16 +90,9 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
                   child: Column(
                     mainAxisSize: MainAxisSize.min,
                     children: [
-                      Container(
-                        width: 295,
-                        child: Image.asset('images/tomas-chylyV3-padded-black-circle.png'),
-                      ),
+                      Container(width: 295, child: Image.asset('images/tomas-chylyV3-padded-black-circle.png')),
                       CommonSpaceVHalf(),
-                      Text(
-                        _version,
-                        style: fancyText(kText),
-                        textAlign: TextAlign.center,
-                      ),
+                      Text(_version, style: fancyText(kText), textAlign: TextAlign.center),
                       CommonSpaceV(),
                     ],
                   ),
@@ -109,23 +101,17 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _InfoWidget(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
+                child: _InfoWidget(crossAxisAlignment: CrossAxisAlignment.center),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _LinksWidget(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
+                child: _LinksWidget(crossAxisAlignment: CrossAxisAlignment.center),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _AttributionWidget(
-                  crossAxisAlignment: CrossAxisAlignment.center,
-                ),
+                child: _AttributionWidget(crossAxisAlignment: CrossAxisAlignment.center),
               ),
             ],
           ),
@@ -179,16 +165,9 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                           child: Column(
                             mainAxisSize: MainAxisSize.min,
                             children: [
-                              Container(
-                                width: 295,
-                                child: Image.asset('images/tomas-chylyV3-padded-black-circle.png'),
-                              ),
+                              Container(width: 295, child: Image.asset('images/tomas-chylyV3-padded-black-circle.png')),
                               CommonSpaceVHalf(),
-                              Text(
-                                _version,
-                                style: fancyText(kText),
-                                textAlign: TextAlign.center,
-                              ),
+                              Text(_version, style: fancyText(kText), textAlign: TextAlign.center),
                               CommonSpaceV(),
                             ],
                           ),
@@ -196,9 +175,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       ),
                     ),
                   ),
-                  Expanded(
-                    child: Container(),
-                  ),
+                  Expanded(child: Container()),
                 ],
               ),
               CommonSpaceV(),
@@ -216,10 +193,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                         child: Column(
                           mainAxisSize: MainAxisSize.min,
                           crossAxisAlignment: CrossAxisAlignment.start,
-                          children: [
-                            _InfoWidget(),
-                            _AttributionWidget(),
-                          ],
+                          children: [_InfoWidget(), _AttributionWidget()],
                         ),
                       ),
                     ),
@@ -248,9 +222,7 @@ class _InfoWidget extends StatelessWidget {
   final CrossAxisAlignment crossAxisAlignment;
 
   /// InfoWidget initialization
-  _InfoWidget({
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-  });
+  _InfoWidget({this.crossAxisAlignment = CrossAxisAlignment.start});
 
   /// Create view layout from widgets
   @override
@@ -261,10 +233,7 @@ class _InfoWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: crossAxisAlignment,
         children: [
-          Text(
-            tt('about.screen.text'),
-            style: fancyText(kText),
-          ),
+          Text(tt('about.screen.text'), style: fancyText(kText)),
           CommonSpaceV(),
         ],
       ),
@@ -276,9 +245,7 @@ class _LinksWidget extends StatelessWidget {
   final CrossAxisAlignment crossAxisAlignment;
 
   /// LinksWidget initialization
-  _LinksWidget({
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-  });
+  _LinksWidget({this.crossAxisAlignment = CrossAxisAlignment.start});
 
   /// Create view layout from widgets
   @override
@@ -289,44 +256,23 @@ class _LinksWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: crossAxisAlignment,
         children: [
-          ButtonWidget(
-            text: tt('about.screen.website'),
-            onTap: () => launchUrlString(kAppWebsite),
-          ),
+          ButtonWidget(text: tt('about.screen.website'), onTap: () => launchUrlString(kAppWebsite)),
           CommonSpaceV(),
-          ButtonWidget(
-            text: tt('about.screen.repository'),
-            onTap: () => launchUrlString('https://github.com/tomaschyly/JsTrions'),
-          ),
+          ButtonWidget(text: tt('about.screen.repository'), onTap: () => launchUrlString('https://github.com/tomaschyly/JsTrions')),
           CommonSpaceV(),
-          ButtonWidget(
-            text: tt('about.screen.contact'),
-            onTap: () => _sendFeedback(context),
-          ),
+          ButtonWidget(text: tt('about.screen.contact'), onTap: () => _sendFeedback(context)),
           CommonSpaceV(),
-          ButtonWidget(
-            text: tt('about.screen.privacy'),
-            onTap: () => launchUrlString('https://tomas-chyly.com/en/jstrions-privacy-policy/'),
-          ),
+          ButtonWidget(text: tt('about.screen.privacy'), onTap: () => launchUrlString('https://tomas-chyly.com/en/jstrions-privacy-policy/')),
           CommonSpaceV(),
           Row(
             mainAxisSize: MainAxisSize.max,
             mainAxisAlignment: MainAxisAlignment.center,
             children: [
-              IconButtonWidget(
-                svgAssetPath: 'images/linkedin.svg',
-                onTap: () => launchUrlString('https://www.linkedin.com/in/tomas-chyly/'),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/linkedin.svg', onTap: () => launchUrlString('https://www.linkedin.com/in/tomas-chyly/')),
               CommonSpaceHHalf(),
-              IconButtonWidget(
-                svgAssetPath: 'images/twitter.svg',
-                onTap: () => launchUrlString('https://twitter.com/TomasChyly'),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/twitter.svg', onTap: () => launchUrlString('https://twitter.com/TomasChyly')),
               CommonSpaceHHalf(),
-              IconButtonWidget(
-                svgAssetPath: 'images/github.svg',
-                onTap: () => launchUrlString('https://github.com/tomaschyly'),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/github.svg', onTap: () => launchUrlString('https://github.com/tomaschyly')),
             ],
           ),
           CommonSpaceVHalf(),
@@ -339,10 +285,7 @@ class _LinksWidget extends StatelessWidget {
                 onTap: () => launchUrlString('https://pub.dev/publishers/tomas-chyly.com/packages'),
               ),
               CommonSpaceHHalf(),
-              IconButtonWidget(
-                svgAssetPath: 'images/npm.svg',
-                onTap: () => launchUrlString('https://www.npmjs.com/~tomaschyly'),
-              ),
+              IconButtonWidget(svgAssetPath: 'images/npm.svg', onTap: () => launchUrlString('https://www.npmjs.com/~tomaschyly')),
               CommonSpaceHHalf(),
               IconButtonWidget(
                 svgAssetPath: 'images/stack_overflow.svg',
@@ -364,10 +307,7 @@ class _LinksWidget extends StatelessWidget {
 
     if (sent == true) {
       displayScreenMessage(
-        ScreenMessage(
-          message: tt('feedback.submit'),
-          type: ScreenMessageType.success,
-        ),
+        ScreenMessage(message: tt('feedback.submit'), type: ScreenMessageType.success),
         appTheme: appTheme,
       );
     }
@@ -378,9 +318,7 @@ class _AttributionWidget extends AbstractStatefulWidget {
   final CrossAxisAlignment crossAxisAlignment;
 
   /// AttributionWidget initialization
-  _AttributionWidget({
-    this.crossAxisAlignment = CrossAxisAlignment.start,
-  });
+  _AttributionWidget({this.crossAxisAlignment = CrossAxisAlignment.start});
 
   /// Create state for widget
   @override
@@ -443,67 +381,23 @@ class _AttributionWidgetState extends AbstractStatefulWidgetState<_AttributionWi
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: CrossAxisAlignment.start,
         children: [
-          Text.rich(
-            TextSpan(children: [
-              TextSpan(
-                text: _copyright1,
-                style: fancyText(kText),
-              ),
-              TextSpan(
-                text: _copyright2,
-                style: fancyText(kTextBold.copyWith(
-                  color: kColorSecondary,
-                  decoration: TextDecoration.underline,
-                  decorationColor: kColorSecondary,
-                )),
-                recognizer: TapGestureRecognizer()..onTap = () => launch('https://tomas-chyly.com/en/'),
-              ),
-              TextSpan(
-                text: _copyright3,
-                style: fancyText(kText),
-              ),
-            ]),
+          LinkTextWidget(
+            parts: [
+              LinkTextPart(text: _copyright1),
+              LinkTextPart(text: _copyright2, onTap: () => launch('https://tomas-chyly.com/en/')),
+              LinkTextPart(text: _copyright3),
+            ],
           ),
           CommonSpaceVDouble(),
-          CategoryHeaderWidget(
-            text: tt('about.screen.special_thanks'),
-            doubleMargin: true,
-          ),
-          Text.rich(
-            TextSpan(
-              children: [
-                TextSpan(
-                  text: _fontAwesome1,
-                  style: fancyText(kText),
-                ),
-                TextSpan(
-                  text: _fontAwesome2,
-                  style: fancyText(kTextBold.copyWith(
-                    color: kColorSecondary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: kColorSecondary,
-                  )),
-                  recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/'),
-                ),
-                TextSpan(
-                  text: _fontAwesome3,
-                  style: fancyText(kText),
-                ),
-                TextSpan(
-                  text: _fontAwesome4,
-                  style: fancyText(kTextBold.copyWith(
-                    color: kColorSecondary,
-                    decoration: TextDecoration.underline,
-                    decorationColor: kColorSecondary,
-                  )),
-                  recognizer: TapGestureRecognizer()..onTap = () => launch('https://fontawesome.com/license/free'),
-                ),
-                TextSpan(
-                  text: _fontAwesome5,
-                  style: fancyText(kText),
-                ),
-              ],
-            ),
+          CategoryHeaderWidget(text: tt('about.screen.special_thanks'), doubleMargin: true),
+          LinkTextWidget(
+            parts: [
+              LinkTextPart(text: _fontAwesome1),
+              LinkTextPart(text: _fontAwesome2, onTap: () => launch('https://fontawesome.com/')),
+              LinkTextPart(text: _fontAwesome3),
+              LinkTextPart(text: _fontAwesome4, onTap: () => launch('https://fontawesome.com/license/free')),
+              LinkTextPart(text: _fontAwesome5),
+            ],
           ),
           CommonSpaceV(),
         ],

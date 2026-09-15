@@ -1,5 +1,5 @@
-import 'package:flutter/gestures.dart';
 import 'package:flutter_svg/svg.dart';
+import 'package:collection/collection.dart';
 import 'package:js_trions/core/app_theme.dart';
 import 'package:js_trions/model/ProgrammingLanguage.dart';
 import 'package:js_trions/model/ProgrammingLanguages.dart';
@@ -7,8 +7,8 @@ import 'package:js_trions/model/Project.dart';
 import 'package:js_trions/model/dataRequests/GetProgrammingLanguagesDataRequest.dart';
 import 'package:js_trions/service/ProgrammingLanguageService.dart';
 import 'package:js_trions/ui/widgets/ChipWidget.dart';
+import 'package:js_trions/ui/widgets/link_text_widget.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
-import 'package:tch_appliable_core/utils/list.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 import 'package:url_launcher/url_launcher.dart';
 
@@ -16,13 +16,7 @@ class ProjectProgrammingLanguagesFieldDataWidget extends AbstractDataWidget {
   final Project? project;
 
   /// ProjectProgrammingLanguagesFieldDataWidget initialization
-  ProjectProgrammingLanguagesFieldDataWidget({
-    required Key key,
-    this.project,
-  }) : super(
-          key: key,
-          dataRequests: [GetProgrammingLanguagesDataRequest()],
-        );
+  ProjectProgrammingLanguagesFieldDataWidget({required Key key, this.project}) : super(key: key, dataRequests: [GetProgrammingLanguagesDataRequest()]);
 
   /// Create state for widget
   @override
@@ -31,10 +25,8 @@ class ProjectProgrammingLanguagesFieldDataWidget extends AbstractDataWidget {
 
 class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidgetState<ProjectProgrammingLanguagesFieldDataWidget>
     with TickerProviderStateMixin {
-  ProjectProgrammingLanguagesFieldDataWidgetValue get value => ProjectProgrammingLanguagesFieldDataWidgetValue(
-        programmingLanguages: _selectedProgrammingLanguages,
-        translationKeys: _translationKeys,
-      );
+  ProjectProgrammingLanguagesFieldDataWidgetValue get value =>
+      ProjectProgrammingLanguagesFieldDataWidgetValue(programmingLanguages: _selectedProgrammingLanguages, translationKeys: _translationKeys);
 
   int? _projectId;
   List<int> _selectedProgrammingLanguages = [];
@@ -86,9 +78,9 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
             padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
             child: Text(
               tt('edit_project.field.programming_languages.empty_error'),
-              style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!).copyWith(
-                color: commonTheme.formStyle.textFormFieldStyle.errorColor,
-              ),
+              style: fancyText(
+                commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!,
+              ).copyWith(color: commonTheme.formStyle.textFormFieldStyle.errorColor),
             ),
           );
         }
@@ -97,9 +89,11 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
 
         _initProject(programmingLanguages.programmingLanguages);
 
-        final availableTranslationKeys = _translationKeys.where((translationKey) =>
-            _selectedProgrammingLanguages.contains(translationKey.programmingLanguage) &&
-            programmingLanguages.programmingLanguages.any((programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage));
+        final availableTranslationKeys = _translationKeys.where(
+          (translationKey) =>
+              _selectedProgrammingLanguages.contains(translationKey.programmingLanguage) &&
+              programmingLanguages.programmingLanguages.any((programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage),
+        );
 
         return AnimatedSize(
           duration: kThemeAnimationDuration,
@@ -114,11 +108,13 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                     spacing: kCommonHorizontalMarginHalf,
                     runSpacing: kCommonVerticalMarginHalf,
                     children: programmingLanguages.programmingLanguages
-                        .map((ProgrammingLanguage programmingLanguage) => _ChipWidget(
-                              programmingLanguage: programmingLanguage,
-                              selected: _selectedProgrammingLanguages.contains(programmingLanguage.id),
-                              toggle: _toggle,
-                            ))
+                        .map(
+                          (ProgrammingLanguage programmingLanguage) => _ChipWidget(
+                            programmingLanguage: programmingLanguage,
+                            selected: _selectedProgrammingLanguages.contains(programmingLanguage.id),
+                            toggle: _toggle,
+                          ),
+                        )
                         .toList(),
                   );
                 },
@@ -140,15 +136,16 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                   padding: const EdgeInsets.only(left: 8, top: 8, right: 8),
                   child: Text(
                     _errorText,
-                    style: fancyText(commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!).copyWith(
-                      color: commonTheme.formStyle.textFormFieldStyle.errorColor,
-                    ),
+                    style: fancyText(
+                      commonTheme.formStyle.textFormFieldStyle.inputDecoration.errorStyle!,
+                    ).copyWith(color: commonTheme.formStyle.textFormFieldStyle.errorColor),
                   ),
                 ),
               CommonSpaceVHalf(),
               ...availableTranslationKeys.map((translationKey) {
-                final programmingLanguage =
-                    programmingLanguages.programmingLanguages.firstWhere((programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage);
+                final programmingLanguage = programmingLanguages.programmingLanguages.firstWhere(
+                  (programmingLanguage) => programmingLanguage.id == translationKey.programmingLanguage,
+                );
 
                 return _TranslationKeyField(
                   translationKey: translationKey,
@@ -157,24 +154,11 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
                 );
               }).toList(),
               if (availableTranslationKeys.isNotEmpty) ...[
-                Text.rich(
-                  TextSpan(
-                    children: [
-                      TextSpan(
-                        text: tt('edit_project.field.programming_languages.hint'),
-                        style: fancyText(kText),
-                      ),
-                      TextSpan(
-                        text: 'https://regexr.com/',
-                        style: fancyText(kTextBold.copyWith(
-                          color: kColorSecondary,
-                          decoration: TextDecoration.underline,
-                          decorationColor: kColorSecondary,
-                        )),
-                        recognizer: TapGestureRecognizer()..onTap = () => launch('https://regexr.com/'),
-                      ),
-                    ],
-                  ),
+                LinkTextWidget(
+                  parts: [
+                    LinkTextPart(text: tt('edit_project.field.programming_languages.hint')),
+                    LinkTextPart(text: 'https://regexr.com/', onTap: () => launch('https://regexr.com/')),
+                  ],
                 ),
                 CommonSpaceVHalf(),
               ],
@@ -216,10 +200,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetState extends AbstractDataWidget
         TranslationKey? translationKey = _translationKeys.firstWhereOrNull((translationKey) => translationKey.programmingLanguage == programmingLanguage.id);
 
         if (translationKey == null) {
-          translationKey = TranslationKey.fromJson(<String, dynamic>{
-            'programmingLanguage': programmingLanguage.id,
-            'key': programmingLanguage.key,
-          });
+          translationKey = TranslationKey.fromJson(<String, dynamic>{'programmingLanguage': programmingLanguage.id, 'key': programmingLanguage.key});
           _translationKeys.add(translationKey);
         }
 
@@ -239,10 +220,7 @@ class ProjectProgrammingLanguagesFieldDataWidgetValue {
   final List<TranslationKey> translationKeys;
 
   /// ProjectProgrammingLanguagesFieldDataWidgetValue initialization
-  ProjectProgrammingLanguagesFieldDataWidgetValue({
-    required this.programmingLanguages,
-    required this.translationKeys,
-  });
+  ProjectProgrammingLanguagesFieldDataWidgetValue({required this.programmingLanguages, required this.translationKeys});
 }
 
 class _ChipWidget extends StatelessWidget {
@@ -251,11 +229,7 @@ class _ChipWidget extends StatelessWidget {
   final void Function(ProgrammingLanguage programmingLanguage) toggle;
 
   /// ChipWidget initialization
-  _ChipWidget({
-    required this.programmingLanguage,
-    this.selected = false,
-    required this.toggle,
-  });
+  _ChipWidget({required this.programmingLanguage, this.selected = false, required this.toggle});
 
   /// Create view layout from widgets
   @override
@@ -281,11 +255,7 @@ class _TranslationKeyField extends StatelessWidget {
   final TextEditingController textEditingController;
 
   /// TranslationKeyField initialization
-  _TranslationKeyField({
-    required this.translationKey,
-    required this.programmingLanguage,
-    required this.textEditingController,
-  });
+  _TranslationKeyField({required this.translationKey, required this.programmingLanguage, required this.textEditingController});
 
   /// Create view layout from widgets
   @override
@@ -296,12 +266,7 @@ class _TranslationKeyField extends StatelessWidget {
         TextFormFieldWidget(
           controller: textEditingController,
           label: programmingLanguage.name,
-          validations: [
-            FormFieldValidation(
-              validator: validateRequired,
-              errorText: tt('validation.required'),
-            ),
-          ],
+          validations: [FormFieldValidation(validator: validateRequired, errorText: tt('validation.required'))],
         ),
         CommonSpaceVHalf(),
       ],

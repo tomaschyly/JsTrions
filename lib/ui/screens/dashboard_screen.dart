@@ -18,40 +18,25 @@ class DashboardScreen extends AbstractResponsiveScreen {
 
 class _DashboardScreenState extends AppResponsiveScreenState<DashboardScreen> {
   @override
-  AbstractScreenOptions options = AppScreenStateOptions.main(
-    screenName: DashboardScreen.ROUTE,
-    title: tt('dashboard.screen.title'),
-  );
+  AbstractScreenOptions options = AppScreenStateOptions.main(screenName: DashboardScreen.ROUTE, title: tt('dashboard.screen.title'));
 
   @override
-  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        info: _info,
-      );
+  Widget extraLargeDesktopScreen(BuildContext context) => _BodyDesktopWidget(info: _info);
 
   @override
-  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        info: _info,
-      );
+  Widget largeDesktopScreen(BuildContext context) => _BodyDesktopWidget(info: _info);
 
   @override
-  Widget largePhoneScreen(BuildContext context) => _BodyWidget(
-        info: _info,
-      );
+  Widget largePhoneScreen(BuildContext context) => _BodyWidget(info: _info);
 
   @override
-  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(
-        info: _info,
-      );
+  Widget smallDesktopScreen(BuildContext context) => _BodyDesktopWidget(info: _info);
 
   @override
-  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(
-        info: _info,
-      );
+  Widget smallPhoneScreen(BuildContext context) => _BodyWidget(info: _info);
 
   @override
-  Widget tabletScreen(BuildContext context) => _BodyWidget(
-        info: _info,
-      );
+  Widget tabletScreen(BuildContext context) => _BodyWidget(info: _info);
 
   List<DashboardInfoPayload> _info = [];
 
@@ -107,12 +92,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
                   mainAxisSize: MainAxisSize.min,
                   children: [
                     CommonSpaceVDouble(),
-                    DashboardInfoWidget(
-                      title: info.title,
-                      text: info.text,
-                      isDanger: info.isDanger,
-                      actionSettingsText: info.actionSettingsText,
-                    ),
+                    DashboardInfoWidget(title: info.title, text: info.text, isDanger: info.isDanger, actionSettingsText: info.actionSettingsText),
                   ],
                 );
               }),
@@ -174,19 +154,11 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                     spacing: kCommonHorizontalMargin,
                     runSpacing: kCommonHorizontalMargin,
                     children: [
-                      SizedBox(
-                        width: _tileWidth,
-                        child: DashboardProjectsDataWidget(),
-                      ),
+                      SizedBox(width: _tileWidth, child: DashboardProjectsDataWidget()),
                       ...widget.info.map((info) {
                         return SizedBox(
                           width: _tileWidth,
-                          child: DashboardInfoWidget(
-                            title: info.title,
-                            text: info.text,
-                            isDanger: info.isDanger,
-                            actionSettingsText: info.actionSettingsText,
-                          ),
+                          child: DashboardInfoWidget(title: info.title, text: info.text, isDanger: info.isDanger, actionSettingsText: info.actionSettingsText),
                         );
                       }),
                     ],

@@ -10,7 +10,7 @@ class HttpPostDataTask extends DataTask<DataTaskParameters, ApiResponse> {
   }) : super(
           method: '',
           options: HTTPTaskOptions(
-            type: HTTPType.Post,
+            type: HTTPType.post,
             url: url,
           ),
           data: DataTaskParameters.fromJson(parameters),

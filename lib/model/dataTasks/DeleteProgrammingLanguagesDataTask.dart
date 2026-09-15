@@ -10,7 +10,7 @@ class DeleteProgrammingLanguagesDataTask extends DataTask<ProgrammingLanguageQue
   }) : super(
           method: ProgrammingLanguage.STORE,
           options: SembastTaskOptions(
-            type: SembastType.DeleteWhere,
+            type: SembastType.deleteWhere,
           ),
           data: data,
           processResult: (json) => SembastResult.fromJson(json),

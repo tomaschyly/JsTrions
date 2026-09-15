@@ -116,9 +116,9 @@ Future<void> deleteProject(
     if (popOnSuccess &&
         dataTask.result != null &&
         ![
-          ResponsiveScreen.SmallDesktop,
-          ResponsiveScreen.LargeDesktop,
-          ResponsiveScreen.ExtraLargeDesktop,
+          ResponsiveScreen.smallDesktop,
+          ResponsiveScreen.largeDesktop,
+          ResponsiveScreen.extraLargeDesktop,
         ].contains(snapshot.responsiveScreen)) {
       Navigator.of(context).pop(dataTask.result?.id);
     }

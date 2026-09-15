@@ -9,7 +9,7 @@ class SaveProgrammingLanguageDataTask extends DataTask<ProgrammingLanguage, Semb
   }) : super(
           method: ProgrammingLanguage.STORE,
           options: SembastTaskOptions(
-            type: SembastType.Save,
+            type: SembastType.save,
           ),
           data: data,
           processResult: (json) => SembastResult.fromJson(json),
