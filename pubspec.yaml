@@ -76,6 +76,7 @@ flutter:
       fonts:
         - asset: fonts/Kalam-Regular.ttf
 
+# https://partner.microsoft.com/
 # https://pub.dev/packages/msix
 # flutter clean && flutter build windows
 # flutter clean && dart run msix:create
