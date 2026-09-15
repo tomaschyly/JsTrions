@@ -18,6 +18,7 @@ Current focus:
 - [ ] **[DECISION]** Do Phase 2 — Remember window size and position
 - [ ] **[DECISION]** Do Phase 4 — Context menus
 - [ ] **[DECISION]** Do Phase 5 — Drag and drop
+- [ ] **[DECISION]** Phase 6 — fix native Linux title bar only vs. custom Flutter title bar on all desktop platforms
 
 ## Current state
 
@@ -28,6 +29,8 @@ Current focus:
 | Prefs | `lib/core/app_preferences.dart` | no window state prefs |
 | Tooltip support | `tch_common_widgets` `IconButtonWidget.tooltip`, `ButtonWidget.tooltip` | styled by `tooltipStyle` at `lib/core/app_theme.dart:268` |
 | Existing tooltips | `lib/ui/data_widgets/project_detail_data_widget.dart:1641`, `lib/ui/dialogs/edit_project_translation_dialog.dart:148` | 8 of ~36 `IconButtonWidget` usages have a tooltip |
+| Window title / brightness | `lib/service/desktop_service.dart:38` | `setTitle(kAppTitle)` + `setBrightness(Brightness.dark)`, no `setTitleBarStyle`, no custom title bar on any platform |
+| Linux runner | `linux/my_application.cc:26` | template GTK header bar with fixed title `js_trions`, window shown at `1280×720` before Dart init |
 | Project detail search | `lib/ui/data_widgets/project_detail_data_widget.dart:72` | `_searchController`, focus target for a search shortcut |
 
 ## Constraints
@@ -95,7 +98,35 @@ Current focus:
 - [ ] Drop target visual state (hover highlight)
 - [ ] **[VERIFY]** Works in MSIX, Snap confinement and macOS sandbox
 
-### Phase 6 — Validation and release
+### Phase 6 — Ubuntu / Linux window chrome
+
+Observed on Ubuntu 26.04 (Wayland, system theme `Yaru-yellow-dark`, `prefer-dark`): the GTK header bar is light and
+shows `js_trions`, so `setTitle` and `setBrightness(Brightness.dark)` from `initDesktop()` have no visible effect.
+
+- [ ] **[DECISION]** Approach:
+  - [ ] A — keep native title bars everywhere, fix the Linux runner so title and dark header bar work
+  - [ ] B — custom Flutter title bar on Windows, macOS and Linux (`TitleBarStyle.hidden`, `DragToMoveArea`, own
+        minimize / maximize / close buttons on Windows / Linux, native traffic lights kept on macOS)
+- [ ] Linux runner (needed for both approaches), `linux/my_application.cc`:
+  - [ ] Stop setting fixed header bar title `js_trions` so `setTitle` is reflected (or set `JsTrions`)
+  - [ ] Follow `window_manager` Linux setup — do not show the window before Dart init (`gtk_widget_realize` on the
+        view), let `windowManager.show()` in `initDesktop()` reveal it after sizing
+- [ ] **[VERIFY]** Why the header bar stays light although `setBrightness` sets `gtk-application-prefer-dark-theme`:
+      `flutter run` from snap VS Code inheriting GTK env vars, theme resolution on Wayland, settings applied after the
+      header bar is realized, Snap build with `gnome` extension theme access
+- [ ] Approach A — ensure dark header bar on Linux regardless of system theme (e.g. prefer-dark set in runner before
+      the window is created) if `setBrightness` alone is not reliable
+- [ ] Approach B — title bar widget:
+  - [ ] Shared widget in `lib/ui/widgets/` styled via app theme, hidden on mobile / web
+  - [ ] Hide native bar in `initDesktop()` per platform before `show()`
+  - [ ] Double-click to maximize / restore, resize edges still work on Linux (`DragToResizeArea` if needed)
+  - [ ] Window buttons with tooltips through `tt(...)`, reflect maximized state via `WindowListener`
+  - [ ] Fit with `AppResponsiveScreenState` app bar / drawer layout (no double app bar)
+  - [ ] Full screen: hide custom bar, macOS traffic light position
+- [ ] **[VERIFY]** No regression on Windows (dark title bar, MSIX) and macOS (title, full screen on small displays)
+- [ ] **[VERIFY]** Linux debug run and Snap build (`core22`, `gnome` extension, X11 and Wayland)
+
+### Phase 7 — Validation and release
 
 - [ ] `dart format` + `flutter analyze` on changed files
 - [ ] Manual test on Windows, macOS, Linux
