@@ -48,7 +48,8 @@ class AppState extends AbstractStatefulWidgetState<App> {
       initializationUi: Builder(
         builder: (BuildContext context) {
           return Scaffold(
-            backgroundColor: kColorPrimaryLight,
+            // Initialization UI is below AppDataState, so it already follows the resolved scheme
+            backgroundColor: kColorSurface(context),
             body: Container(
               child: Center(
                 child: Padding(
@@ -62,7 +63,7 @@ class AppState extends AbstractStatefulWidgetState<App> {
                         Container(height: kCommonVerticalMargin),
                         Text(
                           'JsTrions\nby Tomáš Chylý',
-                          style: fancyText(kTextHeadline, force: true),
+                          style: fancyText(kTextHeadlineOf(context), force: true),
                           textAlign: TextAlign.center,
                         ),
                       ],
@@ -92,21 +93,38 @@ class AppState extends AbstractStatefulWidgetState<App> {
         return child;
       },
       navigatorObservers: [BotToastNavigatorObserver()],
+      // Raw palette is used directly, the semantic layer needs a context below CoreApp which does not exist yet here
       theme: ThemeData(
-        primaryColor: kColorPrimary,
-        primaryColorLight: kColorPrimaryLight,
-        primaryColorDark: kColorPrimaryDark,
+        primaryColor: kPaletteSmoke,
+        primaryColorLight: kPaletteWhite,
+        primaryColorDark: kPaletteSilver,
         appBarTheme: AppBarTheme(
-          backgroundColor: kColorPrimary,
+          backgroundColor: kPaletteSmoke,
           surfaceTintColor: Colors.transparent,
         ),
-        splashColor: kColorSecondary,
+        splashColor: kColorAccent,
         shadowColor: kColorShadow,
-        colorScheme: ThemeData().colorScheme.copyWith(
-              surface: kColorPrimaryLight,
-              secondary: kColorSecondary,
+        colorScheme: ThemeData(brightness: Brightness.light).colorScheme.copyWith(
+              surface: kPaletteWhite,
+              secondary: kColorAccent,
             ),
       ),
+      darkTheme: ThemeData(
+        primaryColor: kPaletteGraphiteDark,
+        primaryColorLight: kPaletteSteel,
+        primaryColorDark: kPaletteBlack,
+        appBarTheme: AppBarTheme(
+          backgroundColor: kPaletteGraphiteDark,
+          surfaceTintColor: Colors.transparent,
+        ),
+        splashColor: kColorAccent,
+        shadowColor: kColorShadow,
+        colorScheme: ThemeData(brightness: Brightness.dark).colorScheme.copyWith(
+              surface: kPaletteSteel,
+              secondary: kColorAccent,
+            ),
+      ),
+      darkThemePrefsKey: AppPreferences.kPrefsDarkMode,
       snapshot: AppDataStateSnapshot(),
       translatorOptions: TranslatorOptions(
         languages: ['en', 'sk'],

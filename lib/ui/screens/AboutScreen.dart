@@ -92,7 +92,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
                     children: [
                       Container(width: 295, child: Image.asset('images/tomas-chylyV3-padded-black-circle.png')),
                       CommonSpaceVHalf(),
-                      Text(_version, style: fancyText(kText), textAlign: TextAlign.center),
+                      Text(_version, style: fancyText(kTextOf(context)), textAlign: TextAlign.center),
                       CommonSpaceV(),
                     ],
                   ),
@@ -167,7 +167,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                             children: [
                               Container(width: 295, child: Image.asset('images/tomas-chylyV3-padded-black-circle.png')),
                               CommonSpaceVHalf(),
-                              Text(_version, style: fancyText(kText), textAlign: TextAlign.center),
+                              Text(_version, style: fancyText(kTextOf(context)), textAlign: TextAlign.center),
                               CommonSpaceV(),
                             ],
                           ),
@@ -233,7 +233,7 @@ class _InfoWidget extends StatelessWidget {
         mainAxisSize: MainAxisSize.min,
         crossAxisAlignment: crossAxisAlignment,
         children: [
-          Text(tt('about.screen.text'), style: fancyText(kText)),
+          Text(tt('about.screen.text'), style: fancyText(kTextOf(context))),
           CommonSpaceV(),
         ],
       ),

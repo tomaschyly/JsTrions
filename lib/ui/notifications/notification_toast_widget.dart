@@ -18,24 +18,25 @@ class NotificationToastWidget extends StatelessWidget {
   /// Create view layout from widgets
   @override
   Widget build(BuildContext context) {
+    // Status fills read the same in both schemes, only their text is picked by contrast
     late Color background;
     Color? textColor;
 
     switch (message.type) {
       case ScreenMessageType.error:
         background = kColorDanger;
-        textColor = kColorTextPrimary;
+        textColor = kColorTextOnDark;
         break;
       case ScreenMessageType.success:
         background = kColorSuccess;
-        textColor = kColorTextSecondary;
+        textColor = kColorTextOnLight;
         break;
       case ScreenMessageType.info:
         background = kColorWarning;
-        textColor = kColorTextPrimary;
+        textColor = kColorTextOnDark;
         break;
       default:
-        background = kColorRed;
+        background = kColorDanger;
     }
 
     return Column(
@@ -61,7 +62,7 @@ class NotificationToastWidget extends StatelessWidget {
                 alignment: Alignment.center,
                 child: Text(
                   message.message,
-                  style: fancyText(kTextBold.copyWith(
+                  style: fancyText(kTextBoldOf(context).copyWith(
                     color: textColor,
                   )),
                   textAlign: TextAlign.center,

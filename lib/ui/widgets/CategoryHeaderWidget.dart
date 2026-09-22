@@ -22,13 +22,13 @@ class CategoryHeaderWidget extends StatelessWidget {
         children: <Widget>[
           Text(
             text,
-            style: fancyText(kTextHeadline),
+            style: fancyText(kTextHeadlineOf(context)),
           ),
           CommonSpaceH(),
           Expanded(
             child: Container(
               height: 1,
-              color: kColorSecondaryDark,
+              color: kColorAccentDark,
             ),
           ),
         ],

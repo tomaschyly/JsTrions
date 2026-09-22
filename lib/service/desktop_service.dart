@@ -37,8 +37,40 @@ Future<void> initDesktop() async {
 
     await windowManager.setTitle(kAppTitle);
 
-    await windowManager.setBrightness(Brightness.dark);
-
     windowManager.show();
+
+    _desktopReady = true;
+
+    // Scheme may have resolved while the window did not exist yet, apply what was asked for meanwhile
+    final theRequestedBrightness = _requestedDesktopBrightness;
+    if (theRequestedBrightness != null) {
+      await applyDesktopBrightness(theRequestedBrightness);
+    }
   }
+}
+
+/// Has initDesktop finished, window_manager traps on a missing window until then
+bool _desktopReady = false;
+
+/// Last brightness asked for, applied by initDesktop when it arrives before the window exists
+Brightness? _requestedDesktopBrightness;
+
+/// Last brightness applied to the native window chrome, so repeat calls do not reach the platform channel
+Brightness? _appliedDesktopBrightness;
+
+/// Make the native window chrome follow the resolved app scheme
+Future<void> applyDesktopBrightness(Brightness brightness) async {
+  if (!(Platform.isWindows || Platform.isLinux || Platform.isMacOS)) {
+    return;
+  }
+
+  _requestedDesktopBrightness = brightness;
+
+  if (!_desktopReady || _appliedDesktopBrightness == brightness) {
+    return;
+  }
+
+  _appliedDesktopBrightness = brightness;
+
+  await windowManager.setBrightness(brightness);
 }

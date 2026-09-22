@@ -58,6 +58,9 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
   final ScrollController _scrollController = ScrollController();
   late String _language;
 
+  /// Saved scheme preference, read on build because it changes without this state being recreated
+  DarkMode get _darkMode => DarkMode.values[prefsInt(kPrefsDarkMode)!];
+
   /// State initialization
   @override
   void initState() {
@@ -97,7 +100,7 @@ abstract class _AbstractBodyWidgetState<T extends _AbstractBodyWidget> extends A
               Container(
                 width: kPhoneStopBreakpoint,
                 padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                child: _GeneralWidget(language: _language),
+                child: _GeneralWidget(language: _language, darkMode: _darkMode),
               ),
               Container(
                 width: kPhoneStopBreakpoint,
@@ -168,7 +171,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                       child: Container(
                         width: kPhoneStopBreakpoint,
                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                        child: _GeneralWidget(language: _language),
+                        child: _GeneralWidget(language: _language, darkMode: _darkMode),
                       ),
                     ),
                   ),
@@ -211,11 +214,12 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
 
 class _GeneralWidget extends StatelessWidget {
   final String language;
+  final DarkMode darkMode;
 
   final _languageKey = GlobalKey<SelectionFormFieldWidgetState>();
 
   /// GeneralWidget initialization
-  _GeneralWidget({required this.language});
+  _GeneralWidget({required this.language, required this.darkMode});
 
   /// Create view layout from widgets
   @override
@@ -241,7 +245,7 @@ class _GeneralWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(tt('settings.screen.reset.description'), style: fancyText(kText)),
+              Text(tt('settings.screen.reset.description'), style: fancyText(kTextOf(context))),
               CommonSpaceVDouble(),
               SelectionFormFieldWidget<String>(
                 key: _languageKey,
@@ -271,7 +275,34 @@ class _GeneralWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(tt('settings.screen.language.description'), style: fancyText(kText)),
+              Text(tt('settings.screen.language.description'), style: fancyText(kTextOf(context))),
+              CommonSpaceVDouble(),
+              SelectionFormFieldWidget<DarkMode>(
+                label: tt('settings.screen.theme'),
+                selectionTitle: tt('settings.screen.theme.selection'),
+                clearText: tt('settings.screen.theme.selection.cancel'),
+                initialValue: darkMode,
+                options: <ListDialogOption<DarkMode>>[
+                  ListDialogOption(text: tt('settings.screen.theme.system'), value: DarkMode.automatic),
+                  ListDialogOption(text: tt('settings.screen.theme.dark'), value: DarkMode.enabled),
+                  ListDialogOption(text: tt('settings.screen.theme.light'), value: DarkMode.disabled),
+                ],
+                onChange: (DarkMode? newValue) {
+                  if (newValue != null) {
+                    prefsSetInt(kPrefsDarkMode, newValue.index);
+
+                    // CoreApp resolves DarkMode in its own build, so it needs the App rebuilt rather than a new stack
+                    AppState.instance.invalidate();
+
+                    displayScreenMessage(
+                      ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
+                      appTheme: commonTheme,
+                    );
+                  }
+                },
+              ),
+              CommonSpaceV(),
+              Text(tt('settings.screen.theme.description'), style: fancyText(kTextOf(context))),
               CommonSpaceVDouble(),
               PreferencesSwitchWidget(
                 label: tt('settings.screen.font'),
@@ -379,7 +410,7 @@ class _TranslationsWidget extends StatelessWidget {
                 },
               ),
               CommonSpaceV(),
-              Text(tt('settings.screen.translationProvider.description'), style: fancyText(kText)),
+              Text(tt('settings.screen.translationProvider.description'), style: fancyText(kTextOf(context))),
               CommonSpaceVDouble(),
               AnimatedSize(
                 duration: kThemeAnimationDuration,
@@ -529,7 +560,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               isLoading: true,
             ),
             CommonSpaceV(),
-            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kText)),
+            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kTextOf(context))),
             CommonSpaceVDouble(),
           ] else if (_openAIModelsAsOptions.isNotEmpty) ...[
             SelectionFormFieldWidget<String>(
@@ -550,7 +581,7 @@ class _TranslationsOpenAIWidgetState extends AbstractStatefulWidgetState<_Transl
               },
             ),
             CommonSpaceV(),
-            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kText)),
+            Text(tt('settings.screen.openAI.selectModel.description'), style: fancyText(kTextOf(context))),
             CommonSpaceVDouble(),
           ],
           PreferencesSwitchWidget(

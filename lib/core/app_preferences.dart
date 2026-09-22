@@ -4,6 +4,7 @@ import 'package:tch_appliable_core/tch_appliable_core.dart';
 
 const String kPrefsLanguage = "prefs_language";
 const String kPrefsFancyFont = 'prefs_fancy_font';
+const String kPrefsDarkMode = 'prefs_dark_mode';
 const String kPrefsProjectsSource = 'prefs_projects_source';
 const String kPrefsProjectsAnalysis = 'prefs_projects_analysis';
 const String kPrefsProjectsCodeOnly = 'prefs_projects_code_only';
@@ -21,6 +22,7 @@ const String kPrefsTranslationsNoHtml = 'prefs_translations_no_html';
 /// Int values, it is for init, defaults and in memory storage
 final Map<String, int> intPrefs = {
   kPrefsFancyFont: 1,
+  kPrefsDarkMode: DarkMode.automatic.index,
   kPrefsProjectsSource: SourceOfTranslations.all.index,
   kPrefsProjectsAnalysis: ProjectAnalysisOnInit.always.index,
   kPrefsProjectsBeautifyJson: 1,
@@ -37,6 +39,7 @@ final Map<String, String> stringPrefs = {kPrefsTranslationsOpenaiSelectedModel: 
 Future<void> clearAllAppPrefs() async {
   // int / bool-like prefs and enum indices
   await prefsRemoveInt(kPrefsFancyFont);
+  await prefsRemoveInt(kPrefsDarkMode);
   await prefsRemoveInt(kPrefsProjectsSource);
   await prefsRemoveInt(kPrefsProjectsAnalysis);
   await prefsRemoveInt(kPrefsProjectsCodeOnly);

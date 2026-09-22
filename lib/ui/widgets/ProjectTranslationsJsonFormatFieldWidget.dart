@@ -90,7 +90,7 @@ class ProjectTranslationsJsonFormatFieldWidgetState extends AbstractStatefulWidg
         CommonSpaceVHalf(),
         Text(
           tt('edit_project.field.translations_json_format.hint'),
-          style: fancyText(kText),
+          style: fancyText(kTextOf(context)),
         ),
       ],
     );

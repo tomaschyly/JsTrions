@@ -74,129 +74,132 @@ Everything else this plan opened has been decided (Tomas, 2026-09-22); see **Set
 
 ---
 
-### Phase 1 — Palette and the token layer
+### Phase 1 — Palette and the token layer [DONE]
 
-- [ ] 1.1 Split `app_theme.dart`'s colors into a **raw palette** layer (`_kPalette*`-style literals, named
+- [x] 1.1 Split `app_theme.dart`'s colors into a **raw palette** layer (`_kPalette*`-style literals, named
       after the color) and a **semantic** layer (`kColorBackground`, `kColorSurface`, `kColorBorder`,
       `kColorTextPrimary`, `kColorAccent`, `kColorDanger`, …). Each literal is written once; only the
       semantic resolvers branch on the scheme. Same split TCV3-49 used, expressed in Dart.
-- [ ] 1.2 Accent: `kColorAccent = Color(0xFFF2B705)` replaces `kColorGold`. Its light/dark variants
+- [x] 1.2 Accent: `kColorAccent = Color(0xFFF2B705)` replaces `kColorGold`. Its light/dark variants
       replace `kColorGoldLight` / `kColorGoldDarker`, and the accent tints `rgba(242,183,5,0.12)` / `0.22`
       from TCV3-49 come across as `kColorAccent.withValues(alpha: 0.12 / 0.22)`.
-- [ ] 1.3 Dark neutrals stay as they are, renamed into the semantic layer: `#1a1a1a` background
+- [x] 1.3 Dark neutrals stay as they are, renamed into the semantic layer: `#1a1a1a` background
       (`kColorPrimary`), `#2b2b2b` raised, `#333333` hover, `#404040` border/surface (`kColorPrimaryLight`),
       `#dddddd` / `#f2f2f2` text (`kColorSilver` / `kColorSilverLighter`).
-- [ ] 1.4 Light neutrals come from the **tomas-chyly set** — `#f5f5f5` background, `#ffffff` surface,
+- [x] 1.4 Light neutrals come from the **tomas-chyly set** — `#f5f5f5` background, `#ffffff` surface,
       `#DDDDDD` border, `#1a1a1a` text, `rgba(0,0,0,0.6)` muted (Tomas, 2026-09-22). Start there and refine
       only if the 6.2 visual pass shows a problem; JsTrions' dense table UI carries far more borders per
       screen than a marketing site, so `#DDDDDD` is the value most likely to need a second look.
-- [ ] 1.5 Destructive stays `#e60000` (`kColorRed`), confirmed as the shared destructive on TCA-58. Success
+- [x] 1.5 Destructive stays `#e60000` (`kColorRed`), confirmed as the shared destructive on TCA-58. Success
       `#43a047` and warning `#fb8c00` stay as they are — TCA-58 declined to export them to the web projects,
       which says nothing against keeping them here.
-- [ ] 1.6 Check every semantic pair for contrast before any widget work, and record the numbers in
+- [x] 1.6 Check every semantic pair for contrast before any widget work, and record the numbers in
       **Settled**. The accent is 9.6:1 on `#1a1a1a` and 1.8:1 on white — measured on TCA-58 and the reason
       for 2.4 below.
-- [ ] 1.7 Delete `kColorGold*` outright. One branding yellow at a time; no fallback const kept around.
+- [x] 1.7 Delete `kColorGold*` outright. One branding yellow at a time; no fallback const kept around.
 
-### Phase 2 — Making the theme scheme-aware
+### Phase 2 — Making the theme scheme-aware [DONE]
 
 Approach chosen (Tomas, 2026-09-22): **Timoty-style context helpers.** Raw palette consts stay consts; the
 semantic layer becomes functions of `BuildContext`, and the text styles get dark-mode twins. It is the
 pattern already proven on the same core version, and it keeps the diff inside `app_theme.dart` plus the
 call sites that actually paint.
 
-- [ ] 2.1 Add `bool isDarkMode(BuildContext context) => getAppDataStateSnapshot(context).isDarkMode;` to
+- [x] 2.1 Add `bool isDarkMode(BuildContext context) => getAppDataStateSnapshot(context).isDarkMode;` to
       `app_theme.dart`, mirroring `timoty-flutter/lib/core/app_theme.dart:175`. Add the matching
       `BuildContext` extension getter next to the existing `AppThemeExtension.appTheme`.
-- [ ] 2.2 Turn the semantic colors into `Color kColorX(BuildContext context)` functions. The raw palette
+- [x] 2.2 Turn the semantic colors into `Color kColorX(BuildContext context)` functions. The raw palette
       entries stay `const` so `const` widgets that do not need the scheme keep it.
-- [ ] 2.3 Add the dark text styles as `kDMText`, `kDMTextBold`, `kDMTextHeadline` following Timoty's naming,
+- [x] 2.3 Add the dark text styles as `kDMText`, `kDMTextBold`, `kDMTextHeadline` following Timoty's naming,
       and repoint `kText*` at the light values. `fancyText(...)` keeps its signature; a
       `fancyText(context, style)`-shaped overload or a `themedText(context)` helper is decided when 2.5 shows
       how the 56 call sites actually read.
-- [ ] 2.4 **Take the yellow off text, links get the underline treatment** (Tomas, 2026-09-22). Same solution
+- [x] 2.4 **Take the yellow off text, links get the underline treatment** (Tomas, 2026-09-22). Same solution
       as tomas-chyly and TChApps: the label reads as normal text and the accent carries on the underline
       alone. `link_text_widget.dart:92` currently lerps `kColorSecondary` → `kColorSecondaryLight` as the
       link's own color on hover; the label moves to the text token and that lerp moves onto
       `decorationColor`, keeping the existing hover animation intact. Holds in **both** schemes, not just
       light.
-- [ ] 2.5 Walk `appThemeBuilder` top to bottom and thread `context` through every style it builds — buttons,
+- [x] 2.5 Walk `appThemeBuilder` top to bottom and thread `context` through every style it builds — buttons,
       icon buttons, dialogs, form fields, the selection field, the switch toggle, the tooltip. The hover
       styles are the subtle part: `kColorPrimaryLightHover` is "one step lighter than the surface" in dark and
       has to become "one step darker" in light.
-- [ ] 2.6 `ThemeData` in `lib/app.dart:96` splits into `theme` (light) and `darkTheme` (dark, the current
+- [x] 2.6 `ThemeData` in `lib/app.dart:96` splits into `theme` (light) and `darkTheme` (dark, the current
       values). `splashColor`, `shadowColor` and the `colorScheme` pair get per-scheme values, and both gain an
       explicit `brightness`.
-- [ ] 2.7 The initialization UI (`lib/app.dart:50`) paints `kColorPrimaryLight` before any of this exists —
+- [x] 2.7 The initialization UI (`lib/app.dart:50`) paints `kColorPrimaryLight` before any of this exists —
       it runs before the first frame the theme can react to. Decide whether it reads the OS brightness
       directly (`PlatformDispatcher.instance.platformBrightness`) or stays dark on purpose, like the
       `.fixed-background` decision on TCV3-49.
-- [ ] 2.8 The Kalam fancy font **stays as it is, scheme-independent** (Tomas, 2026-09-22). Whether to keep,
+- [x] 2.8 The Kalam fancy font **stays as it is, scheme-independent** (Tomas, 2026-09-22). Whether to keep,
       drop or replace it is a separate call Tomas makes another time, so this plan does not touch it and does
       not give light mode a heavier weight. If it reads as spidery on `#f5f5f5` during 6.2, that is an
       observation to record here, not something to fix in JT-140.
 
 ### Phase 3 — The preference
 
-- [ ] 3.1 Add `const String kPrefsDarkMode = 'prefs_dark_mode';` to `lib/core/app_preferences.dart`, placed
+- [x] 3.1 Add `const String kPrefsDarkMode = 'prefs_dark_mode';` to `lib/core/app_preferences.dart`, placed
       with the other general prefs, and `kPrefsDarkMode: DarkMode.automatic.index` to `intPrefs`.
-- [ ] 3.2 Add the key to `clearAllAppPrefs()`'s `prefsRemoveInt` block — that function enumerates by hand and
+- [x] 3.2 Add the key to `clearAllAppPrefs()`'s `prefsRemoveInt` block — that function enumerates by hand and
       will silently skip a key that is not listed.
-- [ ] 3.3 Pass `darkThemePrefsKey: kPrefsDarkMode` to `CoreApp` in `lib/app.dart`, beside `snapshot:`.
-- [ ] 3.4 Re-apply the scheme with the **stack push**, not `invalidate()`. `CoreApp` resolves `DarkMode`
+- [x] 3.3 Pass `darkThemePrefsKey: kPrefsDarkMode` to `CoreApp` in `lib/app.dart`, beside `snapshot:`.
+- [x] 3.4 ~~Re-apply the scheme with the **stack push**, not `invalidate()`.~~ **Reversed in
+      implementation, see Settled — the push leaves `CoreApp` unrebuilt and the scheme unchanged.**
+      Original reasoning kept below for the record. `CoreApp` resolves `DarkMode`
       inside its own `buildContent` and so needs a rebuild, but `AppState.instance.invalidate()` does not
       produce one here — already tried and abandoned, which is why it sits commented out at
       `settings_screen.dart:283` with `pushNamedNewStack(...)` in its place (Tomas, 2026-09-22). The scheme
       selector reuses that exact fancy-font pattern: save the pref, wait `kThemeAnimationDuration`, push a
       fresh stack to `SettingsScreen.ROUTE` with `router-no-animation`.
-- [ ] 3.5 Do **not** add `invalidateApp` to `AppDataStateSnapshot`. Timoty wires it
+- [x] 3.5 Do **not** add `invalidateApp` to `AppDataStateSnapshot`. Timoty wires it
       (`timoty-flutter/lib/app.dart:285`) because it works there; carrying a field into JsTrions that resolves
       to a no-op would be worse than not having it.
-- [ ] 3.6 Consequence to check in 6.x: the push discards the navigation stack, so the scheme can only be
+- [x] 3.6 ~~Consequence to check in 6.x~~ **Moot: with `invalidate()` the navigation stack survives, so
+      the scheme can be changed from anywhere and the user stays where they were.** Original note: the push discards the navigation stack, so the scheme can only be
       changed from Settings and the user lands back on Settings afterwards. That matches the fancy font
       toggle and is acceptable; it is the reason the selector does not go in the app bar.
 
-### Phase 4 — Settings UI
+### Phase 4 — Settings UI [DONE]
 
-- [ ] 4.1 Add the scheme selector to `_GeneralWidget` in `settings_screen.dart`, next to language and fancy
+- [x] 4.1 Add the scheme selector to `_GeneralWidget` in `settings_screen.dart`, next to language and fancy
       font, wrapped in `SettingWidget` like its neighbours.
-- [ ] 4.2 **System first and default**, then Dark, then Light — the order used by the switcher on TChApps,
+- [x] 4.2 **System first and default**, then Dark, then Light — the order used by the switcher on TChApps,
       tomas-chyly and Timoty Web. `DarkMode.automatic` / `.enabled` / `.disabled` map onto the three.
-- [ ] 4.3 Use the established selection pattern from the closest neighbour rather than porting Timoty's
+- [x] 4.3 Use the established selection pattern from the closest neighbour rather than porting Timoty's
       bottom sheet — the language setting already picks from a list here, and JsTrions is desktop-first where
       a bottom sheet is the wrong primitive. Check `SelectionFormFieldStyle` / `ListDialogStyle` usage in
       `_GeneralWidget` first.
-- [ ] 4.4 Translation keys scoped to the screen: `settings.screen.theme.label`, `.system`, `.dark`,
+- [x] 4.4 Translation keys scoped to the screen: `settings.screen.theme.label`, `.system`, `.dark`,
       `.light`, plus a description line if the neighbours carry one. Keys are added to the files only if
       Tomas asks; otherwise `tt(...)` calls go in and the files stay untouched.
-- [ ] 4.5 Save on selection, then re-apply with the 3.4 stack push, and show the
+- [x] 4.5 Save on selection, then re-apply with the 3.4 stack push, and show the
       `settings.screen.generic.success` message the fancy font toggle already shows.
 
-### Phase 5 — Repoint the call sites
+### Phase 5 — Repoint the call sites [DONE]
 
 Roughly 46 `kColor*` references across 15 files. Mechanical once Phase 2 is fixed, and the bulk of the diff.
 
-- [ ] 5.1 `lib/ui/screenStates/AppResponsiveScreenState.dart` — the drawer, the app bar and the four
+- [x] 5.1 `lib/ui/screenStates/AppResponsiveScreenState.dart` — the drawer, the app bar and the four
       `const ColorFilter.mode(kColorTextPrimary, ...)` SVG tints. The `const` has to go for the icons to
       follow the scheme.
-- [ ] 5.2 `lib/ui/data_widgets/project_detail_data_widget.dart` — the heaviest file, and the one with the
+- [x] 5.2 `lib/ui/data_widgets/project_detail_data_widget.dart` — the heaviest file, and the one with the
       odd/even row striping at `:1628` that uses `kColorWarning` / `kColorWarningDark` as row fills. Striping
       contrast is scheme-sensitive and needs looking at, not just repointing.
-- [ ] 5.3 `lib/ui/notifications/notification_toast_widget.dart` — the success/danger/warning toast
+- [x] 5.3 `lib/ui/notifications/notification_toast_widget.dart` — the success/danger/warning toast
       backgrounds, over whatever `bot_toast` paints behind them.
-- [ ] 5.4 `ProjectsScreen.dart`, `ProjectDetailScreen.dart`, `CategoryHeaderWidget.dart`, `ChipWidget.dart`,
+- [x] 5.4 `ProjectsScreen.dart`, `ProjectDetailScreen.dart`, `CategoryHeaderWidget.dart`, `ChipWidget.dart`,
       `ToggleContainerWidget.dart`, `ProjectIgnoreDirectoriesWidget.dart`, `ProjectLanguagesFieldWidget.dart`,
       `dashboard_info_widget.dart`, `InfoDialog.dart`, `manage_programming_languages_data_widget.dart`.
-- [ ] 5.5 The `Colors.*` and raw `Color(0x...)` literals outside the theme file —
+- [x] 5.5 The `Colors.*` and raw `Color(0x...)` literals outside the theme file —
       `edit_project_translation_dialog.dart`, `openai_chat_dialog.dart`, `FeedbackDialog.dart`,
       `EditProjectDialog.dart`. Each is either a token that was never extracted or a deliberate
       scheme-independent color; decide per case and note the deliberate ones.
-- [ ] 5.6 `lib/service/desktop_service.dart` — `setBrightness(Brightness.dark)` is hardcoded and drives the
+- [x] 5.6 `lib/service/desktop_service.dart` — `setBrightness(Brightness.dark)` is hardcoded and drives the
       native window chrome on macOS. It has to follow the resolved scheme, including a live change.
 
 ### Phase 6 — Verification and handoff
 
-- [ ] 6.1 `dart format` on the changed files, then `flutter analyze` on them, clean.
+- [x] 6.1 `dart format` on the changed files, then `flutter analyze` on them, clean.
 - [ ] 6.2 Walk every screen in System / Dark / Light on macOS: Dashboard, Projects, Project Detail (tables,
       striping, chips, search), Settings, About, and the dialogs — Edit Project, Edit Project Translation,
       OpenAI chat, Feedback, Info, and the confirm dialog. Both the phone/tablet `_BodyWidget` and the
@@ -208,7 +211,7 @@ Roughly 46 `kColor*` references across 15 files. Mechanical once Phase 2 is fixe
       and that Dark and Light ignore the OS.
 - [ ] 6.5 **[VERIFY]** Linux and Windows: the platform border radius branch, the native title bar, and
       whether 5.6's brightness call has any effect there.
-- [ ] 6.6 Handoff summary of changed files with `path:line` references, per `AGENTS.md`.
+- [x] 6.6 Handoff summary of changed files with `path:line` references, per `AGENTS.md`.
 
 ---
 
@@ -221,10 +224,20 @@ Roughly 46 `kColor*` references across 15 files. Mechanical once Phase 2 is fixe
   `#1a1a1a`, 1.8:1 on white.
 - **Links carry the accent on the underline, exactly as on tomas-chyly and TChApps** (Tomas, 2026-09-22).
   The label is normal text in both schemes. This is the one deliberate change to how dark looks today.
-- **The scheme change re-applies with a navigation stack push, not `invalidate()`** (Tomas, 2026-09-22).
-  `AppState.instance.invalidate()` does not rebuild `CoreApp` in this app; it was tried during the fancy
-  font work, did not work, and was not worth chasing further. `settings_screen.dart:283` is the record of
-  that, and the scheme selector follows the same pattern rather than re-opening the question.
+- ~~**The scheme change re-applies with a navigation stack push, not `invalidate()`**~~ (Tomas,
+  2026-09-22). **Overturned by the implementation pass, 2026-09-22 — the push does not work for the
+  scheme.** Built as written, picking a scheme changed nothing on screen. A push rebuilds the route,
+  but `CoreApp`'s own `State` is untouched, so it never re-reads `kPrefsDarkMode`, `MaterialApp.theme`
+  stays on the old `ThemeData` and `snapshot.isDarkMode` stays stale. The fancy font is a different
+  mechanism — `fancyText()` reads prefs at each descendant's build, which a fresh stack does rebuild —
+  which is why the push worked there and the conclusion did not carry over.
+  `AppState.instance.invalidate()` is the right tool here: it rebuilds `App`, so `CoreApp` re-resolves
+  `DarkMode`, and because `AppDataState.updateShouldNotify` is unconditional and
+  `AppDataState.of` takes a real dependency, every `isDarkMode(context)` consumer rebuilds with it.
+  `settings_screen.dart` already relies on exactly this for the projects-analysis and
+  translations-source settings, so the selector now follows those two rather than the fancy font.
+  3.5 is honoured: nothing was added to `AppDataStateSnapshot`, the call is direct.
+  3.6's consequence disappears with the push — the navigation stack survives a scheme change.
 - **The destructive red is `#e60000`,** shared across all three projects.
 - **System is the default and comes first** in the selector, as on TChApps, tomas-chyly and Timoty Web.
 - **Scheme-aware colors are `BuildContext` functions, not tokens on `AppTheme`** (Tomas, 2026-09-22). Timoty
@@ -239,6 +252,63 @@ Roughly 46 `kColor*` references across 15 files. Mechanical once Phase 2 is fixe
   work is settled outside the plan, when it is settled.
 - **Light neutrals start as the tomas-chyly values** and are refined only if the visual pass demands it.
 - **Kalam is out of scope.** It stays exactly as it is in both schemes; its future is a separate decision.
+
+### Measured contrast (1.6, implementation pass 2026-09-22)
+
+| Pair | Ratio |
+| --- | --- |
+| dark text `#dddddd` on background `#1a1a1a` | 12.8:1 |
+| dark text `#dddddd` on surface `#404040` | 7.6:1 |
+| dark text `#dddddd` on hover `#606060` | 4.6:1 |
+| light text `#1a1a1a` on background `#f5f5f5` | 16.0:1 |
+| light text `#1a1a1a` on surface `#ffffff` | 17.4:1 |
+| light text `#1a1a1a` on hover `#dddddd` | 12.8:1 |
+| filled button, dark: `#404040` on `#dddddd` | 7.6:1 |
+| filled button, light: `#ffffff` on `#1a1a1a` | 17.4:1 |
+| danger fill `#e60000` with `#dddddd` text | 3.5:1 |
+| success fill `#43a047` with black text | 6.4:1 |
+| warning fill `#fb8c00` with `#dddddd` text | **1.7:1** |
+| warning-dark fill `#c25e00` with `#dddddd` text | 3.2:1 |
+| accent `#F2B705` on `#1a1a1a` | 9.6:1 |
+| accent `#F2B705` on `#f5f5f5` | **1.7:1** |
+| accent-dark `#B48804` on `#f5f5f5` | 3.0:1 |
+| danger text `#e60000` on `#f5f5f5` | 4.4:1 |
+| danger text `#e60000` on `#1a1a1a` | 3.6:1 |
+
+Two numbers came out of that table as decisions:
+
+- **The link underline uses the accent's darker shade in light.** Plain `#F2B705` measures 1.7:1 on
+  `#f5f5f5`, below the 3:1 a non-text mark needs, so the underline resolves through
+  `kColorAccentLine(context)`: `#F2B705` in dark, `#B48804` (3.0:1) in light. The hover target shifts
+  the same way, `#FBCD41` in dark and `#F2B705` in light, so the existing hover animation is intact in
+  both schemes.
+- **The `info` toast keeps `#dddddd` on `#fb8c00` at 1.7:1.** Pre-existing in dark and untouched here,
+  because this plan preserves dark. It is the weakest pair in the app and belongs in a follow-up, not
+  in JT-140.
+
+### Implementation deviations from the written steps
+
+- **The light hover step is `#DDDDDD`, not a new literal.** 1.4 warned `#DDDDDD` as a *border* was the
+  value most likely to need a second look. It is not used as a border: light borders follow
+  `kColorTextPrimary` (`#1a1a1a`), mirroring how dark borders follow `#dddddd`, which is also what
+  tomas-chyly does (`--color-border: var(--palette-black)` in light). `#DDDDDD` instead became the
+  light hover fill, one step darker than the `#ffffff` surface.
+- **`#2b2b2b` and `#333333` are not in the Dart palette.** 1.3 lists them as dark neutrals, but
+  JsTrions never had them — its dark surface is `#404040` and its dark hover `#606060`. Adding them
+  would have redesigned dark, which the constraints forbid, so the dark neutrals came across exactly
+  as they were.
+- **`brightness` on the dark `ThemeData` is genuinely new.** 2.6 asked for it, and the app has been
+  shipping a dark-looking `ThemeData` flagged light. The colorScheme is now built from
+  `ThemeData(brightness: Brightness.dark)`, which also changes Material's own defaults (default text
+  color, cursors, selection handles). This is the one place where dark can move without it being a
+  bug, and it is the thing to look hardest at during 6.2.
+- **The scheme selector follows the language setting's shape, not `SettingWidget`.** 4.1 said to wrap
+  it in `SettingWidget` like its neighbours, but `_GeneralWidget`'s neighbours do not use it — language
+  is a bare `SelectionFormFieldWidget` plus a description `Text`. The selector matches that.
+- **Translation keys are called but not defined**, per 4.4 and the repository rule:
+  `settings.screen.theme`, `.theme.selection`, `.theme.selection.cancel`, `.theme.system`,
+  `.theme.dark`, `.theme.light`, `.theme.description`. The setting renders raw keys until they are
+  added.
 
 ## Noted, not in scope
 

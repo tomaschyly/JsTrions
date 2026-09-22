@@ -3,48 +3,108 @@ import 'dart:io';
 import 'package:flutter/foundation.dart';
 import 'package:js_trions/app.dart';
 import 'package:js_trions/core/app_preferences.dart';
+import 'package:js_trions/service/desktop_service.dart';
 import 'package:tch_appliable_core/tch_appliable_core.dart';
+import 'package:tch_appliable_core/utils/widget.dart';
 import 'package:tch_common_widgets/tch_common_widgets.dart';
 
 const double kDrawerWidthOverride = 200;
 const double kLeftPanelWidth = 260;
 
-const kColorPrimary = Color(0xFF1a1a1a);
-const kColorPrimaryLight = Color(0xFF404040);
-const kColorPrimaryDark = Color(0xFF000000);
-const kColorSecondary = kColorGold;
-const kColorSecondaryLight = kColorGoldLight;
-const kColorSecondaryDark = kColorGoldDarker;
+/// Raw palette, every color literal of the app lives here once
+/// The semantic layer below maps these onto the scheme, so a color is never written out twice
+/// Topinambur is the branding accent, named after the plant's yellow flowers, shared with TChApps and tomas-chyly
+/// It is a surface color only, it never carries text, it measures 9.6:1 on the dark background but 1.8:1 on white
+const kPaletteTopinambur = Color(0xFFF2B705);
+const kPaletteTopinamburLight = Color(0xFFFBCD41);
+const kPaletteTopinamburDark = Color(0xFFB48804);
+const kPaletteRed = Color(0xFFe60000);
+const kPaletteRedDark = Color(0xFFb30000);
+const kPaletteGreen = Color(0xFF43a047);
+const kPaletteOrange = Color(0xFFfb8c00);
+const kPaletteOrangeDark = Color(0xFFc25e00);
+const kPaletteBlack = Color(0xFF000000);
+const kPaletteGraphiteDark = Color(0xFF1a1a1a);
+const kPaletteSteel = Color(0xFF404040);
+const kPaletteSteelLight = Color(0xFF606060);
+const kPaletteSilver = Color(0xFFdddddd);
+const kPaletteSmoke = Color(0xFFf5f5f5);
+const kPaletteWhite = Color(0xFFffffff);
+const kPaletteShade = Color(0x60000000);
 
-const kColorTextPrimary = kColorSilver;
-const kColorTextSecondary = Colors.black;
+/// Semantic colors that do not follow the scheme
+/// Status fills and the accent read the same on both backgrounds, only the text over them is picked by contrast
+const kColorAccent = kPaletteTopinambur;
+const kColorAccentLight = kPaletteTopinamburLight;
+const kColorAccentDark = kPaletteTopinamburDark;
+const kColorSuccess = kPaletteGreen;
+const kColorDanger = kPaletteRed;
+const kColorDangerHover = kPaletteRedDark;
+const kColorWarning = kPaletteOrange;
+const kColorWarningDark = kPaletteOrangeDark;
+const kColorShadow = kPaletteShade;
 
-const kColorSuccess = Color(0xFF43a047);
-const kColorDanger = kColorRed;
-const kColorWarning = Color(0xFFfb8c00);
-const kColorWarningDark = Color(0xFFc25e00);
+/// Tooltips and the barrier behind dialogs stay dark in both schemes, they are overlays rather than surfaces
+const kColorOverlay = kPaletteBlack;
 
-const kColorGold = Color(0xFFffd700);
-const kColorGoldLight = Color(0xFFffff52);
-const kColorGoldDarker = Color(0xFFc7a600);
-const kColorRed = Color(0xFFe60000);
-const kColorShadow = Color(0x60000000);
-const kColorSilver = Color(0xFFdddddd);
-const kColorSilverDarker = Color(0xFFcccccc);
-const kColorSilverLighter = Color(0xFFf2f2f2);
+/// Text over a filled status or accent color, picked by contrast rather than by scheme
+const kColorTextOnDark = kPaletteSilver;
+const kColorTextOnLight = kPaletteBlack;
 
-/// Hover colors (lighter variants for dark theme)
-const kColorPrimaryLightHover = Color(0xFF606060); // lighter than kColorPrimaryLight (0xFF404040)
-const kColorRedHover = Color(0xFFb30000); // darker than kColorRed (0xFFe60000)
+/// Accent tints for hover fills, shared with tomas-chyly
+final kColorAccentTint = kColorAccent.withValues(alpha: 0.12);
+final kColorAccentTintStrong = kColorAccent.withValues(alpha: 0.22);
+
+/// Is the dark scheme resolved for this context, by preference or by the OS
+bool isDarkMode(BuildContext context) => AppDataState.of(context)!.isDarkMode;
+
+/// Page, app bar and drawer background
+Color kColorBackground(BuildContext context) => isDarkMode(context) ? kPaletteGraphiteDark : kPaletteSmoke;
+
+/// Raised surfaces, dialogs, the selected drawer option and even table rows
+Color kColorSurface(BuildContext context) => isDarkMode(context) ? kPaletteSteel : kPaletteWhite;
+
+/// Hover fill, one step away from the surface in the direction of the scheme
+Color kColorSurfaceHover(BuildContext context) => isDarkMode(context) ? kPaletteSteelLight : kPaletteSilver;
+
+/// Text, icons and the borders that enclose them
+Color kColorTextPrimary(BuildContext context) => isDarkMode(context) ? kPaletteSilver : kPaletteGraphiteDark;
+
+/// Text over a filled button or icon button, which is filled with kColorTextPrimary
+Color kColorTextOnFill(BuildContext context) => isDarkMode(context) ? kPaletteSteel : kPaletteWhite;
+
+/// Accent carried on a thin mark such as a link underline
+/// Light needs the darker shade, plain kColorAccent measures only 1.7:1 on the light background
+Color kColorAccentLine(BuildContext context) => isDarkMode(context) ? kColorAccent : kColorAccentDark;
+
+/// Hovered variant of kColorAccentLine
+Color kColorAccentLineHover(BuildContext context) => isDarkMode(context) ? kColorAccentLight : kColorAccent;
 
 const kFontFamily = 'Kalam';
 
-const kText = TextStyle(color: kColorTextPrimary, fontSize: 16);
-const kTextBold = TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold);
-const kTextHeadline = TextStyle(color: kColorTextPrimary, fontSize: 20);
+/// Light scheme text styles
+const kText = TextStyle(color: kPaletteGraphiteDark, fontSize: 16);
+const kTextBold = TextStyle(color: kPaletteGraphiteDark, fontSize: 16, fontWeight: FontWeight.bold);
+const kTextHeadline = TextStyle(color: kPaletteGraphiteDark, fontSize: 20);
+
+/// Dark scheme twins of the text styles
+const kDMText = TextStyle(color: kPaletteSilver, fontSize: 16);
+const kDMTextBold = TextStyle(color: kPaletteSilver, fontSize: 16, fontWeight: FontWeight.bold);
+const kDMTextHeadline = TextStyle(color: kPaletteSilver, fontSize: 20);
+
+/// Status text styles, their color is the same in both schemes
 const kTextSuccess = TextStyle(color: kColorSuccess, fontSize: 16);
 const kTextDanger = TextStyle(color: kColorDanger, fontSize: 16);
 const kTextWarning = TextStyle(color: kColorWarning, fontSize: 16);
+
+/// Text style of the current scheme
+TextStyle kTextOf(BuildContext context) => isDarkMode(context) ? kDMText : kText;
+
+/// Bold text style of the current scheme
+TextStyle kTextBoldOf(BuildContext context) => isDarkMode(context) ? kDMTextBold : kTextBold;
+
+/// Headline text style of the current scheme
+TextStyle kTextHeadlineOf(BuildContext context) => isDarkMode(context) ? kDMTextHeadline : kTextHeadline;
 
 /// If fancy font enabled, add it to TextStyle
 TextStyle fancyText(TextStyle textStyle, {bool force = false}) =>
@@ -75,18 +135,26 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     dialogsMainAxisAlignment = MainAxisAlignment.center;
   }
 
-  final kButtonHoverStyle = CommonButtonHoverStyle(
-    backgroundColor: kColorPrimaryLightHover,
-    borderColor: kColorTextPrimary,
-    //TODO
-  );
+  // Native window chrome follows the resolved scheme, including a live OS change
+  addPostFrameCallback((timeStamp) {
+    applyDesktopBrightness(snapshot.isDarkMode ? Brightness.dark : Brightness.light);
+  });
+
+  final kTextStyle = kTextOf(context);
+  final kTextBoldStyle = kTextBoldOf(context);
+  final kTextHeadlineStyle = kTextHeadlineOf(context);
+  final kTextColor = kColorTextPrimary(context);
+  final kFillTextColor = kColorTextOnFill(context);
+  final kHoverColor = kColorSurfaceHover(context);
+
+  final kButtonHoverStyle = CommonButtonHoverStyle(backgroundColor: kHoverColor, borderColor: kTextColor);
 
   final kButtonStyle = CommonButtonStyle(
     height: kButtonHeight,
-    textStyle: const TextStyle(color: kColorTextPrimary, fontSize: 16, fontWeight: FontWeight.bold),
-    filledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
-    disabledTextStyle: const TextStyle(color: kColorPrimaryLight, fontSize: 16, fontWeight: FontWeight.bold),
-    color: kColorTextPrimary,
+    textStyle: kTextBoldStyle,
+    filledTextStyle: kTextBoldStyle.copyWith(color: kFillTextColor),
+    disabledTextStyle: kTextBoldStyle.copyWith(color: kFillTextColor),
+    color: kTextColor,
     borderRadius: platformBorderRadius,
     preffixIconWidth: kIconSizeNotTouch,
     preffixIconHeight: kIconSizeNotTouch,
@@ -97,31 +165,32 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kButtonFilledStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.filled,
-    // Hover background is dark, switch text to light for readability
+    // Hover background is the surface hover, switch text to the text color for readability
     // Border blends into background, so hovered filled button stays a solid block unlike outlined one
     hoverStyle: kButtonHoverStyle.copyWith(
-      borderColor: kColorPrimaryLightHover,
-      filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
+      borderColor: kHoverColor,
+      filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kTextColor),
     ),
   );
 
   final kButtonTextOnlyStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.textOnly,
     // Border blends into background, so hovered text-only button is highlighted without outline
-    hoverStyle: kButtonHoverStyle.copyWith(borderColor: kColorPrimaryLightHover),
+    hoverStyle: kButtonHoverStyle.copyWith(borderColor: kHoverColor),
   );
 
   final kButtonDangerStyle = kButtonStyle.copyWith(
     variant: ButtonVariant.filled,
-    filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary),
-    color: kColorRed,
+    // Red fill needs light text in both schemes
+    filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextOnDark),
+    color: kColorDanger,
     // Darker red on hover, text is already light so it stays readable
-    hoverStyle: CommonButtonHoverStyle(backgroundColor: kColorRedHover, borderColor: kColorRedHover),
+    hoverStyle: CommonButtonHoverStyle(backgroundColor: kColorDangerHover, borderColor: kColorDangerHover),
   );
 
   final kListItemButtonStyle = kButtonTextOnlyStyle.copyWith(fullWidthMobileOnly: false, alignment: Alignment.centerLeft, textOverflow: TextOverflow.ellipsis);
 
-  final kIconButtonHoverStyle = IconButtonHoverStyle(backgroundColor: kColorPrimaryLightHover, borderColor: kColorTextPrimary);
+  final kIconButtonHoverStyle = IconButtonHoverStyle(backgroundColor: kHoverColor, borderColor: kTextColor);
 
   final kIconButtonStyle = IconButtonStyle(
     width: kButtonHeight,
@@ -130,22 +199,22 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     iconHeight: kIconSizeNotTouch,
     loadingIconWidth: kIconSizeNotTouch,
     loadingIconHeight: kIconSizeNotTouch,
-    color: kColorTextPrimary,
+    color: kTextColor,
     borderRadius: platformBorderRadius,
     hoverStyle: kIconButtonHoverStyle,
   );
 
   final kIconButtonFilledStyle = kIconButtonStyle.copyWith(
     variant: IconButtonVariant.filled,
-    iconColor: kColorPrimaryLight,
-    // Hover background is dark, switch icon to light for readability and blend border like filled button
-    hoverStyle: kIconButtonHoverStyle.copyWith(borderColor: kColorPrimaryLightHover, iconColor: kColorTextPrimary),
+    iconColor: kFillTextColor,
+    // Hover background is the surface hover, switch icon to the text color for readability and blend border like filled button
+    hoverStyle: kIconButtonHoverStyle.copyWith(borderColor: kHoverColor, iconColor: kTextColor),
   );
 
   final kIconButtonRowActionStyle = kIconButtonStyle.copyWith(
     variant: IconButtonVariant.iconOnly,
-    // Row actions are visible on hovered row which already uses kColorPrimaryLightHover, so hover background is darker to stand out
-    hoverStyle: kIconButtonHoverStyle.copyWith(backgroundColor: kColorPrimaryLight),
+    // Row actions are visible on hovered row which already uses the surface hover, so hover background is the surface to stand out
+    hoverStyle: kIconButtonHoverStyle.copyWith(backgroundColor: kColorSurface(context)),
   );
 
   final kAppBarIconButtonStyle = IconButtonStyle(
@@ -154,7 +223,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     height: kButtonHeight,
     iconWidth: kIconSizeNotTouch,
     iconHeight: kIconSizeNotTouch,
-    color: kColorTextPrimary,
+    color: kTextColor,
     borderRadius: platformBorderRadius,
     // Icon only variant has no border, so only hover background is visible on app bar
     hoverStyle: kIconButtonHoverStyle,
@@ -162,16 +231,16 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kDialogContainerStyle = DialogContainerStyle(
     mainAxisAlignment: dialogsMainAxisAlignment,
-    backgroundColor: kColorPrimaryLight,
+    backgroundColor: kColorSurface(context),
     borderRadius: platformBorderRadius,
   );
 
   final kConfirmDialogStyle = ConfirmDialogStyle(
     dialogContainerStyle: kDialogContainerStyle,
-    dialogHeaderStyle: const DialogHeaderStyle(textStyle: kTextHeadline),
-    textStyle: kText,
+    dialogHeaderStyle: DialogHeaderStyle(textStyle: kTextHeadlineStyle),
+    textStyle: kTextStyle,
     dialogFooterStyle: DialogFooterStyle(
-      buttonStyle: kButtonStyle.copyWith(widthWrapContent: true, filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kColorTextPrimary)),
+      buttonStyle: kButtonStyle.copyWith(widthWrapContent: true, filledTextStyle: kButtonStyle.filledTextStyle.copyWith(color: kTextColor)),
       // All app confirm dialogs are danger, so Yes uses danger style including its hover
       yesButtonStyle: kButtonDangerStyle.copyWith(widthWrapContent: true),
       dangerColor: kColorDanger,
@@ -182,7 +251,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kTextFormFieldStyle = TextFormFieldStyle(
     inputDecoration: TextFormFieldStyle().inputDecoration.copyWith(
-      labelStyle: kTextBold,
+      labelStyle: kTextBoldStyle,
       contentPadding: EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf, vertical: prefsInt(kPrefsFancyFont) == 1 ? 8 : 8),
       enabledBorder: platformInputBorder,
       disabledBorder: platformInputBorder,
@@ -190,11 +259,11 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
       errorBorder: platformInputBorder,
       focusedErrorBorder: platformInputBorder,
     ),
-    inputStyle: kText,
-    borderColor: kColorTextPrimary,
-    focusedBorderColor: kColorTextPrimary,
-    // Filled on hover like selection field and outlined buttons, border already uses kColorTextPrimary
-    hoverStyle: const TextFormFieldHoverStyle(fillColor: kColorPrimaryLightHover),
+    inputStyle: kTextStyle,
+    borderColor: kTextColor,
+    focusedBorderColor: kTextColor,
+    // Filled on hover like selection field and outlined buttons, border already uses the text color
+    hoverStyle: TextFormFieldHoverStyle(fillColor: kHoverColor),
     textAlign: TextAlign.center,
   );
 
@@ -202,7 +271,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     dialogContainerStyle: kDialogContainerStyle,
     optionStyle: kButtonTextOnlyStyle,
     selectedOptionStyle: kButtonFilledStyle,
-    dialogHeaderStyle: const DialogHeaderStyle(textStyle: kTextHeadline),
+    dialogHeaderStyle: DialogHeaderStyle(textStyle: kTextHeadlineStyle),
     dialogFooterStyle: DialogFooterStyle(
       buttonStyle: kButtonStyle.copyWith(
         widthWrapContent: true,
@@ -210,7 +279,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
         loadingIconWidth: kIconSizeNotTouch,
         loadingIconHeight: kIconSizeNotTouch,
       ),
-      // Filled Yes needs light text on dark hover background
+      // Filled Yes needs the text color on the surface hover background
       yesButtonStyle: kButtonFilledStyle.copyWith(widthWrapContent: true, iconColor: kColorWarning),
     ),
     filterStyle: kTextFormFieldStyle,
@@ -223,12 +292,10 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kSelectionFormFieldStyle = SelectionFormFieldStyle(
     // Base fill is transparent variant of hover fill, so hover animation only fades opacity
-    inputStyle: kTextFormFieldStyle.copyWith(
-      inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kColorPrimaryLightHover.withValues(alpha: 0)),
-    ),
-    // Filled on hover like outlined buttons, border already uses kColorTextPrimary
+    inputStyle: kTextFormFieldStyle.copyWith(inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kHoverColor.withValues(alpha: 0))),
+    // Filled on hover like outlined buttons, border already uses the text color
     hoverStyle: SelectionFormFieldHoverStyle(
-      inputStyle: kTextFormFieldStyle.copyWith(inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kColorPrimaryLightHover)),
+      inputStyle: kTextFormFieldStyle.copyWith(inputDecoration: kTextFormFieldStyle.inputDecoration.copyWith(fillColor: kHoverColor)),
     ),
   );
 
@@ -242,8 +309,8 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
 
   final kPreferencesSwitchStyle = PreferencesSwitchStyle(
     layout: PreferencesSwitchLayout.vertical,
-    labelStyle: kTextBold,
-    descriptionStyle: kText,
+    labelStyle: kTextBoldStyle,
+    descriptionStyle: kTextStyle,
     useSwitchToggleWidget: true,
   );
 
@@ -266,7 +333,7 @@ Widget appThemeBuilder(BuildContext context, Widget child) {
     ),
     emailFormFieldStyle: kEmailFormFieldStyle,
     tooltipStyle: TooltipStyle(
-      decoration: BoxDecoration(color: Colors.black, borderRadius: platformBorderRadius),
+      decoration: BoxDecoration(color: kColorOverlay, borderRadius: platformBorderRadius),
     ),
     child: child,
   );

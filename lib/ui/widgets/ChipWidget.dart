@@ -47,8 +47,8 @@ class _ChipWidgetState extends AbstractStatefulWidgetState<ChipWidget> {
           : const EdgeInsets.only(left: kCommonHorizontalMarginHalf),
       decoration: BoxDecoration(
         // Transparent variant of hover color, so hover animation only fades opacity
-        color: _isHovered ? kColorPrimaryLightHover : kColorPrimaryLightHover.withValues(alpha: 0),
-        border: Border.all(width: 1, color: kColorTextPrimary),
+        color: _isHovered ? kColorSurfaceHover(context) : kColorSurfaceHover(context).withValues(alpha: 0),
+        border: Border.all(width: 1, color: kColorTextPrimary(context)),
         borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
       ),
       child: Row(
@@ -56,7 +56,7 @@ class _ChipWidgetState extends AbstractStatefulWidgetState<ChipWidget> {
         mainAxisAlignment: MainAxisAlignment.center,
         crossAxisAlignment: CrossAxisAlignment.center,
         children: [
-          Text(widget.text, style: fancyText(kText)),
+          Text(widget.text, style: fancyText(kTextOf(context))),
           CommonSpaceHHalf(),
           widget.suffixIcon,
         ],

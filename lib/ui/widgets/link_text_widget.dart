@@ -76,7 +76,7 @@ class _LinkTextWidgetState extends AbstractStatefulWidgetState<LinkTextWidget> w
           TextSpan(
             children: [
               for (final (index, part) in widget.parts.indexed)
-                if (part.onTap == null) TextSpan(text: part.text, style: fancyText(kText)) else _buildLinkSpan(part, index, animationCurve),
+                if (part.onTap == null) TextSpan(text: part.text, style: fancyText(kTextOf(context))) else _buildLinkSpan(context, part, index, animationCurve),
             ],
           ),
         );
@@ -84,20 +84,17 @@ class _LinkTextWidgetState extends AbstractStatefulWidgetState<LinkTextWidget> w
     );
   }
 
-  /// Build link span with color animated by its hover controller
-  TextSpan _buildLinkSpan(LinkTextPart part, int index, Curve animationCurve) {
+  /// Build link span with underline color animated by its hover controller
+  TextSpan _buildLinkSpan(BuildContext context, LinkTextPart part, int index, Curve animationCurve) {
     final controller = _hoverControllers[index]!;
 
     final hoverProgress = animationCurve.transform(controller.value);
-    final color = Color.lerp(kColorSecondary, kColorSecondaryLight, hoverProgress)!;
-    // Underline fades out with text color, decoration stays so text layout does not change
-    // Thin line stays visible until nearly transparent, so its fade is front-loaded to feel in sync with text color
-    final underlineProgress = Curves.easeOut.transform(hoverProgress);
-    final decorationColor = color.withValues(alpha: 1 - underlineProgress);
+    // Accent never carries text in either scheme, the label reads as normal text and the accent stays on the underline
+    final decorationColor = Color.lerp(kColorAccentLine(context), kColorAccentLineHover(context), hoverProgress)!;
 
     return TextSpan(
       text: part.text,
-      style: fancyText(kTextBold.copyWith(color: color, decoration: TextDecoration.underline, decorationColor: decorationColor)),
+      style: fancyText(kTextBoldOf(context).copyWith(decoration: TextDecoration.underline, decorationColor: decorationColor)),
       recognizer: _recognizers[index],
       onEnter: (event) => controller.forward(),
       onExit: (event) => controller.reverse(),

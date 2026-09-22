@@ -91,7 +91,7 @@ class _ProjectDetailScreenState extends AppResponsiveScreenState<ProjectDetailSc
             onTap: (BuildContext context) {
               EditProjectDialog.show(context, project: _project);
             },
-            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary(context)),
             button: isDesktop
                 ? ButtonWidget(
                     style: commonTheme.buttonTextOnlyStyle.copyWith(

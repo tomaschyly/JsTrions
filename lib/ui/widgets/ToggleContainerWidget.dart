@@ -70,7 +70,7 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                 curve: commonTheme.buttonsStyle.buttonStyle.animationCurve,
                 decoration: BoxDecoration(
                   // Transparent variant of hover color, so hover animation only fades opacity
-                  color: _isHovered ? kColorPrimaryLightHover : kColorPrimaryLightHover.withValues(alpha: 0),
+                  color: _isHovered ? kColorSurfaceHover(context) : kColorSurfaceHover(context).withValues(alpha: 0),
                   borderRadius: headerBorderRadius,
                 ),
                 child: Material(
@@ -90,7 +90,7 @@ class _ToggleContainerWidgetState extends AbstractStatefulWidgetState<ToggleCont
                         mainAxisAlignment: MainAxisAlignment.start,
                         crossAxisAlignment: CrossAxisAlignment.center,
                         children: [
-                          Text(widget.title, style: fancyText(kTextBold)),
+                          Text(widget.title, style: fancyText(kTextBoldOf(context))),
                           CommonSpaceH(),
                           const Spacer(),
                           SizedBox(
