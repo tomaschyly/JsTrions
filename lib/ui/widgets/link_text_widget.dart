@@ -16,6 +16,9 @@ class LinkTextWidget extends AbstractStatefulWidget {
 }
 
 class _LinkTextWidgetState extends AbstractStatefulWidgetState<LinkTextWidget> with TickerProviderStateMixin {
+  static const double _underlineThickness = 1;
+  static const double _underlineThicknessHovered = 3;
+
   List<AnimationController?> _hoverControllers = [];
   List<TapGestureRecognizer?> _recognizers = [];
 
@@ -88,13 +91,28 @@ class _LinkTextWidgetState extends AbstractStatefulWidgetState<LinkTextWidget> w
   TextSpan _buildLinkSpan(BuildContext context, LinkTextPart part, int index, Curve animationCurve) {
     final controller = _hoverControllers[index]!;
 
-    final hoverProgress = animationCurve.transform(controller.value);
+    // Curve follows the direction the controller runs, so leaving hover is as quick off the mark as entering
+    // Transforming the raw value instead would mirror easeOut into an easeIn on the way out and read as sluggish
+    // The AnimatedContainer hovers elsewhere never reverse, they always animate forward, which is what this matches
+    final hoverProgress = controller.status == AnimationStatus.reverse
+        ? 1 - animationCurve.transform(1 - controller.value)
+        : animationCurve.transform(controller.value);
     // Accent never carries text in either scheme, the label reads as normal text and the accent stays on the underline
+    // So the hover is the underline growing and brightening, the same affordance the accent carries on tomas-chyly and TChApps
+    final color = Color.lerp(kColorTextPrimary(context), kColorTextContrast(context), hoverProgress)!;
     final decorationColor = Color.lerp(kColorAccentLine(context), kColorAccentLineHover(context), hoverProgress)!;
+    final decorationThickness = _underlineThickness + (_underlineThicknessHovered - _underlineThickness) * hoverProgress;
 
     return TextSpan(
       text: part.text,
-      style: fancyText(kTextBoldOf(context).copyWith(decoration: TextDecoration.underline, decorationColor: decorationColor)),
+      style: fancyText(
+        kTextBoldOf(context).copyWith(
+          color: color,
+          decoration: TextDecoration.underline,
+          decorationColor: decorationColor,
+          decorationThickness: decorationThickness,
+        ),
+      ),
       recognizer: _recognizers[index],
       onEnter: (event) => controller.forward(),
       onExit: (event) => controller.reverse(),

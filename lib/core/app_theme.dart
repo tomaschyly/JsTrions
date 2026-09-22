@@ -28,6 +28,7 @@ const kPaletteGraphiteDark = Color(0xFF1a1a1a);
 const kPaletteSteel = Color(0xFF404040);
 const kPaletteSteelLight = Color(0xFF606060);
 const kPaletteSilver = Color(0xFFdddddd);
+const kPaletteSilverLight = Color(0xFFf2f2f2);
 const kPaletteSmoke = Color(0xFFf5f5f5);
 const kPaletteWhite = Color(0xFFffffff);
 const kPaletteShade = Color(0x60000000);
@@ -72,6 +73,9 @@ Color kColorTextPrimary(BuildContext context) => isDarkMode(context) ? kPaletteS
 
 /// Text over a filled button or icon button, which is filled with kColorTextPrimary
 Color kColorTextOnFill(BuildContext context) => isDarkMode(context) ? kPaletteSteel : kPaletteWhite;
+
+/// Text that has to stand out from body text, such as a hovered link
+Color kColorTextContrast(BuildContext context) => isDarkMode(context) ? kPaletteSilverLight : kPaletteBlack;
 
 /// Accent carried on a thin mark such as a link underline
 /// Light needs the darker shade, plain kColorAccent measures only 1.7:1 on the light background
