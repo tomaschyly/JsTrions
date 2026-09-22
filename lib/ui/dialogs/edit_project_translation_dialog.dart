@@ -156,7 +156,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                         Flexible(
                           child: Text(
                             theKey,
-                            style: fancyText(kTextBold),
+                            style: fancyText(kTextBoldOf(context)),
                           ),
                         ),
                         CommonSpaceHHalf(),
@@ -213,7 +213,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                     CommonSpaceVHalf(),
                     Text(
                       tt('edit_project_translation.field.hint'),
-                      style: fancyText(kText),
+                      style: fancyText(kTextOf(context)),
                     ),
                   ],
                   CommonSpaceV(),
@@ -233,7 +233,7 @@ class _EditProjectTranslationDialogState extends AbstractStatefulWidgetState<Edi
                     ),
                   Text(
                     tt('edit_project_translation.ai_translate.hint'),
-                    style: fancyText(kText),
+                    style: fancyText(kTextOf(context)),
                   ),
                   CommonSpaceVHalf(),
                 ],

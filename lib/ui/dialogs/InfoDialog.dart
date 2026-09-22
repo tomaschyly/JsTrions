@@ -69,7 +69,7 @@ class _InfoDialogState extends AbstractStatefulWidgetState<InfoDialog> {
                         Expanded(
                           child: Text(
                             theHeadline,
-                            style: fancyText(kTextHeadline),
+                            style: fancyText(kTextHeadlineOf(context)),
                           ),
                         ),
                       ],
@@ -81,7 +81,7 @@ class _InfoDialogState extends AbstractStatefulWidgetState<InfoDialog> {
                       (widget.info.isWelcome || widget.info.type == InfoType.TextOnly || widget.info.type == InfoType.ImageText)) ...[
                     Text(
                       theText,
-                      style: fancyText(kText),
+                      style: fancyText(kTextOf(context)),
                       textAlign: TextAlign.start,
                     ),
                     CommonSpaceV(),

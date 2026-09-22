@@ -263,7 +263,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                       mainAxisSize: MainAxisSize.min,
                                       crossAxisAlignment: CrossAxisAlignment.start,
                                       children: [
-                                        Text(tt('project_detail.actions.source.title'), style: fancyText(kTextBold)),
+                                        Text(tt('project_detail.actions.source.title'), style: fancyText(kTextBoldOf(context))),
                                         CommonSpaceVHalf(),
                                         Wrap(
                                           spacing: kCommonHorizontalMarginHalf,
@@ -292,7 +292,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           ],
                                         ),
                                         CommonSpaceV(),
-                                        Text(tt('project_detail.actions.code_only_keys'), style: fancyText(kTextBold)),
+                                        Text(tt('project_detail.actions.code_only_keys'), style: fancyText(kTextBoldOf(context))),
                                         CommonSpaceVHalf(),
                                         SwitchToggleWidget(
                                           key: _displayOnlyCodeOnlyKeysKey,
@@ -306,7 +306,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                           },
                                         ),
                                         CommonSpaceV(),
-                                        Text(tt('project_detail.actions.import_export.title'), style: fancyText(kTextBold)),
+                                        Text(tt('project_detail.actions.import_export.title'), style: fancyText(kTextBoldOf(context))),
                                         CommonSpaceVHalf(),
                                         Row(
                                           mainAxisSize: MainAxisSize.min,
@@ -365,7 +365,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                 mainAxisAlignment: MainAxisAlignment.start,
                                 crossAxisAlignment: CrossAxisAlignment.center,
                                 children: [
-                                  Text(tt('project_detail.translations.label'), style: fancyText(kTextHeadline)),
+                                  Text(tt('project_detail.translations.label'), style: fancyText(kTextHeadlineOf(context))),
                                   CommonSpaceHHalf(),
                                   Text(
                                     tt('project_detail.translations.stats').parameters(<String, String>{
@@ -373,7 +373,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                       r'$words': _wordsForCurrent.toString(),
                                       r'$ignored': _ignoredKeys.toString(),
                                     }),
-                                    style: fancyText(kText),
+                                    style: fancyText(kTextOf(context)),
                                   ),
                                 ],
                               ),
@@ -425,7 +425,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                                     ValueListenableBuilder(
                                                       valueListenable: _analysisProgress,
                                                       builder: (BuildContext context, String value, Widget? child) {
-                                                        return Text(value, style: fancyText(kText));
+                                                        return Text(value, style: fancyText(kTextOf(context)));
                                                       },
                                                     ),
                                                     CommonSpaceH(),
@@ -454,7 +454,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                               flexibleSpace: Container(
                                 height: kButtonHeight,
                                 margin: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMargin),
-                                decoration: BoxDecoration(color: kColorSecondaryDark, borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius),
+                                decoration: BoxDecoration(color: kColorAccentDark, borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius),
                                 child: Row(
                                   mainAxisSize: MainAxisSize.max,
                                   children: [
@@ -463,7 +463,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.centerLeft,
                                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                                        child: Text(tt('project_detail.table.key'), style: fancyText(kTextBold)),
+                                        child: Text(tt('project_detail.table.key'), style: fancyText(kTextBoldOf(context))),
                                       ),
                                     ),
                                     CommonSpaceH(),
@@ -472,7 +472,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
                                         constraints: BoxConstraints(minHeight: kButtonHeight),
                                         alignment: Alignment.centerLeft,
                                         padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                                        child: Text(tt('project_detail.table.translation'), style: fancyText(kTextBold)),
+                                        child: Text(tt('project_detail.table.translation'), style: fancyText(kTextBoldOf(context))),
                                       ),
                                     ),
                                     SizedBox(width: kButtonHeight + kCommonHorizontalMargin + kButtonHeight),
@@ -520,7 +520,7 @@ class ProjectDetailDataWidgetState extends AbstractDataWidgetState<ProjectDetail
               mainAxisSize: MainAxisSize.max,
               crossAxisAlignment: CrossAxisAlignment.start,
               children: [
-                Text(theProject.name, style: fancyText(kTextHeadline)),
+                Text(theProject.name, style: fancyText(kTextHeadlineOf(context))),
                 CommonSpaceV(),
                 Expanded(child: content),
               ],
@@ -1623,13 +1623,13 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
     final animationDuration = commonTheme.buttonsStyle.buttonStyle.animationDuration;
     final animationCurve = commonTheme.buttonsStyle.buttonStyle.animationCurve;
 
-    Color rowColor = widget.rowIsOdd ? kColorPrimary : kColorPrimaryLight;
+    Color rowColor = widget.rowIsOdd ? kColorBackground(context) : kColorSurface(context);
     if (widget.isCodeOnly) {
       rowColor = widget.rowIsOdd ? kColorWarning : kColorWarningDark;
     }
 
     if (_isHovered) {
-      rowColor = kColorPrimaryLightHover;
+      rowColor = kColorSurfaceHover(context);
     }
 
     final actions = <Widget>[
@@ -1676,7 +1676,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
         decoration: BoxDecoration(
           color: rowColor,
           borderRadius: commonTheme.buttonsStyle.buttonStyle.borderRadius,
-          border: _isHovered ? Border.all(color: kColorTextPrimary, width: 1) : Border.all(color: rowColor, width: 1),
+          border: _isHovered ? Border.all(color: kColorTextPrimary(context), width: 1) : Border.all(color: rowColor, width: 1),
         ),
         child: Row(
           mainAxisSize: MainAxisSize.max,
@@ -1686,7 +1686,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
                 constraints: BoxConstraints(minHeight: kButtonHeight),
                 alignment: Alignment.topLeft,
                 padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                child: Text(widget.keyString, style: fancyText(kText)),
+                child: Text(widget.keyString, style: fancyText(kTextOf(context))),
               ),
             ),
             CommonSpaceH(),
@@ -1695,7 +1695,7 @@ class _KeyListItemWidgetState extends AbstractStatefulWidgetState<_KeyListItemWi
                 constraints: BoxConstraints(minHeight: kButtonHeight),
                 alignment: Alignment.topLeft,
                 padding: const EdgeInsets.all(kCommonPrimaryMarginHalf),
-                child: Text(widget.value, style: fancyText(kText)),
+                child: Text(widget.value, style: fancyText(kTextOf(context))),
               ),
             ),
             CommonSpaceHHalf(),

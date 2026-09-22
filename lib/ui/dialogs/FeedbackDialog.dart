@@ -137,7 +137,7 @@ class _FeedbackDialogState extends AbstractStatefulWidgetState<FeedbackDialog> w
                           if (!_gdpr && _gdprError)
                             Padding(
                               padding: const EdgeInsets.symmetric(horizontal: kCommonHorizontalMarginHalf),
-                              child: Text(tt('feedback.gdpr.error'), style: fancyText(kText.copyWith(color: Colors.red))),
+                              child: Text(tt('feedback.gdpr.error'), style: fancyText(kTextOf(context).copyWith(color: Colors.red))),
                             ),
                         ],
                       ),

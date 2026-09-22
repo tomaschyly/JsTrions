@@ -197,7 +197,7 @@ class _EditProjectDialogState extends AbstractStatefulWidgetState<EditProjectDia
               CommonSpaceVHalf(),
               Text(
                 tt('edit_project.field.translation_assets.hint'),
-                style: fancyText(kText),
+                style: fancyText(kTextOf(context)),
               ),
               CommonSpaceVHalf(),
               ProjectLanguagesFieldWidget(
