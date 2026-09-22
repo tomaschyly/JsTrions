@@ -217,6 +217,7 @@ class _GeneralWidget extends StatelessWidget {
   final DarkMode darkMode;
 
   final _languageKey = GlobalKey<SelectionFormFieldWidgetState>();
+  final _darkModeKey = GlobalKey<SelectionFormFieldWidgetState>();
 
   /// GeneralWidget initialization
   _GeneralWidget({required this.language, required this.darkMode});
@@ -278,6 +279,7 @@ class _GeneralWidget extends StatelessWidget {
               Text(tt('settings.screen.language.description'), style: fancyText(kTextOf(context))),
               CommonSpaceVDouble(),
               SelectionFormFieldWidget<DarkMode>(
+                key: _darkModeKey,
                 label: tt('settings.screen.theme'),
                 selectionTitle: tt('settings.screen.theme.selection'),
                 clearText: tt('settings.screen.theme.selection.cancel'),
@@ -298,6 +300,9 @@ class _GeneralWidget extends StatelessWidget {
                       ScreenMessage(message: tt('settings.screen.generic.success'), type: ScreenMessageType.success),
                       appTheme: commonTheme,
                     );
+                  } else {
+                    // Clear has no meaning for a scheme, there is always one in effect, so the saved one is put back
+                    _darkModeKey.currentState?.setValue(darkMode);
                   }
                 },
               ),
