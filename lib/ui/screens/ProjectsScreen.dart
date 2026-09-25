@@ -33,7 +33,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
         onTap: (BuildContext context) {
           EditProjectDialog.show(context);
         },
-        icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
+        icon: Builder(builder: (BuildContext context) => SvgPicture.asset('images/plus.svg', color: kColorTextPrimary(context))),
       ),
     ];
 
@@ -99,7 +99,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
           onTap: (BuildContext context) {
             EditProjectDialog.show(context);
           },
-          icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary),
+          icon: SvgPicture.asset('images/plus.svg', color: kColorTextPrimary(context)),
           button: isDesktop
               ? ButtonWidget(
                   style: commonTheme.buttonTextOnlyStyle.copyWith(
@@ -119,7 +119,7 @@ class _ProjectsScreenState extends AppResponsiveScreenState<ProjectsScreen> {
             onTap: (BuildContext context) {
               EditProjectDialog.show(context, project: _project);
             },
-            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary),
+            icon: SvgPicture.asset('images/edit.svg', color: kColorTextPrimary(context)),
             button: Builder(
               builder: (context) {
                 final snapshot = AppDataState.of(context)!;
@@ -367,7 +367,7 @@ class _BodyDesktopWidgetState extends _AbstractBodyWidgetState<_BodyDesktopWidge
                     ],
                   ),
                 ),
-                Container(width: 1, height: double.infinity, color: kColorSecondaryDark),
+                Container(width: 1, height: double.infinity, color: kColorAccentDark),
                 if (theProject != null)
                   Expanded(
                     child: Container(
@@ -461,14 +461,14 @@ class _ProjectsListWidgetState extends AbstractStatefulWidgetState<_ProjectsList
       buildLoadingItemWithGlobalKey: (BuildContext context, GlobalKey globalKey) {
         return LoadingItemWidget(
           containerKey: globalKey,
-          text: Text(tt('list.item.loading'), style: fancyText(kText)),
+          text: Text(tt('list.item.loading'), style: fancyText(kTextOf(context))),
         );
       },
       emptyState: Container(
         width: double.infinity,
         padding: const EdgeInsets.all(kCommonPrimaryMargin),
         alignment: Alignment.topCenter,
-        child: Text(tt('list.empty'), style: fancyText(kText)),
+        child: Text(tt('list.empty'), style: fancyText(kTextOf(context))),
       ),
     );
   }

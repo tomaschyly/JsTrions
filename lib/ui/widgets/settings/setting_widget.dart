@@ -24,13 +24,13 @@ class SettingWidget extends StatelessWidget {
       crossAxisAlignment: CrossAxisAlignment.start,
       children: [
         if (label != null) ...[
-          Text(label!, style: fancyText(kTextBold)),
+          Text(label!, style: fancyText(kTextBoldOf(context))),
           CommonSpaceVHalf(),
         ],
         content,
         if (description != null) ...[
           CommonSpaceVHalf(),
-          Text(description!, style: fancyText(kText)),
+          Text(description!, style: fancyText(kTextOf(context))),
         ],
         if (trailing != null) ...[
           CommonSpaceVHalf(),

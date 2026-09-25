@@ -29,8 +29,11 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == DashboardScreen.ROUTE;
         },
-        title: Text(tt('drawer.dashboard'), style: fancyText(kText)),
-        icon: SvgPicture.asset('images/dashboard.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
+        title: Builder(builder: (BuildContext context) => Text(tt('drawer.dashboard'), style: fancyText(kTextOf(context)))),
+        icon: Builder(
+          builder: (BuildContext context) =>
+              SvgPicture.asset('images/dashboard.svg', colorFilter: ColorFilter.mode(kColorTextPrimary(context), BlendMode.srcIn)),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -41,8 +44,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == ProjectsScreen.ROUTE;
         },
-        title: Text(tt('drawer.projects'), style: fancyText(kText)),
-        icon: SvgPicture.asset('images/project.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
+        title: Builder(builder: (BuildContext context) => Text(tt('drawer.projects'), style: fancyText(kTextOf(context)))),
+        icon: Builder(
+          builder: (BuildContext context) => SvgPicture.asset('images/project.svg', colorFilter: ColorFilter.mode(kColorTextPrimary(context), BlendMode.srcIn)),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -53,8 +58,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == SettingsScreen.ROUTE;
         },
-        title: Text(tt('drawer.settings'), style: fancyText(kText)),
-        icon: SvgPicture.asset('images/cog.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
+        title: Builder(builder: (BuildContext context) => Text(tt('drawer.settings'), style: fancyText(kTextOf(context)))),
+        icon: Builder(
+          builder: (BuildContext context) => SvgPicture.asset('images/cog.svg', colorFilter: ColorFilter.mode(kColorTextPrimary(context), BlendMode.srcIn)),
+        ),
       ),
       DrawerOption(
         onSelect: (BuildContext context) {
@@ -65,8 +72,10 @@ class AppScreenStateOptions extends AbstractScreenOptions {
 
           return arguments?.route == AboutScreen.ROUTE;
         },
-        title: Text(tt('drawer.about'), style: fancyText(kText)),
-        icon: SvgPicture.asset('images/info.svg', colorFilter: const ColorFilter.mode(kColorTextPrimary, BlendMode.srcIn)),
+        title: Builder(builder: (BuildContext context) => Text(tt('drawer.about'), style: fancyText(kTextOf(context)))),
+        icon: Builder(
+          builder: (BuildContext context) => SvgPicture.asset('images/info.svg', colorFilter: ColorFilter.mode(kColorTextPrimary(context), BlendMode.srcIn)),
+        ),
       ),
     ];
   }
@@ -91,7 +100,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
 
     return AppBar(
       toolbarHeight: 44,
-      title: Text(options.title, style: fancyText(kTextHeadline)),
+      title: Text(options.title, style: fancyText(kTextHeadlineOf(context))),
       centerTitle: false,
       leading: options.drawerOptions?.isNotEmpty == true
           ? (!options.drawerIsPermanentlyVisible
@@ -163,7 +172,7 @@ abstract class AppResponsiveScreenState<T extends AbstractResponsiveScreen> exte
     if (theDrawerOptions != null && theDrawerOptions.isNotEmpty) {
       final drawerList = Container(
         width: options.drawerIsPermanentlyVisible ? kDrawerWidthOverride : null,
-        color: kColorPrimary,
+        color: kColorBackground(context),
         child: ListView(
           padding: EdgeInsets.zero,
           children: [
@@ -239,9 +248,9 @@ class _DrawerOptionWidgetState extends AbstractStatefulWidgetState<_DrawerOption
 
     final option = widget.option;
 
-    Color color = widget.isSelected ? kColorPrimaryLight : kColorPrimary;
+    Color color = widget.isSelected ? kColorSurface(context) : kColorBackground(context);
     if (!widget.isSelected && _isHovered) {
-      color = kColorPrimaryLightHover;
+      color = kColorSurfaceHover(context);
     }
 
     // Background is below Material, so InkWell splash stays visible above hover color

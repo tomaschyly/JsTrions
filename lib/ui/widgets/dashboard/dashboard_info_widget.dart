@@ -29,12 +29,12 @@ class DashboardInfoWidget extends StatelessWidget {
       children: [
         Text(
           title,
-          style: fancyText(kTextHeadline),
+          style: fancyText(kTextHeadlineOf(context)),
         ),
         CommonSpaceV(),
         Text(
           text,
-          style: fancyText(kText).copyWith(
+          style: fancyText(kTextOf(context)).copyWith(
             color: isDanger ? kColorDanger : null,
           ),
         ),

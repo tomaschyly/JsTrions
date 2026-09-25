@@ -116,7 +116,7 @@ class ProjectIgnoreDirectoriesWidgetState extends AbstractStatefulWidgetState<Pr
         CommonSpaceVHalf(),
         Text(
           tt('edit_project.field.ignore_directories.hint'),
-          style: fancyText(kText),
+          style: fancyText(kTextOf(context)),
         ),
       ],
     );
