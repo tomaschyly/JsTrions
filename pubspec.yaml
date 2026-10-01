@@ -22,8 +22,8 @@ dependencies:
   flutter_localizations:
     sdk: flutter
 
-  tch_appliable_core: ^0.39.0
-  tch_common_widgets: ^0.42.2
+  tch_appliable_core: ^0.40.0
+  tch_common_widgets: ^0.43.0
 
   supercharged: ^2.1.1
   package_info_plus: ^9.0.0
