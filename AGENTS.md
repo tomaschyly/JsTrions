@@ -2,6 +2,10 @@
 
 These instructions apply to the whole repository unless a deeper `AGENTS.md` overrides them.
 
+## Supported platforms
+
+- JsTrions targets macOS, Windows (Microsoft Store), and Ubuntu (Snap). Web, Android, and iOS are not supported; responsive phone/tablet methods do not imply mobile build support.
+
 ## Branch safety rule
 
 - For implementation work (any non-planning/non-question-only task), if current branch is `main` or `master`, ask the user first whether to switch to a new `feature/*` branch before making edits.
@@ -22,9 +26,7 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 - During every app version bump, check the `pubspec.yaml` `environment` constraints against the Flutter version used by the project.
 - When Flutter is upgraded, update the Dart SDK and Flutter constraints together so they remain compatible with the new Flutter toolchain.
-- Current baseline: Flutter `3.44.9` uses:
-  - `sdk: ">=3.12.0 <4.0.0"`
-  - `flutter: ">=3.44.0"`
+- Determine the active Flutter and Dart versions from the project's configured toolchain. Do not copy another project's version baseline or lower the current constraints without verifying compatibility here.
 
 - When user asks to bump app to `x.x.x`, follow this order:
   1. Ensure branch `version/x.x.x` exists and is checked out — create and switch to it automatically if missing, without asking the user.
@@ -53,13 +55,23 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 ### Pattern consistency
 
-- In every change, follow established patterns from related contexts in this project (similar screen, feature, layer, or widget type).
-- Prefer consistency with existing structure and naming over introducing a new approach.
-- If multiple patterns exist, choose the one used in the closest relevant files unless the user explicitly asks otherwise.
+- Following established project patterns is a requirement for every change. Before implementing, read concrete examples of the same kind of behavior; follow the reference-discovery workflow in **Context-first preparation** below.
+- Match by purpose and behavior, not just by file proximity or similar names. For example, use existing list screens for a new list screen, detail screens for details, create/edit screens and forms for create/edit flows, and comparable settings, widgets, components, utilities, service helpers, routing flows, or domain models for their equivalents.
+- Follow the reference's structure, naming, layer boundaries, shared abstractions, and applicable behavior. This includes layout/composition, state and data flow, validation, loading/empty/error states, permissions, navigation, persistence, and EventSystem handling where relevant to the task.
+- Reuse established components, widgets, utilities, extensions, and service helpers when they fit. Read their implementation and representative call sites before using them; preserve their intended contracts instead of duplicating their behavior or bypassing them with custom code.
+- Prefer consistency with existing structure and naming over introducing a new approach. Do not introduce a parallel abstraction, dependency, or architecture merely because it is familiar or seems cleaner in isolation.
+- If multiple patterns exist, prefer the closest feature-equivalent implementation in the same project and layer unless the user explicitly selects another reference. Apply explicit repository rules over conflicting examples; do not copy known bugs or obsolete behavior. Explain material differences when adapting a reference.
 - When adding or moving methods, widget helpers, fields, constants, route entries, configuration values, or service functions, place them with the related code instead of at the end of the file or the first convenient location.
 - Before editing a file, scan nearby declarations for the existing grouping/order pattern (for example fields before lifecycle methods, lifecycle methods before build helpers, callbacks near related UI, route display order, domain workflow order, or alphabetical order) and preserve it.
-- In a file centered on a primary class, mixin, extension, or other type, declare that primary type before supporting top-level declarations. Place helper data classes, enums, constants, typedefs, and similar supporting declarations after the primary type unless Dart or Flutter requires a different order.
+- In a file centered on a primary class, mixin, extension, or other type, declare that primary type before supporting top-level declarations. Place result and helper data classes, enums, constants, typedefs, and similar supporting declarations after the primary type unless Dart or Flutter requires a different order.
 - For cross-file lists or registries that represent the same domain concept, keep the order consistent across the related files.
+
+### Readability and formatting
+
+- Write code for a human reader: use descriptive names, clear control flow, and functions with focused responsibilities. Avoid dense expressions, excessive nesting, and clever shortcuts when straightforward code is clearer.
+- Match surrounding indentation, line wrapping, spacing, braces, and declaration grouping. Use the project's configured formatter where available; avoid unrelated formatting changes.
+- Keep related steps together and use blank lines to separate logical stages. Add comments that explain intent or non-obvious constraints, following the code-commenting rules above.
+- Before finishing, review the diff for both readability and consistency with the chosen references. A successful build alone does not establish pattern consistency.
 
 ### Button loading state
 
@@ -107,11 +119,15 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - In mapping, prefer: `field: clearField == true ? null : (field ?? this.field)`.
 - Do not use sentinel placeholders (for example `_copyWithUndefined`) for this use case unless explicitly requested.
 
+### Configuration parity
+
+- `lib/config.dart` is local and ignored because it contains API keys. When adding or changing a constant there, update `lib/config.example.dart` in the same change with placeholder values so a fresh clone remains buildable. Never copy local API keys into the example.
+
 ## Screen implementation & routing
 
 ### Screen architecture
 
-- For new screens, follow the architecture from the latest similar existing screen in the same domain.
+- For new screens, follow the closest feature-equivalent existing screen in the same domain, preferring the latest example when equally suitable. Apply the reference-discovery and pattern-consistency rules above.
 - Extend `AbstractResponsiveScreen` and use an `AppResponsiveScreenState` implementation for screen state.
 - Implement all six responsive methods: `smallPhoneScreen`, `largePhoneScreen`, `tabletScreen`, `smallDesktopScreen`, `largeDesktopScreen`, and `extraLargeDesktopScreen`.
 - Use `_BodyWidget` for phone and tablet layouts and `_BodyDesktopWidget` for desktop layouts unless the closest related screen establishes a different breakpoint behavior.
@@ -170,9 +186,12 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 ### Context-first preparation
 
-- Before proposing a plan or starting code changes, review related files in the same domain/context to identify established patterns and structure.
-- Use those nearby implementations as the primary reference for architecture, naming, state handling, and UI composition decisions.
-- If patterns conflict, prefer the closest feature-equivalent example and call out the choice in your summary.
+- Before proposing a plan or starting code changes, find and read at least one concrete implementation of the same kind of behavior, when one exists. For work spanning several layers or distinct behaviors, inspect the relevant examples for each part and trace their connected flow as needed.
+- Start with references supplied by the user and inspect the related code needed to understand them. If the user supplies no references, search for suitable examples yourself; reference discovery is the agent's responsibility. Do not ask the user to locate examples that can be found in the repository.
+- Search the same domain/context first, then comparable features elsewhere in the same project. Inspect shared components, utilities, and helpers used by those examples. When another project's code is needed, first list its verified root and read only the specific reference files using absolute paths; adapt to this project's conventions.
+- Before editing, briefly name the main reference files in a progress update and state which patterns you will follow. Reading only filenames or declarations is insufficient; inspect the implementation and relevant call sites.
+- If examples conflict, use the selection rules in **Pattern consistency**. If no suitable example exists after searching, state that and use the nearest established conventions. Ask only when an unresolved choice materially affects behavior or architecture; do not invent a new pattern silently.
+- Before handoff, compare the changed code with the selected references and correct unexplained differences. Briefly identify the main references followed and explain any material deviations in the handoff.
 
 ### IDE tools and reviewability
 
@@ -190,12 +209,15 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 
 ### Validation
 
+- Focus platform-specific dependency checks and build validation on macOS, Windows, and Linux. Run native builds on a compatible host and report checks that could not run locally.
+
 - After finishing code changes, run `dart format` on the changed Dart files first, then run `flutter analyze` and resolve issues introduced by your changes before handoff.
 - Prefer targeting both commands at the changed Dart files (for example `dart format lib/path/a.dart lib/path/b.dart` followed by `flutter analyze lib/path/a.dart lib/path/b.dart`) unless there is a clear reason to run them on the whole project.
 
 ### Handoff summary format
 
 - After code changes and validation, include a short summary of changed files in your final response.
+- Briefly name the reference implementations followed and explain any intentional pattern departures. Keep this proportional to the change; a short sentence is enough for a small task.
 - Use plain text (non-clickable) project-relative file references only.
 - For each relevant change block, include the starting line number using the `path:line` format (for example `lib/ui/widgets/device/device_form_widget.dart:890`).
 - Do not use markdown file links for handoff file references.
@@ -228,3 +250,10 @@ These instructions apply to the whole repository unless a deeper `AGENTS.md` ove
 - Prefer hot reload (`r`) for small UI-only changes.
 - Prefer hot restart (`R`) for state, model, service, initialization, or routing changes where recreating app state is safer.
 - If hot reload or hot restart cannot be sent to the active process, restart the app with the same target and entry point.
+
+## Release notes
+
+### Translation output
+
+- For app release-note translation requests, provide `CS`, `DE`, `EN`, and `SK` versions.
+- Keep wording natural and consistent across languages.
